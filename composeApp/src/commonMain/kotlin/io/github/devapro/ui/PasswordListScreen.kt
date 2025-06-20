@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,12 +23,22 @@ import io.github.devapro.model.ItemModel
 fun PasswordListScreen(
     items: List<ItemModel>,
     onAddClick: () -> Unit,
-    onEditClick: (ItemModel) -> Unit
+    onEditClick: (ItemModel) -> Unit,
+    onImportExportClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Password Manager") }
+                title = { Text("Password Manager") },
+                actions = {
+                    IconButton(onClick = onImportExportClick) {
+                        Icon(
+                            Icons.Default.ImportExport,
+                            contentDescription = "Import/Export",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             )
         },
         floatingActionButton = {
