@@ -1,43 +1,50 @@
 package io.github.devapro.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import droidpasswords.composeapp.generated.resources.Res
-import droidpasswords.composeapp.generated.resources.compose_multiplatform
-import io.github.devapro.Greeting
-import org.jetbrains.compose.resources.painterResource
+import androidx.compose.runtime.*
+import io.github.devapro.data.PasswordRepository
+import io.github.devapro.model.ItemModel
 
 @Composable
 fun MainScreen() {
-    var showContent by remember { mutableStateOf(false) }
-    Column(
-        modifier = Modifier
-            .safeContentPadding()
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Button(onClick = { showContent = !showContent }) {
-            Text("Click me!")
+    var currentScreen by remember { mutableStateOf<Screen>(Screen.PasswordList) }
+    var editingItem by remember { mutableStateOf<ItemModel?>(null) }
+    val passwords by remember { derivedStateOf { PasswordRepository.passwords } }
+    
+    when (val screen = currentScreen) {
+        is Screen.PasswordList -> {
+            PasswordListScreen(
+                items = passwords,
+                onAddClick = {
+                    editingItem = null
+                    currentScreen = Screen.AddEditPassword
+                },
+                onEditClick = { item ->
+                    editingItem = item
+                    currentScreen = Screen.AddEditPassword
+                }
+            )
         }
-        AnimatedVisibility(showContent) {
-            val greeting = remember { Greeting().greet() }
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(painterResource(Res.drawable.compose_multiplatform), null)
-                Text("Compose: $greeting")
-            }
+        
+        is Screen.AddEditPassword -> {
+            AddEditPasswordScreen(
+                item = editingItem,
+                onSave = { password ->
+                    if (editingItem != null) {
+                        PasswordRepository.updatePassword(password)
+                    } else {
+                        PasswordRepository.addPassword(password)
+                    }
+                    currentScreen = Screen.PasswordList
+                },
+                onBack = {
+                    currentScreen = Screen.PasswordList
+                }
+            )
         }
     }
+}
+
+sealed class Screen {
+    object PasswordList : Screen()
+    object AddEditPassword : Screen()
 }
