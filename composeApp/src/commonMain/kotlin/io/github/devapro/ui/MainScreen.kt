@@ -14,24 +14,14 @@ fun MainScreen() {
     var viewingItem by remember { mutableStateOf<ItemModel?>(null) }
     val passwords by remember { derivedStateOf { PasswordRepository.passwords } }
     var unlockErrorMessage by remember { mutableStateOf<String?>(null) }
-    
-    // Check if app is locked
-    if (LockManager.isLocked) {
-        LockScreen(
-            onUnlock = { password ->
-                if (LockManager.unlock(password)) {
-                    unlockErrorMessage = null
-                } else {
-                    unlockErrorMessage = "Incorrect password"
-                }
-            },
-            onSetupPassword = {
-                currentScreen = Screen.SetLockPassword
-            },
-            hasLockPassword = LockManager.hasLockPassword,
-            errorMessage = unlockErrorMessage
-        )
-        return
+
+    LaunchedEffect(Unit) {
+        // If the app is locked, show the lock screen
+        if (LockManager.isLocked) {
+            currentScreen = Screen.LockScreen
+        } else {
+            currentScreen = Screen.PasswordList
+        }
     }
     
     when (val screen = currentScreen) {
@@ -191,6 +181,23 @@ fun MainScreen() {
                 }
             )
         }
+
+        is Screen.LockScreen -> {
+            LockScreen(
+                onUnlock = { password ->
+                    if (LockManager.unlock(password)) {
+                        unlockErrorMessage = null
+                    } else {
+                        unlockErrorMessage = "Incorrect password"
+                    }
+                },
+                onSetupPassword = {
+                    currentScreen = Screen.SetLockPassword
+                },
+                hasLockPassword = LockManager.hasLockPassword,
+                errorMessage = unlockErrorMessage
+            )
+        }
     }
 }
 
@@ -200,4 +207,5 @@ sealed class Screen {
     object AddEditPassword : Screen()
     object ImportExport : Screen()
     object SetLockPassword : Screen()
+    object LockScreen : Screen()
 }
