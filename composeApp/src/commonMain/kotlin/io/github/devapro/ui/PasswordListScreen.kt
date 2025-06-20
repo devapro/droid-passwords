@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,7 +25,8 @@ fun PasswordListScreen(
     items: List<ItemModel>,
     onAddClick: () -> Unit,
     onEditClick: (ItemModel) -> Unit,
-    onImportExportClick: () -> Unit
+    onImportExportClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -35,6 +37,13 @@ fun PasswordListScreen(
                         Icon(
                             Icons.Default.ImportExport,
                             contentDescription = "Import/Export",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Settings",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }

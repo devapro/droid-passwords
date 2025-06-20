@@ -3,6 +3,7 @@ package io.github.devapro.ui
 import androidx.compose.runtime.*
 import io.github.devapro.data.ImportExportManager
 import io.github.devapro.data.ImportException
+import io.github.devapro.data.LockManager
 import io.github.devapro.data.PasswordRepository
 import io.github.devapro.model.ItemModel
 
@@ -12,6 +13,26 @@ fun MainScreen() {
     var editingItem by remember { mutableStateOf<ItemModel?>(null) }
     var viewingItem by remember { mutableStateOf<ItemModel?>(null) }
     val passwords by remember { derivedStateOf { PasswordRepository.passwords } }
+    var unlockErrorMessage by remember { mutableStateOf<String?>(null) }
+    
+    // Check if app is locked
+    if (LockManager.isLocked) {
+        LockScreen(
+            onUnlock = { password ->
+                if (LockManager.unlock(password)) {
+                    unlockErrorMessage = null
+                } else {
+                    unlockErrorMessage = "Incorrect password"
+                }
+            },
+            onSetupPassword = {
+                currentScreen = Screen.SetLockPassword
+            },
+            hasLockPassword = LockManager.hasLockPassword,
+            errorMessage = unlockErrorMessage
+        )
+        return
+    }
     
     when (val screen = currentScreen) {
         is Screen.PasswordList -> {
@@ -27,6 +48,9 @@ fun MainScreen() {
                 },
                 onImportExportClick = {
                     currentScreen = Screen.ImportExport
+                },
+                onSettingsClick = {
+                    currentScreen = Screen.SetLockPassword
                 }
             )
         }
@@ -122,6 +146,35 @@ fun MainScreen() {
             )
         }
         
+        is Screen.SetLockPassword -> {
+            SetLockPasswordScreen(
+                hasExistingPassword = LockManager.hasLockPassword,
+                onSave = { oldPassword, newPassword ->
+                    if (LockManager.hasLockPassword) {
+                        if (oldPassword != null && LockManager.changeLockPassword(oldPassword, newPassword)) {
+                            currentScreen = Screen.PasswordList
+                            true
+                        } else {
+                            false
+                        }
+                    } else {
+                        LockManager.setLockPassword(newPassword)
+                        currentScreen = Screen.PasswordList
+                        true
+                    }
+                },
+                onBack = {
+                    currentScreen = Screen.PasswordList
+                },
+                onRemovePassword = if (LockManager.hasLockPassword) {
+                    {
+                        LockManager.removeLockPassword()
+                        currentScreen = Screen.PasswordList
+                    }
+                } else null
+            )
+        }
+        
         is Screen.AddEditPassword -> {
             AddEditPasswordScreen(
                 item = editingItem,
@@ -146,4 +199,5 @@ sealed class Screen {
     object PasswordDetail : Screen()
     object AddEditPassword : Screen()
     object ImportExport : Screen()
+    object SetLockPassword : Screen()
 }
