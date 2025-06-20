@@ -36,7 +36,7 @@ fun AddEditPasswordScreen(
     var username by remember { mutableStateOf(item?.username ?: "") }
     var password by remember { mutableStateOf(item?.password ?: "") }
     var passwordVisible by remember { mutableStateOf(false) }
-    var additionalFields by remember { 
+        var additionalFields by remember { 
         mutableStateOf(item?.additionalFields ?: mutableListOf())
     }
     

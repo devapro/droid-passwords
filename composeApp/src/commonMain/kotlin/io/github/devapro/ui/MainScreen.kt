@@ -8,6 +8,7 @@ import io.github.devapro.model.ItemModel
 fun MainScreen() {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.PasswordList) }
     var editingItem by remember { mutableStateOf<ItemModel?>(null) }
+    var viewingItem by remember { mutableStateOf<ItemModel?>(null) }
     val passwords by remember { derivedStateOf { PasswordRepository.passwords } }
     
     when (val screen = currentScreen) {
@@ -19,10 +20,25 @@ fun MainScreen() {
                     currentScreen = Screen.AddEditPassword
                 },
                 onEditClick = { item ->
-                    editingItem = item
-                    currentScreen = Screen.AddEditPassword
+                    viewingItem = item
+                    currentScreen = Screen.PasswordDetail
                 }
             )
+        }
+        
+        is Screen.PasswordDetail -> {
+            viewingItem?.let { item ->
+                PasswordDetailScreen(
+                    item = item,
+                    onBack = {
+                        currentScreen = Screen.PasswordList
+                    },
+                    onEdit = {
+                        editingItem = item
+                        currentScreen = Screen.AddEditPassword
+                    }
+                )
+            }
         }
         
         is Screen.AddEditPassword -> {
@@ -46,5 +62,6 @@ fun MainScreen() {
 
 sealed class Screen {
     object PasswordList : Screen()
+    object PasswordDetail : Screen()
     object AddEditPassword : Screen()
 }
