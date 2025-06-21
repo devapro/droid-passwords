@@ -5,6 +5,7 @@ import io.github.devapro.data.LocalStorage
 import io.github.devapro.data.LockManager
 import io.github.devapro.ui.importexport.registerImportExportScreenDi
 import io.github.devapro.ui.setlock.registerSetLockPasswordScreenDi
+import io.github.devapro.ui.unlock.registerUnLockVaultScreenDi
 import io.github.devapro.ui.welcome.WelcomeScreenViewModel
 import io.github.devapro.ui.welcome.registerWelcomeScreenDi
 import org.koin.core.context.startKoin
@@ -28,6 +29,7 @@ val appModule: Module = module {
     registerWelcomeScreenDi()
     registerImportExportScreenDi()
     registerSetLockPasswordScreenDi()
+    registerUnLockVaultScreenDi()
 }
 
 private fun Module.coreDi() {

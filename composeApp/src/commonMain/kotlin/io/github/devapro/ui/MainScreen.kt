@@ -198,7 +198,7 @@ fun MainScreen() {
         }
 
         is Screen.LockScreen -> {
-            LockScreen(
+            UnLockVaultScreen(
                 onUnlock = { password ->
                     if (LockManager.unlock(password)) {
                         unlockErrorMessage = null

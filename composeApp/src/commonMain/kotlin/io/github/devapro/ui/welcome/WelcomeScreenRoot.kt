@@ -6,6 +6,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.ui.importexport.navigation.ImportExportScreen
 import io.github.devapro.ui.setlock.navigation.SetLockPasswordScreen
+import io.github.devapro.ui.unlock.navigation.UnLockVaultScreen
 import io.github.devapro.ui.welcome.model.WelcomeScreenAction
 import io.github.devapro.ui.welcome.model.WelcomeScreenEvent
 import io.github.devapro.ui.welcome.ui.WelcomeScreenContent
