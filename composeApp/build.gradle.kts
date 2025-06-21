@@ -61,6 +61,15 @@ kotlin {
             implementation("androidx.datastore:datastore:1.1.7")
             // The Preferences DataStore library
             implementation("androidx.datastore:datastore-preferences:1.1.7")
+
+            // Navigator
+            implementation("cafe.adriel.voyager:voyager-navigator:1.0.1")
+
+            // TabNavigator
+            implementation("cafe.adriel.voyager:voyager-tab-navigator:1.0.1")
+
+            // Transitions
+            implementation("cafe.adriel.voyager:voyager-transitions:1.0.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
