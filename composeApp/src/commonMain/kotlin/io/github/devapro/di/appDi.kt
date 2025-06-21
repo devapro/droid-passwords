@@ -1,15 +1,28 @@
 package io.github.devapro.di
 
 import io.github.devapro.core.mvi.CoroutineContextProvider
+import io.github.devapro.data.LocalStorage
+import io.github.devapro.ui.welcome.WelcomeScreenViewModel
+import io.github.devapro.ui.welcome.registerWelcomeScreenDi
+import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
+
+fun initKoin(){
+    startKoin {
+        modules(appModule)
+    }
+}
 
 val appModule: Module = module {
     coreDi()
     factoriesDi()
     viewModelsDi()
     reducersDi()
+    dataDi()
+
+    registerWelcomeScreenDi()
 }
 
 private fun Module.coreDi() {
@@ -21,7 +34,11 @@ private fun Module.factoriesDi() {
 }
 
 private fun Module.viewModelsDi() {
-   // viewModelOf(::MainViewMode)
+    factoryOf(::WelcomeScreenViewModel)
+}
+
+private fun Module.dataDi() {
+     factoryOf(::LocalStorage)
 }
 
 private fun Module.reducersDi() {

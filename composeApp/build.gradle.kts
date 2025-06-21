@@ -57,6 +57,10 @@ kotlin {
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-compose")
             implementation(libs.viewmodel)
+            // DataStore library
+            implementation("androidx.datastore:datastore:1.1.7")
+            // The Preferences DataStore library
+            implementation("androidx.datastore:datastore-preferences:1.1.7")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

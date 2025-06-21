@@ -6,6 +6,7 @@ import io.github.devapro.data.ImportException
 import io.github.devapro.data.LockManager
 import io.github.devapro.data.PasswordRepository
 import io.github.devapro.model.ItemModel
+import io.github.devapro.ui.welcome.WelcomeScreen
 
 @Composable
 fun MainScreen() {
@@ -27,13 +28,13 @@ fun MainScreen() {
     when (val screen = currentScreen) {
         is Screen.Welcome -> {
             WelcomeScreen(
-                onCreateNew = {
-                    currentScreen = Screen.SetLockPassword
-                },
-                onImportExisting = {
-                    LockManager.completeFirstLaunch()
-                    currentScreen = Screen.ImportExport
-                }
+//                onCreateNew = {
+//                    currentScreen = Screen.SetLockPassword
+//                },
+//                onImportExisting = {
+//                    LockManager.completeFirstLaunch()
+//                    currentScreen = Screen.ImportExport
+//                }
             )
         }
         
