@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,42 +52,77 @@ fun PasswordListScreenContent(
     onAction: (PasswordListScreenAction) -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    var isSearchActive by remember { mutableStateOf(state.hasSearchQuery) }
+
+    // Update search active state when search query changes
+    LaunchedEffect(state.hasSearchQuery) {
+        if (!state.hasSearchQuery && isSearchActive) {
+            isSearchActive = false
+        }
+    }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Passwords") },
-                actions = {
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "More options")
-                    }
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Import/Export") },
-                            onClick = {
-                                showMenu = false
-                                onAction(PasswordListScreenAction.OnImportExportClicked)
-                            },
-                            leadingIcon = {
-                                Icon(Icons.Default.ImportExport, contentDescription = null)
-                            }
+            if (isSearchActive) {
+                // Search bar as top bar
+                TopAppBar(
+                    title = {
+                        OutlinedTextField(
+                            value = state.searchQuery,
+                            onValueChange = { onAction(PasswordListScreenAction.OnSearchChanged(it)) },
+                            placeholder = { Text("Search passwords...") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
                         )
-                        DropdownMenuItem(
-                            text = { Text("Settings") },
-                            onClick = {
-                                showMenu = false
-                                onAction(PasswordListScreenAction.OnSettingsClicked)
-                            },
-                            leadingIcon = {
-                                Icon(Icons.Default.Settings, contentDescription = null)
-                            }
-                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { 
+                            isSearchActive = false
+                            onAction(PasswordListScreenAction.OnClearSearch)
+                        }) {
+                            Icon(Icons.Default.Clear, contentDescription = "Close search")
+                        }
                     }
-                }
-            )
+                )
+            } else {
+                // Normal top bar
+                TopAppBar(
+                    title = { Text("Passwords") },
+                    actions = {
+                        IconButton(onClick = { isSearchActive = true }) {
+                            Icon(Icons.Default.Search, contentDescription = "Search")
+                        }
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Import/Export") },
+                                onClick = {
+                                    showMenu = false
+                                    onAction(PasswordListScreenAction.OnImportExportClicked)
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.ImportExport, contentDescription = null)
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Settings") },
+                                onClick = {
+                                    showMenu = false
+                                    onAction(PasswordListScreenAction.OnSettingsClicked)
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Settings, contentDescription = null)
+                                }
+                            )
+                        }
+                    }
+                )
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -102,28 +138,6 @@ fun PasswordListScreenContent(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Search bar
-            OutlinedTextField(
-                value = state.searchQuery,
-                onValueChange = { onAction(PasswordListScreenAction.OnSearchChanged(it)) },
-                label = { Text("Search passwords") },
-                placeholder = { Text("Search by title, username, or URL") },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = "Search")
-                },
-                trailingIcon = if (state.hasSearchQuery) {
-                    {
-                        IconButton(onClick = { onAction(PasswordListScreenAction.OnClearSearch) }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear search")
-                        }
-                    }
-                } else null,
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            )
-
             // Password list
             if (state.filteredPasswords.isEmpty()) {
                 Box(
