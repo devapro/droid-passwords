@@ -14,6 +14,15 @@ class InitScreenReducer
         action: WelcomeScreenAction.InitScreen,
         getState: () -> WelcomeScreenState
     ): Reducer.Result<WelcomeScreenState, WelcomeScreenAction.InitScreen, WelcomeScreenEvent?> {
-        TODO("Not yet implemented")
+        return Reducer.Result(
+            state = WelcomeScreenState.Success(
+                platformName = "DroidPasswords",
+                isDarkThemeEnabled = false,
+                isBiometricAuthEnabled = false,
+                isPasswordProtected = false
+            ),
+            action = action,
+            event = null
+        )
     }
 }
