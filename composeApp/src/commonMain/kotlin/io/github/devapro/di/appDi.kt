@@ -2,7 +2,9 @@ package io.github.devapro.di
 
 import io.github.devapro.core.mvi.CoroutineContextProvider
 import io.github.devapro.data.LocalStorage
+import io.github.devapro.data.LockManager
 import io.github.devapro.ui.importexport.registerImportExportScreenDi
+import io.github.devapro.ui.setlock.registerSetLockPasswordScreenDi
 import io.github.devapro.ui.welcome.WelcomeScreenViewModel
 import io.github.devapro.ui.welcome.registerWelcomeScreenDi
 import org.koin.core.context.startKoin
@@ -25,6 +27,7 @@ val appModule: Module = module {
 
     registerWelcomeScreenDi()
     registerImportExportScreenDi()
+    registerSetLockPasswordScreenDi()
 }
 
 private fun Module.coreDi() {
@@ -41,6 +44,7 @@ private fun Module.viewModelsDi() {
 
 private fun Module.dataDi() {
      factoryOf(::LocalStorage)
+     single { LockManager }
 }
 
 private fun Module.reducersDi() {

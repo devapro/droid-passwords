@@ -1,0 +1,33 @@
+package io.github.devapro.ui.setlock.reducer
+
+import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.ui.setlock.model.SetLockPasswordScreenAction
+import io.github.devapro.ui.setlock.model.SetLockPasswordScreenEvent
+import io.github.devapro.ui.setlock.model.SetLockPasswordScreenState
+
+class OnToggleNewPasswordVisibilityReducer
+    : Reducer<SetLockPasswordScreenAction.OnToggleNewPasswordVisibility, SetLockPasswordScreenState, SetLockPasswordScreenAction, SetLockPasswordScreenEvent> {
+
+    override val actionClass = SetLockPasswordScreenAction.OnToggleNewPasswordVisibility::class
+
+    override suspend fun reduce(
+        action: SetLockPasswordScreenAction.OnToggleNewPasswordVisibility,
+        getState: () -> SetLockPasswordScreenState
+    ): Reducer.Result<SetLockPasswordScreenState, SetLockPasswordScreenAction.OnToggleNewPasswordVisibility, SetLockPasswordScreenEvent?> {
+        val currentState = getState()
+
+        return if (currentState is SetLockPasswordScreenState.Success) {
+            Reducer.Result(
+                state = currentState.copy(isNewPasswordVisible = !currentState.isNewPasswordVisible),
+                action = null,
+                event = null
+            )
+        } else {
+            Reducer.Result(
+                state = currentState,
+                action = null,
+                event = null
+            )
+        }
+    }
+} 

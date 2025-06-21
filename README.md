@@ -12,3 +12,9 @@ This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
 
 
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+
+### TODO
+- [ ] Import / export to/from file
+- [ ] Modularize the project
+- [ ] Add encryption
+- [ ] Add CI for iOS and Android, desktop builds

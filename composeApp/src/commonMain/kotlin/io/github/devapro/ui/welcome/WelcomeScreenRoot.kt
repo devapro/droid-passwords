@@ -5,6 +5,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.ui.importexport.navigation.ImportExportScreen
+import io.github.devapro.ui.setlock.navigation.SetLockPasswordScreen
 import io.github.devapro.ui.welcome.model.WelcomeScreenAction
 import io.github.devapro.ui.welcome.model.WelcomeScreenEvent
 import io.github.devapro.ui.welcome.ui.WelcomeScreenContent
@@ -24,7 +25,7 @@ fun WelcomeScreenRoot() {
         viewModel.onAction(WelcomeScreenAction.InitScreen)
         viewModel.event.collect {
             when (it) {
-                is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(ImportExportScreen)
+                is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(SetLockPasswordScreen)
                 is WelcomeScreenEvent.OnOpenExistingVault -> navigator.push(ImportExportScreen)
             }
         }
