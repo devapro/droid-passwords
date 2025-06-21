@@ -3,6 +3,7 @@ package io.github.devapro.di
 import io.github.devapro.core.mvi.CoroutineContextProvider
 import io.github.devapro.data.LocalStorage
 import io.github.devapro.data.LockManager
+import io.github.devapro.ui.edit.registerAddEditPasswordScreenDi
 import io.github.devapro.ui.importexport.registerImportExportScreenDi
 import io.github.devapro.ui.itemdetails.registerPasswordDetailScreenDi
 import io.github.devapro.ui.itemslist.registerPasswordListScreenDi
@@ -34,6 +35,7 @@ val appModule: Module = module {
     registerUnLockVaultScreenDi()
     registerPasswordListScreenDi()
     registerPasswordDetailScreenDi()
+    registerAddEditPasswordScreenDi()
 }
 
 private fun Module.coreDi() {
