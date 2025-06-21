@@ -2,6 +2,7 @@ package io.github.devapro.di
 
 import io.github.devapro.core.mvi.CoroutineContextProvider
 import io.github.devapro.data.LocalStorage
+import io.github.devapro.ui.importexport.registerImportExportScreenDi
 import io.github.devapro.ui.welcome.WelcomeScreenViewModel
 import io.github.devapro.ui.welcome.registerWelcomeScreenDi
 import org.koin.core.context.startKoin
@@ -23,6 +24,7 @@ val appModule: Module = module {
     dataDi()
 
     registerWelcomeScreenDi()
+    registerImportExportScreenDi()
 }
 
 private fun Module.coreDi() {

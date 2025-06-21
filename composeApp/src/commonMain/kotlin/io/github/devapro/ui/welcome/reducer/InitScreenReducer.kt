@@ -21,7 +21,7 @@ class InitScreenReducer
                 isBiometricAuthEnabled = false,
                 isPasswordProtected = false
             ),
-            action = action,
+            action = null,
             event = null
         )
     }

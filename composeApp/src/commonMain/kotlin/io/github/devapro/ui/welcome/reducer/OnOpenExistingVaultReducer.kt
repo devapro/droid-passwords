@@ -16,7 +16,7 @@ class OnOpenExistingVaultReducer
     ): Reducer.Result<WelcomeScreenState, WelcomeScreenAction.OnOpenExistingVault, WelcomeScreenEvent?> {
         return Reducer.Result(
             state = getState(),
-            action = action,
+            action = null,
             event = WelcomeScreenEvent.OnOpenExistingVault
         )
     }

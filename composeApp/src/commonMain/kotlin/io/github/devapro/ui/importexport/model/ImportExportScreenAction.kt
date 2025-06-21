@@ -1,0 +1,21 @@
+package io.github.devapro.ui.importexport.model
+
+sealed interface ImportExportScreenAction {
+    data object InitScreen : ImportExportScreenAction
+
+    data object OnSwitchToImport : ImportExportScreenAction
+    
+    data object OnSwitchToExport : ImportExportScreenAction
+
+    data class OnFormatSelected(val format: FileFormat) : ImportExportScreenAction
+
+    data object OnImportClicked : ImportExportScreenAction
+
+    data object OnExportClicked : ImportExportScreenAction
+
+    data object OnBackClicked : ImportExportScreenAction
+}
+
+enum class FileFormat {
+    CSV, XML, JSON
+} 

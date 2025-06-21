@@ -16,7 +16,7 @@ class OnCreateNewVaultReducer
     ): Reducer.Result<WelcomeScreenState, WelcomeScreenAction.OnCreateNewVault, WelcomeScreenEvent?> {
         return Reducer.Result(
             state = getState(),
-            action = action,
+            action = null,
             event = WelcomeScreenEvent.OnCreateNewVault
         )
     }

@@ -1,6 +1,12 @@
 package io.github.devapro.ui.welcome
 
 import androidx.compose.runtime.*
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.ui.importexport.navigation.ImportExportScreen
+import io.github.devapro.ui.welcome.model.WelcomeScreenAction
+import io.github.devapro.ui.welcome.model.WelcomeScreenEvent
 import io.github.devapro.ui.welcome.ui.WelcomeScreenContent
 import org.koin.compose.koinInject
 
@@ -12,4 +18,15 @@ fun WelcomeScreenRoot() {
         state = state,
         onAction = viewModel::onAction
     )
+
+    val navigator = LocalNavigator.currentOrThrow
+    LaunchedEffect(Unit) {
+        viewModel.onAction(WelcomeScreenAction.InitScreen)
+        viewModel.event.collect {
+            when (it) {
+                is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(ImportExportScreen)
+                is WelcomeScreenEvent.OnOpenExistingVault -> navigator.push(ImportExportScreen)
+            }
+        }
+    }
 } 
