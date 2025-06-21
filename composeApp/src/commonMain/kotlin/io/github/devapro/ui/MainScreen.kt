@@ -16,15 +16,27 @@ fun MainScreen() {
     var unlockErrorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
-        // If the app is locked, show the lock screen
-        if (LockManager.isLocked) {
-            currentScreen = Screen.LockScreen
-        } else {
-            currentScreen = Screen.PasswordList
+        // Determine initial screen based on app state
+        when {
+            LockManager.isFirstLaunch -> currentScreen = Screen.Welcome
+            LockManager.isLocked -> currentScreen = Screen.LockScreen
+            else -> currentScreen = Screen.PasswordList
         }
     }
     
     when (val screen = currentScreen) {
+        is Screen.Welcome -> {
+            WelcomeScreen(
+                onCreateNew = {
+                    currentScreen = Screen.SetLockPassword
+                },
+                onImportExisting = {
+                    LockManager.completeFirstLaunch()
+                    currentScreen = Screen.ImportExport
+                }
+            )
+        }
+        
         is Screen.PasswordList -> {
             PasswordListScreen(
                 items = passwords,
@@ -63,7 +75,7 @@ fun MainScreen() {
         is Screen.ImportExport -> {
             ImportExportScreen(
                 onBack = {
-                    currentScreen = Screen.PasswordList
+                    currentScreen = if (LockManager.isFirstLaunch) Screen.Welcome else Screen.PasswordList
                 },
                 onImport = { format ->
                     // For now, we'll simulate file content - in a real app, you'd use a file picker
@@ -115,6 +127,7 @@ fun MainScreen() {
                         importedItems.forEach { item ->
                             PasswordRepository.addPassword(item)
                         }
+                        LockManager.completeFirstLaunch()
                         currentScreen = Screen.PasswordList
                     } catch (e: ImportException) {
                         // In a real app, you'd show an error dialog
@@ -149,12 +162,13 @@ fun MainScreen() {
                         }
                     } else {
                         LockManager.setLockPassword(newPassword)
-                        currentScreen = Screen.PasswordList
+                        // After setting up password, check if locked to show lock screen or go to password list
+                        currentScreen = if (LockManager.isLocked) Screen.LockScreen else Screen.PasswordList
                         true
                     }
                 },
                 onBack = {
-                    currentScreen = Screen.PasswordList
+                    currentScreen = if (LockManager.isFirstLaunch) Screen.Welcome else Screen.PasswordList
                 },
                 onRemovePassword = if (LockManager.hasLockPassword) {
                     {
@@ -202,6 +216,7 @@ fun MainScreen() {
 }
 
 sealed class Screen {
+    object Welcome : Screen()
     object PasswordList : Screen()
     object PasswordDetail : Screen()
     object AddEditPassword : Screen()
