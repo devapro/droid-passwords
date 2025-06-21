@@ -5,7 +5,8 @@ import io.github.devapro.model.ItemModel
 import io.github.devapro.ui.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.ui.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.ui.edit.model.AddEditPasswordScreenState
-import com.benasher44.uuid.uuid4
+import kotlinx.uuid.UUID
+import kotlinx.uuid.generateUUID
 
 class OnSaveClickedReducer
     : Reducer<AddEditPasswordScreenAction.OnSaveClicked, AddEditPasswordScreenState, AddEditPasswordScreenAction, AddEditPasswordScreenEvent> {
@@ -20,7 +21,7 @@ class OnSaveClickedReducer
 
         return if (currentState is AddEditPasswordScreenState.Success && currentState.isFormValid) {
             val item = ItemModel(
-                id = currentState.itemId ?: uuid4().toString(),
+                id = currentState.itemId ?: UUID.generateUUID().toString(),
                 title = currentState.title,
                 username = currentState.username,
                 password = currentState.password,

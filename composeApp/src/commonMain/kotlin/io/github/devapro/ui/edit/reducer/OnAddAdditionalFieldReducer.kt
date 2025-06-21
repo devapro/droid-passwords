@@ -5,7 +5,8 @@ import io.github.devapro.model.AdditionalFieldsModel
 import io.github.devapro.ui.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.ui.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.ui.edit.model.AddEditPasswordScreenState
-import com.benasher44.uuid.uuid4
+import kotlinx.uuid.UUID
+import kotlinx.uuid.generateUUID
 
 class OnAddAdditionalFieldReducer
     : Reducer<AddEditPasswordScreenAction.OnAddAdditionalField, AddEditPasswordScreenState, AddEditPasswordScreenAction, AddEditPasswordScreenEvent> {
@@ -20,7 +21,7 @@ class OnAddAdditionalFieldReducer
 
         return if (currentState is AddEditPasswordScreenState.Success) {
             val newField = AdditionalFieldsModel(
-                id = uuid4().toString(),
+                id = UUID.generateUUID().toString(),
                 name = "",
                 value = ""
             )

@@ -1,6 +1,6 @@
 package io.github.devapro.model
 
-class AdditionalFieldsModel(
+data class AdditionalFieldsModel(
     val id: String,
     val name: String,
     val value: String
