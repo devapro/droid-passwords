@@ -1,0 +1,16 @@
+package io.github.devapro.ui.itemdetails.model
+
+import io.github.devapro.model.ItemModel
+
+sealed interface PasswordDetailScreenState {
+    data object Loading : PasswordDetailScreenState
+
+    data class Error(val message: String) : PasswordDetailScreenState
+
+    data class Success(
+        val item: ItemModel,
+        val isPasswordVisible: Boolean,
+        val isLoading: Boolean,
+        val isFavorite: Boolean
+    ) : PasswordDetailScreenState
+} 
