@@ -6,9 +6,6 @@ sealed interface WelcomeScreenState {
     data class Error(val message: String) : WelcomeScreenState
 
     data class Success(
-        val platformName: String,
-        val isDarkThemeEnabled: Boolean,
-        val isBiometricAuthEnabled: Boolean,
-        val isPasswordProtected: Boolean,
+        val isVaultExists: Boolean
     ) : WelcomeScreenState
 }

@@ -4,12 +4,6 @@ sealed interface SetLockPasswordScreenEvent {
 
     data object NavigateBack : SetLockPasswordScreenEvent
 
-    data class SavePassword(
-        val isNewVault: Boolean,
-        val oldPassword: String?,
-        val newPassword: String
-    ) : SetLockPasswordScreenEvent
-
     data object RemovePassword : SetLockPasswordScreenEvent
 
     data class ShowError(val message: String) : SetLockPasswordScreenEvent

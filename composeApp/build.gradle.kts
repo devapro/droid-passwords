@@ -57,6 +57,7 @@ kotlin {
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-compose")
             implementation(libs.viewmodel)
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
             // DataStore library
             implementation("androidx.datastore:datastore:1.1.7")
             // The Preferences DataStore library
@@ -70,6 +71,13 @@ kotlin {
 
             // Transitions
             implementation("cafe.adriel.voyager:voyager-transitions:1.0.1")
+
+            // FileKit
+            implementation("io.github.vinceglb:filekit-core:0.10.0-beta04")
+            // Enables FileKit dialogs without Compose dependencies
+            implementation("io.github.vinceglb:filekit-dialogs:0.10.0-beta04")
+            // Enables FileKit dialogs with Composable utilities
+            implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta04")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -117,6 +125,9 @@ compose.desktop {
         mainClass = "io.github.devapro.MainKt"
 
         nativeDistributions {
+            linux {
+                modules("jdk.security.auth")
+            }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.devapro"
             packageVersion = "1.0.0"

@@ -75,17 +75,43 @@ fun WelcomeScreenContent(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    CreateNewVault(
-                        onClick = {
-                            onAction(WelcomeScreenAction.OnCreateNewVault)
-                        }
-                    )
 
-                    ImportExistingVault(
-                        onClick = {
-                            onAction(WelcomeScreenAction.OnOpenExistingVault)
+                    when (state) {
+                        is WelcomeScreenState.Loading -> {
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         }
-                    )
+                        is WelcomeScreenState.Error -> {
+                            Text(
+                                text = "An error occurred. Please try again.",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        is WelcomeScreenState.Success -> {
+                            if (state.isVaultExists) {
+                                LoadVault(
+                                    onClick = {
+                                        onAction(WelcomeScreenAction.OnLoadVault)
+                                    }
+                                )
+                            } else {
+                                CreateNewVault(
+                                    onClick = {
+                                        onAction(WelcomeScreenAction.OnCreateNewVault)
+                                    }
+                                )
+                            }
+                            ImportExistingVault(
+                                onClick = {
+                                    onAction(WelcomeScreenAction.OnOpenExistingVault)
+                                }
+                            )
+                        }
+                    }
                 }
                 
                 Spacer(modifier = Modifier.height(8.dp))

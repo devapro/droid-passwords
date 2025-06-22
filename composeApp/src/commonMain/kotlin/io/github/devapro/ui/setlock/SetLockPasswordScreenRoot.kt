@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.ui.itemslist.navigation.PasswordListScreen
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenAction
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenEvent
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenState
@@ -31,6 +32,7 @@ fun SetLockPasswordScreenRoot() {
                 }
                 is SetLockPasswordScreenEvent.ShowSuccess -> {
                     navigator.pop()
+                    navigator.push(PasswordListScreen)
                 }
                 else -> { /* Handle other events if needed */ }
             }

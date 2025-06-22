@@ -5,5 +5,7 @@ sealed interface WelcomeScreenAction {
 
     data object OnCreateNewVault : WelcomeScreenAction
 
+    data object OnLoadVault : WelcomeScreenAction
+
     data object OnOpenExistingVault : WelcomeScreenAction
 }

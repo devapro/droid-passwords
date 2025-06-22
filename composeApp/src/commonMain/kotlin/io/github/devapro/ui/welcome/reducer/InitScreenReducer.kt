@@ -1,12 +1,14 @@
 package io.github.devapro.ui.welcome.reducer
 
 import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.ui.welcome.model.WelcomeScreenAction
 import io.github.devapro.ui.welcome.model.WelcomeScreenEvent
 import io.github.devapro.ui.welcome.model.WelcomeScreenState
 
-class InitScreenReducer
-    : Reducer<WelcomeScreenAction.InitScreen, WelcomeScreenState, WelcomeScreenAction, WelcomeScreenEvent> {
+class InitScreenReducer(
+    private val vaultFileRepository: VaultFileRepository
+): Reducer<WelcomeScreenAction.InitScreen, WelcomeScreenState, WelcomeScreenAction, WelcomeScreenEvent> {
 
     override val actionClass = WelcomeScreenAction.InitScreen::class
 
@@ -14,12 +16,10 @@ class InitScreenReducer
         action: WelcomeScreenAction.InitScreen,
         getState: () -> WelcomeScreenState
     ): Reducer.Result<WelcomeScreenState, WelcomeScreenAction.InitScreen, WelcomeScreenEvent?> {
+        val isVaultExists = vaultFileRepository.isVaultExists()
         return Reducer.Result(
             state = WelcomeScreenState.Success(
-                platformName = "DroidPasswords",
-                isDarkThemeEnabled = false,
-                isBiometricAuthEnabled = false,
-                isPasswordProtected = false
+                isVaultExists = isVaultExists
             ),
             action = null,
             event = null

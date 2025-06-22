@@ -1,13 +1,15 @@
 package io.github.devapro.ui.setlock.reducer
 
 import io.github.devapro.core.mvi.Reducer
-import io.github.devapro.data.vault.VaultRepository
+import io.github.devapro.data.vault.VaultFileRepository
+import io.github.devapro.data.vault.VaultRuntimeRepository
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenAction
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenEvent
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenState
 
 class OnSaveClickedReducer(
-    private val vaultRepository: VaultRepository
+    private val vaultFileRepository: VaultFileRepository,
+    private val runtimeRepository: VaultRuntimeRepository
 ) : Reducer<SetLockPasswordScreenAction.OnSaveClicked, SetLockPasswordScreenState, SetLockPasswordScreenAction, SetLockPasswordScreenEvent> {
 
     override val actionClass = SetLockPasswordScreenAction.OnSaveClicked::class
@@ -21,22 +23,29 @@ class OnSaveClickedReducer(
         return if (currentState is SetLockPasswordScreenState.Success && currentState.isValid && !currentState.isProcessing) {
             // Create a new vault or change the password
             val isSuccess = if (currentState.isNewVault) {
-                vaultRepository.createVault(currentState.newPassword)
+                vaultFileRepository.createVault(currentState.newPassword)
             } else {
-                vaultRepository.changePassword(
+                vaultFileRepository.changePassword(
                     oldPassword = currentState.currentPassword,
                     newPassword = currentState.newPassword
                 )
             }
-            Reducer.Result(
-                state = currentState.copy(isProcessing = true),
-                action = null,
-                event = SetLockPasswordScreenEvent.SavePassword(
-                    isNewVault = currentState.isNewVault,
-                    oldPassword = if (currentState.isNewVault) currentState.currentPassword else null,
-                    newPassword = currentState.newPassword
+            if (isSuccess) {
+                val vault = vaultFileRepository.getVault(currentState.newPassword)
+                runtimeRepository.loadVault(vault)
+                Reducer.Result(
+                    state = currentState.copy(isProcessing = false),
+                    action = null,
+                    event = SetLockPasswordScreenEvent.ShowSuccess
                 )
-            )
+            } else {
+                // If the operation failed, return an error event
+                Reducer.Result(
+                    state = currentState.copy(isProcessing = false),
+                    action = null,
+                    event = SetLockPasswordScreenEvent.ShowError("Failed to save the vault.")
+                )
+            }
         } else {
             Reducer.Result(
                 state = currentState,

@@ -3,7 +3,8 @@ package io.github.devapro.di
 import io.github.devapro.core.mvi.CoroutineContextProvider
 import io.github.devapro.data.LocalStorage
 import io.github.devapro.data.LockManager
-import io.github.devapro.data.vault.VaultRepository
+import io.github.devapro.data.vault.VaultFileRepository
+import io.github.devapro.data.vault.VaultRuntimeRepository
 import io.github.devapro.ui.edit.registerAddEditPasswordScreenDi
 import io.github.devapro.ui.importexport.registerImportExportScreenDi
 import io.github.devapro.ui.itemdetails.registerPasswordDetailScreenDi
@@ -12,9 +13,11 @@ import io.github.devapro.ui.setlock.registerSetLockPasswordScreenDi
 import io.github.devapro.ui.unlock.registerUnLockVaultScreenDi
 import io.github.devapro.ui.welcome.WelcomeScreenViewModel
 import io.github.devapro.ui.welcome.registerWelcomeScreenDi
+import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 fun initKoin(){
@@ -53,5 +56,9 @@ private fun Module.viewModelsDi() {
 private fun Module.dataDi() {
      factoryOf(::LocalStorage)
      single { LockManager }
-    factoryOf(::VaultRepository)
+    factoryOf(::VaultFileRepository)
+    singleOf(::VaultRuntimeRepository)
+    single {
+        Json { ignoreUnknownKeys = true }
+    }
 }
