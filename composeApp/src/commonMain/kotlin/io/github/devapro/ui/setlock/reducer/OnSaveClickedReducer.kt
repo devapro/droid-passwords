@@ -22,6 +22,7 @@ class OnSaveClickedReducer(
 
         return if (currentState is SetLockPasswordScreenState.Success && currentState.isValid && !currentState.isProcessing) {
             // Create a new vault or change the password
+            vaultFileRepository.createVault(currentState.newPassword)
             val isSuccess = if (currentState.isNewVault) {
                 vaultFileRepository.createVault(currentState.newPassword)
             } else {

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -40,6 +41,7 @@ kotlin {
             implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.4"))
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-android")
+            implementation(libs.kstore.file)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -78,6 +80,9 @@ kotlin {
             implementation("io.github.vinceglb:filekit-dialogs:0.10.0-beta04")
             // Enables FileKit dialogs with Composable utilities
             implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta04")
+
+            implementation(libs.kstore)
+            implementation(libs.kstore.file)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -85,6 +90,11 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.kstore.file)
+            implementation("net.harawata:appdirs:1.4.0")
+        }
+        iosMain.dependencies {
+            implementation(libs.kstore.file)
         }
     }
 }
