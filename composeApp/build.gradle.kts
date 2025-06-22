@@ -80,9 +80,7 @@ kotlin {
             implementation("io.github.vinceglb:filekit-dialogs:0.10.0-beta04")
             // Enables FileKit dialogs with Composable utilities
             implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta04")
-
-            implementation(libs.kstore)
-            implementation(libs.kstore.file)
+            
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -90,11 +88,9 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-            implementation(libs.kstore.file)
-            implementation("net.harawata:appdirs:1.4.0")
         }
         iosMain.dependencies {
-            implementation(libs.kstore.file)
+
         }
     }
 }
