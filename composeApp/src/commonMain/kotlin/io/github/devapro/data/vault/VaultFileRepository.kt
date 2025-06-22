@@ -18,7 +18,7 @@ import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
 import kotlinx.serialization.json.Json
 
-private const val DEFAULT_FILE_NAME = "droidpass.json"
+private const val DEFAULT_FILE_NAME = "1v.json"
 
 class VaultFileRepository(
     private val json: Json
@@ -26,18 +26,18 @@ class VaultFileRepository(
 
     suspend fun isVaultExists(): Boolean {
         val file = PlatformFile(FileKit.cacheDir, DEFAULT_FILE_NAME)
-//        println("Checking if vault exists at:")
-//        println(file.absolutePath())
-//        println(file.path.toString())
-//        return file.exists()
-        val path = file.absolutePath()
-        val store: KStore<VaultModel> = storeOf(
-            file = Path(path),
-            json = json
-        )
-        return store.get() != null.also {
-            store.close()
-        }
+        println("Checking if vault exists at:")
+        println(file.absolutePath())
+        println(file.path.toString())
+        return file.exists()
+//        val path = file.absolutePath()
+//        val store: KStore<VaultModel> = storeOf(
+//            file = Path(path),
+//            json = json
+//        )
+//        return store.get() != null.also {
+//            store.close()
+//        }
     }
 
     suspend fun createVault(password: String): Boolean { // TODO replace with AppResult
@@ -53,20 +53,20 @@ class VaultFileRepository(
         val vaultModel = VaultModel(
             items = emptyList()
         )
-  //      val vaultRawContent = json.encodeToString(vaultModel)
+        val vaultRawContent = json.encodeToString(vaultModel)
 
         val path = file.absolutePath()
-        val store: KStore<VaultModel> = storeOf(
-            file = Path(path),
-            enableCache = false,
-            json = json
-        )
-
-        store.set(vaultModel)
-        store.close()
+//        val store: KStore<VaultModel> = storeOf(
+//            file = Path(path),
+//            enableCache = false,
+//            json = json
+//        )
+//
+//        store.set(vaultModel)
+//        store.close()
 
         // TODO add encryption logic here using the provided password
-   //     file.writeString(vaultRawContent)
+        file.writeString(vaultRawContent)
 
         println(file.absolutePath())
 //        val file2 = PlatformFile(FileKit.cacheDir, DEFAULT_FILE_NAME)
@@ -83,20 +83,20 @@ class VaultFileRepository(
 
     suspend fun getVault(password: String): VaultModel {
         val file = PlatformFile(FileKit.cacheDir, DEFAULT_FILE_NAME)
-        val path = file.absolutePath()
-        val store: KStore<VaultModel> = storeOf(
-            file = Path(path),
-            json = json
-        )
+//        val path = file.absolutePath()
+//        val store: KStore<VaultModel> = storeOf(
+//            file = Path(path),
+//            json = json
+//        )
 //        println(file.absolutePath())
-//        if (!file.exists()) {
-//            return VaultModel(items = emptyList())
-//        }
-//        val vaultRawContent = file.readString()
-//        return json.decodeFromString(vaultRawContent)
-        return store.get() ?: VaultModel(items = emptyList()).also {
-            store.close()
+        if (!file.exists()) {
+            return VaultModel(items = emptyList())
         }
+        val vaultRawContent = file.readString()
+        return json.decodeFromString(vaultRawContent)
+//        return store.get() ?: VaultModel(items = emptyList()).also {
+//            store.close()
+//        }
     }
 
     suspend fun saveVault(vaultModel: VaultModel, password: String): Boolean {
