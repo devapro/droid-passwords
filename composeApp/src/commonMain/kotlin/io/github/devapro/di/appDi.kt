@@ -3,6 +3,7 @@ package io.github.devapro.di
 import io.github.devapro.core.mvi.CoroutineContextProvider
 import io.github.devapro.data.LocalStorage
 import io.github.devapro.data.LockManager
+import io.github.devapro.data.vault.VaultRepository
 import io.github.devapro.ui.edit.registerAddEditPasswordScreenDi
 import io.github.devapro.ui.importexport.registerImportExportScreenDi
 import io.github.devapro.ui.itemdetails.registerPasswordDetailScreenDi
@@ -26,7 +27,6 @@ val appModule: Module = module {
     coreDi()
     factoriesDi()
     viewModelsDi()
-    reducersDi()
     dataDi()
 
     registerWelcomeScreenDi()
@@ -53,21 +53,5 @@ private fun Module.viewModelsDi() {
 private fun Module.dataDi() {
      factoryOf(::LocalStorage)
      single { LockManager }
-}
-
-private fun Module.reducersDi() {
-//    factoryOf(::ChangeScreenReducer)
-//    factoryOf(::InitAppReducer)
-//    factoryOf(::CheckPermissionsReducer)
-//    factory {
-//        MainActionProcessor(
-//            reducers = setOf(
-//                get(ChangeScreenReducer::class),
-//                get(InitAppReducer::class),
-//                get(CheckPermissionsReducer::class)
-//            ),
-//            initStateFactory = get(),
-//            coroutineContextProvider = get()
-//        )
-//    }
+    factoryOf(::VaultRepository)
 }

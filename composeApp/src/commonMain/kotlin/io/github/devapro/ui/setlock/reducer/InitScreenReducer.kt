@@ -16,7 +16,7 @@ class InitScreenReducer
     ): Reducer.Result<SetLockPasswordScreenState, SetLockPasswordScreenAction.InitScreen, SetLockPasswordScreenEvent?> {
         return Reducer.Result(
             state = SetLockPasswordScreenState.Success(
-                hasExistingPassword = false, // Will be determined by business logic
+                isNewVault = false, // Will be determined by business logic
                 currentPassword = "",
                 newPassword = "",
                 confirmPassword = "",

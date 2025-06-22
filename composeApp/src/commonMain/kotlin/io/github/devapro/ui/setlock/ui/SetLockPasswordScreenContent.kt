@@ -1,13 +1,11 @@
 package io.github.devapro.ui.setlock.ui
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -47,7 +45,7 @@ fun SetLockPasswordScreenContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = if (state.hasExistingPassword) "Change Lock Password" else "Set Lock Password"
+                        text = if (state.isNewVault) "Change Lock Password" else "Set Lock Password"
                     )
                 },
                 navigationIcon = {
@@ -75,7 +73,7 @@ fun SetLockPasswordScreenContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = if (state.hasExistingPassword) {
+                        text = if (state.isNewVault) {
                             "Change your lock password"
                         } else {
                             "Set a password to secure your vault"
@@ -83,7 +81,7 @@ fun SetLockPasswordScreenContent(
                         style = MaterialTheme.typography.bodyLarge
                     )
 
-                    if (state.hasExistingPassword) {
+                    if (state.isNewVault) {
                         OutlinedTextField(
                             value = state.currentPassword,
                             onValueChange = { onAction(SetLockPasswordScreenAction.OnCurrentPasswordChanged(it)) },
@@ -208,11 +206,11 @@ fun SetLockPasswordScreenContent(
                             Text("Saving...")
                         }
                     } else {
-                        Text(if (state.hasExistingPassword) "Change Password" else "Set Password")
+                        Text(if (state.isNewVault) "Change Password" else "Set Password")
                     }
                 }
 
-                if (state.hasExistingPassword) {
+                if (state.isNewVault) {
                     OutlinedButton(
                         onClick = { onAction(SetLockPasswordScreenAction.OnRemovePasswordClicked) },
                         enabled = !state.isProcessing,

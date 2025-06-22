@@ -30,7 +30,7 @@ class OnNewPasswordChangedReducer
                     currentPassword = currentState.currentPassword,
                     newPassword = action.password,
                     confirmPassword = currentState.confirmPassword,
-                    hasExistingPassword = currentState.hasExistingPassword
+                    hasExistingPassword = currentState.isNewVault
                 )
             )
             Reducer.Result(

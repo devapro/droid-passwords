@@ -6,7 +6,7 @@ sealed interface SetLockPasswordScreenState {
     data class Error(val message: String) : SetLockPasswordScreenState
 
     data class Success(
-        val hasExistingPassword: Boolean,
+        val isNewVault: Boolean,
         val currentPassword: String,
         val newPassword: String,
         val confirmPassword: String,

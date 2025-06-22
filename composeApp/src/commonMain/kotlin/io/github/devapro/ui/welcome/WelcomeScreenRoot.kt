@@ -27,7 +27,7 @@ fun WelcomeScreenRoot() {
         viewModel.onAction(WelcomeScreenAction.InitScreen)
         viewModel.event.collect {
             when (it) {
-                is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(PasswordListScreen)
+                is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(SetLockPasswordScreen)
                 is WelcomeScreenEvent.OnOpenExistingVault -> navigator.push(ImportExportScreen)
             }
         }
