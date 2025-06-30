@@ -45,7 +45,7 @@ fun SetLockPasswordScreenContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = if (state.isNewVault) "Change Lock Password" else "Set Lock Password"
+                        text = if (state.isVaultExists) "Change Lock Password" else "Set Lock Password"
                     )
                 },
                 navigationIcon = {
@@ -73,7 +73,7 @@ fun SetLockPasswordScreenContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = if (state.isNewVault) {
+                        text = if (state.isVaultExists) {
                             "Change your lock password"
                         } else {
                             "Set a password to secure your vault"
@@ -81,7 +81,7 @@ fun SetLockPasswordScreenContent(
                         style = MaterialTheme.typography.bodyLarge
                     )
 
-                    if (state.isNewVault) {
+                    if (state.isVaultExists) {
                         OutlinedTextField(
                             value = state.currentPassword,
                             onValueChange = { onAction(SetLockPasswordScreenAction.OnCurrentPasswordChanged(it)) },
@@ -206,11 +206,11 @@ fun SetLockPasswordScreenContent(
                             Text("Saving...")
                         }
                     } else {
-                        Text(if (state.isNewVault) "Change Password" else "Set Password")
+                        Text(if (state.isVaultExists) "Change Password" else "Set Password")
                     }
                 }
 
-                if (state.isNewVault) {
+                if (state.isVaultExists) {
                     OutlinedButton(
                         onClick = { onAction(SetLockPasswordScreenAction.OnRemovePasswordClicked) },
                         enabled = !state.isProcessing,

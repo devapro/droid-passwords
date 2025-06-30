@@ -3,9 +3,7 @@ package io.github.devapro.ui.unlock.model
 sealed interface UnLockVaultScreenState {
     data object Loading : UnLockVaultScreenState
 
-    data class Error(val message: String) : UnLockVaultScreenState
-
-    data class Success(
+    data class Loaded(
         val password: String,
         val isPasswordVisible: Boolean,
         val isProcessing: Boolean,

@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.ui.itemslist.navigation.PasswordListScreen
 import io.github.devapro.ui.unlock.model.UnLockVaultScreenAction
 import io.github.devapro.ui.unlock.model.UnLockVaultScreenEvent
 import io.github.devapro.ui.unlock.model.UnLockVaultScreenState
@@ -32,8 +33,10 @@ fun UnLockVaultScreenRoot() {
                 }
                 is UnLockVaultScreenEvent.UnlockSuccess -> {
                     navigator.pop()
+                    navigator.push(PasswordListScreen)
                 }
-                is UnLockVaultScreenEvent.UnlockVault -> {
+
+                is UnLockVaultScreenEvent.ShowError -> {
                     // Handle unlock vault event
                 }
             }
@@ -44,12 +47,9 @@ fun UnLockVaultScreenRoot() {
         is UnLockVaultScreenState.Loading -> {
             // Show loading indicator if needed
         }
-        is UnLockVaultScreenState.Error -> {
-            // Show error state if needed
-        }
-        is UnLockVaultScreenState.Success -> {
+        is UnLockVaultScreenState.Loaded -> {
             UnLockVaultScreenContent(
-                state = state as UnLockVaultScreenState.Success,
+                state = state as UnLockVaultScreenState.Loaded,
                 onAction = viewModel::onAction
             )
         }

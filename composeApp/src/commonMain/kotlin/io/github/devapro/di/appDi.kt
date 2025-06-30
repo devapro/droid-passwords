@@ -3,6 +3,7 @@ package io.github.devapro.di
 import io.github.devapro.core.mvi.CoroutineContextProvider
 import io.github.devapro.data.LocalStorage
 import io.github.devapro.data.LockManager
+import io.github.devapro.data.vault.CryptoMapper
 import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.data.vault.VaultRuntimeRepository
 import io.github.devapro.ui.edit.registerAddEditPasswordScreenDi
@@ -58,6 +59,7 @@ private fun Module.dataDi() {
      single { LockManager }
     factoryOf(::VaultFileRepository)
     singleOf(::VaultRuntimeRepository)
+    singleOf(::CryptoMapper)
     single {
         Json { ignoreUnknownKeys = true }
     }

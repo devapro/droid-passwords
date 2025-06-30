@@ -4,7 +4,7 @@ sealed interface UnLockVaultScreenEvent {
 
     data object NavigateBack : UnLockVaultScreenEvent
 
-    data class UnlockVault(val password: String) : UnLockVaultScreenEvent
+    data class ShowError(val error: String) : UnLockVaultScreenEvent
 
     data object UnlockSuccess : UnLockVaultScreenEvent
 } 

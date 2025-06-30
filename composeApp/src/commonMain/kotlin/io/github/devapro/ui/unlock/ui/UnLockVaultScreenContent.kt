@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +43,7 @@ import io.github.devapro.ui.unlock.model.UnLockVaultScreenState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnLockVaultScreenContent(
-    state: UnLockVaultScreenState.Success,
+    state: UnLockVaultScreenState.Loaded,
     onAction: (UnLockVaultScreenAction) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current

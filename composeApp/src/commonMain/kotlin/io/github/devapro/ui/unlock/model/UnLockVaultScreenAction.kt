@@ -11,5 +11,7 @@ sealed interface UnLockVaultScreenAction {
 
     data object OnBackClicked : UnLockVaultScreenAction
 
-    data object OnForgotPasswordClicked : UnLockVaultScreenAction
+    data class UnlockVault(
+        val password: String
+    ) : UnLockVaultScreenAction
 } 

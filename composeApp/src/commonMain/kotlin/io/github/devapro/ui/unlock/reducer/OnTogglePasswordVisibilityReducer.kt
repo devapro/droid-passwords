@@ -16,7 +16,7 @@ class OnTogglePasswordVisibilityReducer
     ): Reducer.Result<UnLockVaultScreenState, UnLockVaultScreenAction.OnTogglePasswordVisibility, UnLockVaultScreenEvent?> {
         val currentState = getState()
 
-        return if (currentState is UnLockVaultScreenState.Success) {
+        return if (currentState is UnLockVaultScreenState.Loaded) {
             Reducer.Result(
                 state = currentState.copy(isPasswordVisible = !currentState.isPasswordVisible),
                 action = null,

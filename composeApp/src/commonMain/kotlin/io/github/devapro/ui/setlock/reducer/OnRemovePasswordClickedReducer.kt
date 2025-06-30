@@ -16,7 +16,7 @@ class OnRemovePasswordClickedReducer
     ): Reducer.Result<SetLockPasswordScreenState, SetLockPasswordScreenAction.OnRemovePasswordClicked, SetLockPasswordScreenEvent?> {
         val currentState = getState()
 
-        return if (currentState is SetLockPasswordScreenState.Success && currentState.isNewVault && !currentState.isProcessing) {
+        return if (currentState is SetLockPasswordScreenState.Success && currentState.isVaultExists && !currentState.isProcessing) {
             Reducer.Result(
                 state = currentState.copy(isProcessing = true),
                 action = null,

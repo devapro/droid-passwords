@@ -42,6 +42,7 @@ kotlin {
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-android")
             implementation(libs.kstore.file)
+            implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.4.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -80,7 +81,9 @@ kotlin {
             implementation("io.github.vinceglb:filekit-dialogs:0.10.0-beta04")
             // Enables FileKit dialogs with Composable utilities
             implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta04")
-            
+
+            implementation("dev.whyoleg.cryptography:cryptography-core:0.4.0")
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -88,9 +91,10 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.4.0")
         }
         iosMain.dependencies {
-
+            implementation("dev.whyoleg.cryptography:cryptography-provider-apple:0.4.0")
         }
     }
 }

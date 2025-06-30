@@ -13,14 +13,14 @@ class OnUnlockClickedReducer
     override suspend fun reduce(
         action: UnLockVaultScreenAction.OnUnlockClicked,
         getState: () -> UnLockVaultScreenState
-    ): Reducer.Result<UnLockVaultScreenState, UnLockVaultScreenAction.OnUnlockClicked, UnLockVaultScreenEvent?> {
+    ): Reducer.Result<UnLockVaultScreenState, UnLockVaultScreenAction, UnLockVaultScreenEvent> {
         val currentState = getState()
 
-        return if (currentState is UnLockVaultScreenState.Success && currentState.isValid && !currentState.isProcessing) {
+        return if (currentState is UnLockVaultScreenState.Loaded && currentState.isValid && !currentState.isProcessing) {
             Reducer.Result(
                 state = currentState.copy(isProcessing = true),
-                action = null,
-                event = UnLockVaultScreenEvent.UnlockVault(currentState.password)
+                action = UnLockVaultScreenAction.UnlockVault(currentState.password),
+                event = null
             )
         } else {
             Reducer.Result(

@@ -16,7 +16,7 @@ class OnPasswordChangedReducer
     ): Reducer.Result<UnLockVaultScreenState, UnLockVaultScreenAction.OnPasswordChanged, UnLockVaultScreenEvent?> {
         val currentState = getState()
 
-        return if (currentState is UnLockVaultScreenState.Success) {
+        return if (currentState is UnLockVaultScreenState.Loaded) {
             val isValid = action.password.isNotEmpty()
             val passwordError = if (action.password.isEmpty()) null else null // Clear error on input
 

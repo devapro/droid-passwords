@@ -15,7 +15,7 @@ class InitScreenReducer
         getState: () -> UnLockVaultScreenState
     ): Reducer.Result<UnLockVaultScreenState, UnLockVaultScreenAction.InitScreen, UnLockVaultScreenEvent?> {
         return Reducer.Result(
-            state = UnLockVaultScreenState.Success(
+            state = UnLockVaultScreenState.Loaded(
                 password = "",
                 isPasswordVisible = false,
                 isProcessing = false,

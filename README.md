@@ -18,3 +18,4 @@ Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-mu
 - [ ] Modularize the project
 - [ ] Add encryption
 - [ ] Add CI for iOS and Android, desktop builds
+- [ ] Implement showing errors in the UI

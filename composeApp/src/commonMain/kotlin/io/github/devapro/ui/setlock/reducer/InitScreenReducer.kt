@@ -1,12 +1,14 @@
 package io.github.devapro.ui.setlock.reducer
 
 import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenAction
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenEvent
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenState
 
-class InitScreenReducer
-    : Reducer<SetLockPasswordScreenAction.InitScreen, SetLockPasswordScreenState, SetLockPasswordScreenAction, SetLockPasswordScreenEvent> {
+class InitScreenReducer(
+    private val vaultFileRepository: VaultFileRepository
+) : Reducer<SetLockPasswordScreenAction.InitScreen, SetLockPasswordScreenState, SetLockPasswordScreenAction, SetLockPasswordScreenEvent> {
 
     override val actionClass = SetLockPasswordScreenAction.InitScreen::class
 
@@ -14,9 +16,10 @@ class InitScreenReducer
         action: SetLockPasswordScreenAction.InitScreen,
         getState: () -> SetLockPasswordScreenState
     ): Reducer.Result<SetLockPasswordScreenState, SetLockPasswordScreenAction.InitScreen, SetLockPasswordScreenEvent?> {
+        val isVaultExists = vaultFileRepository.isVaultExists()
         return Reducer.Result(
             state = SetLockPasswordScreenState.Success(
-                isNewVault = false, // Will be determined by business logic
+                isVaultExists = isVaultExists,
                 currentPassword = "",
                 newPassword = "",
                 confirmPassword = "",
