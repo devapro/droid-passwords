@@ -3,6 +3,7 @@ package io.github.devapro.data.vault
 class VaultRuntimeRepository {
 
     private var vaultModel = VaultModel(
+        password = "",
         items = emptyList()
     )
 
@@ -10,7 +11,7 @@ class VaultRuntimeRepository {
         vaultModel = vault
     }
 
-    fun updateVault(vaultItemModel: VaultItemModel) {
+    fun addOrUpdateVault(vaultItemModel: VaultItemModel) {
         val existingItemModel = vaultModel.items.firstOrNull { it.id == vaultItemModel.id }
         if (existingItemModel == null) {
             vaultModel = vaultModel.copy(items = vaultModel.items + vaultItemModel)
@@ -31,5 +32,9 @@ class VaultRuntimeRepository {
         vaultModel = vaultModel.copy(
             items = vaultModel.items.filter { it.id != vaultItemModel.id }
         )
+    }
+
+    fun getVault(): VaultModel {
+        return vaultModel
     }
 }

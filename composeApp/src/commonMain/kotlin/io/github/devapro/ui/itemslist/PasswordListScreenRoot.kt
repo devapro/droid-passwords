@@ -6,6 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.ui.edit.navigation.AddEditPasswordScreen
+import io.github.devapro.ui.itemdetails.navigation.PasswordDetailScreen
 import io.github.devapro.ui.itemslist.model.PasswordListScreenAction
 import io.github.devapro.ui.itemslist.model.PasswordListScreenEvent
 import io.github.devapro.ui.itemslist.model.PasswordListScreenState
@@ -27,12 +29,10 @@ fun PasswordListScreenRoot() {
         viewModel.event.collect {
             when (it) {
                 is PasswordListScreenEvent.NavigateToAddPassword -> {
-                    // Navigate to add password screen
-                    // navigator.push(AddEditPasswordScreen())
+                    navigator.push(AddEditPasswordScreen())
                 }
                 is PasswordListScreenEvent.NavigateToPasswordDetail -> {
-                    // Navigate to password detail screen
-                    // navigator.push(PasswordDetailScreen(it.item))
+                    navigator.push(PasswordDetailScreen(it.item))
                 }
                 is PasswordListScreenEvent.NavigateToImportExport -> {
                     // Navigate to import/export screen

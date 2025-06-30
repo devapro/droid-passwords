@@ -9,7 +9,8 @@ data class VaultItemModel(
     val username: String,
     val password: String,
     val url: String? = null,
-    val notes: String? = null,
+    val description: String? = null,
     val createdAt: Long,
-    val updatedAt: Long
+    val updatedAt: Long,
+    val additionalFields: List<VaultAdditionalFieldModel> = emptyList()
 )

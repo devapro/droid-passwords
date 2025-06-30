@@ -1,12 +1,10 @@
 package io.github.devapro.ui.edit.model
 
-import io.github.devapro.model.ItemModel
-
 sealed interface AddEditPasswordScreenEvent {
 
     data object NavigateBack : AddEditPasswordScreenEvent
 
-    data class SaveSuccess(val item: ItemModel) : AddEditPasswordScreenEvent
+    data object SaveSuccess : AddEditPasswordScreenEvent
 
     data class SaveError(val message: String) : AddEditPasswordScreenEvent
 

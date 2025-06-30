@@ -55,7 +55,6 @@ object ImportExportManager {
             xmlBuilder.appendLine("    <additionalFields>")
             item.additionalFields.forEach { field ->
                 xmlBuilder.appendLine("      <field>")
-                xmlBuilder.appendLine("        <id>${escapeXml(field.id)}</id>")
                 xmlBuilder.appendLine("        <name>${escapeXml(field.name)}</name>")
                 xmlBuilder.appendLine("        <value>${escapeXml(field.value)}</value>")
                 xmlBuilder.appendLine("      </field>")
@@ -85,7 +84,6 @@ object ImportExportManager {
             
             item.additionalFields.forEachIndexed { fieldIndex, field ->
                 jsonBuilder.appendLine("        {")
-                jsonBuilder.appendLine("          \"id\": \"${escapeJson(field.id)}\",")
                 jsonBuilder.appendLine("          \"name\": \"${escapeJson(field.name)}\",")
                 jsonBuilder.append("          \"value\": \"${escapeJson(field.value)}\"")
                 jsonBuilder.appendLine()
@@ -121,7 +119,6 @@ object ImportExportManager {
                         val parts = field.split(":", limit = 2)
                         if (parts.size == 2) {
                             AdditionalFieldsModel(
-                                id = UUID.generateUUID().toString(),
                                 name = parts[0],
                                 value = parts[1]
                             )
@@ -171,7 +168,6 @@ object ImportExportManager {
                         if (name.isNotBlank() || value.isNotBlank()) {
                             additionalFields.add(
                                 AdditionalFieldsModel(
-                                    id = UUID.generateUUID().toString(),
                                     name = name,
                                     value = value
                                 )
@@ -234,7 +230,6 @@ object ImportExportManager {
                             if (name.isNotBlank() || value.isNotBlank()) {
                                 additionalFields.add(
                                     AdditionalFieldsModel(
-                                        id = UUID.generateUUID().toString(),
                                         name = name,
                                         value = value
                                     )

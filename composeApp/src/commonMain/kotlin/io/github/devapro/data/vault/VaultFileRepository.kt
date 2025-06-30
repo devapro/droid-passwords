@@ -7,10 +7,9 @@ import io.github.vinceglb.filekit.cacheDir
 import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.readBytes
 import io.github.vinceglb.filekit.write
-import io.github.vinceglb.filekit.writeString
 import kotlinx.serialization.json.Json
 
-private const val DEFAULT_FILE_NAME = "droid-d3.data"
+private const val DEFAULT_FILE_NAME = "droid-d4.data"
 
 class VaultFileRepository(
     private val json: Json,
@@ -26,7 +25,8 @@ class VaultFileRepository(
         try {
             val file = getVaultFile()
             val vaultModel = VaultModel(
-                items = emptyList()
+                items = emptyList(),
+                password = password
             )
             val vaultRawContent = json.encodeToString(vaultModel)
 
@@ -73,12 +73,20 @@ class VaultFileRepository(
         return AppResult.Success(json.decodeFromString(vaultRawContent))
     }
 
-    suspend fun saveVault(vaultModel: VaultModel, password: String): Boolean {
-        val file = getVaultFile()
-        val vaultRawContent = json.encodeToString(vaultModel)
-        // TODO add encryption logic here if needed
-        file.writeString(vaultRawContent)
-        return true // Return true if successful, false otherwise
+    suspend fun saveVault(vaultModel: VaultModel): AppResult<Unit> {
+        return try {
+            val file = getVaultFile()
+            val vaultRawContent = json.encodeToString(vaultModel)
+
+            val vaultEncodedContent = cryptoMapper.encode(
+                vaultModel.password, vaultRawContent
+            )
+
+            file.write(vaultEncodedContent)
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Failure(e)
+        }
     }
 
     private fun getVaultFile(): PlatformFile {
