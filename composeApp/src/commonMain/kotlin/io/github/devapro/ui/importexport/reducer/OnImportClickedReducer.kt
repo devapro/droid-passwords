@@ -15,7 +15,7 @@ class OnImportClickedReducer
         getState: () -> ImportExportScreenState
     ): Reducer.Result<ImportExportScreenState, ImportExportScreenAction.OnImportClicked, ImportExportScreenEvent?> {
         val currentState = getState()
-        return if (currentState is ImportExportScreenState.Success) {
+        return if (currentState is ImportExportScreenState.Loaded) {
             Reducer.Result(
                 state = currentState.copy(isProcessing = true),
                 action = null,

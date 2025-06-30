@@ -1,13 +1,21 @@
 package io.github.devapro.ui.importexport
 
+import io.github.devapro.ui.importexport.factory.FormatsListFactory
 import io.github.devapro.ui.importexport.factory.ImportExportScreenInitStateFactory
-import io.github.devapro.ui.importexport.reducer.*
+import io.github.devapro.ui.importexport.reducer.InitScreenReducer
+import io.github.devapro.ui.importexport.reducer.OnBackClickedReducer
+import io.github.devapro.ui.importexport.reducer.OnExportClickedReducer
+import io.github.devapro.ui.importexport.reducer.OnFormatSelectedReducer
+import io.github.devapro.ui.importexport.reducer.OnImportClickedReducer
+import io.github.devapro.ui.importexport.reducer.OnSwitchToExportReducer
+import io.github.devapro.ui.importexport.reducer.OnSwitchToImportReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 
 fun Module.registerImportExportScreenDi() {
     factoryOf(::ImportExportScreenViewModel)
     factoryOf(::ImportExportScreenInitStateFactory)
+    factoryOf(::FormatsListFactory)
     reducersDi()
 }
 

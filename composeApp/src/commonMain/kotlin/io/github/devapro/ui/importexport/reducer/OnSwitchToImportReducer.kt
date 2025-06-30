@@ -16,7 +16,7 @@ class OnSwitchToImportReducer
         getState: () -> ImportExportScreenState
     ): Reducer.Result<ImportExportScreenState, ImportExportScreenAction.OnSwitchToImport, ImportExportScreenEvent?> {
         val currentState = getState()
-        return if (currentState is ImportExportScreenState.Success) {
+        return if (currentState is ImportExportScreenState.Loaded) {
             Reducer.Result(
                 state = currentState.copy(selectedTab = ImportExportTab.IMPORT),
                 action = null,

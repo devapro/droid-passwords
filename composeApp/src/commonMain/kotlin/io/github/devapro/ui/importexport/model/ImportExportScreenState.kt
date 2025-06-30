@@ -5,14 +5,12 @@ sealed interface ImportExportScreenState {
 
     data class Error(val message: String) : ImportExportScreenState
 
-    data class Success(
+    data class Loaded(
         val selectedTab: ImportExportTab,
         val selectedFormat: FileFormat,
         val isProcessing: Boolean,
+        val formats: List<FormatModel>,
         val formatDescription: String
     ) : ImportExportScreenState
 }
 
-enum class ImportExportTab {
-    IMPORT, EXPORT
-} 

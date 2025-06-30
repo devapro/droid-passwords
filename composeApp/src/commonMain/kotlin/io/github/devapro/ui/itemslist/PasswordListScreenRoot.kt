@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.ui.edit.navigation.AddEditPasswordScreen
+import io.github.devapro.ui.importexport.navigation.ImportExportScreen
 import io.github.devapro.ui.itemdetails.navigation.PasswordDetailScreen
 import io.github.devapro.ui.itemslist.model.PasswordListScreenAction
 import io.github.devapro.ui.itemslist.model.PasswordListScreenEvent
@@ -35,12 +36,10 @@ fun PasswordListScreenRoot() {
                     navigator.push(PasswordDetailScreen(it.item))
                 }
                 is PasswordListScreenEvent.NavigateToImportExport -> {
-                    // Navigate to import/export screen
-                    // navigator.push(ImportExportScreen())
+                    navigator.push(ImportExportScreen)
                 }
                 is PasswordListScreenEvent.NavigateToSettings -> {
-                    // Navigate to settings screen
-                    // navigator.push(SettingsScreen())
+                    //navigator.push(SettingsScreen())
                 }
                 is PasswordListScreenEvent.DeletePassword -> {
                     // Handle password deletion

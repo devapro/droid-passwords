@@ -7,7 +7,7 @@ sealed interface ImportExportScreenAction {
     
     data object OnSwitchToExport : ImportExportScreenAction
 
-    data class OnFormatSelected(val format: FileFormat) : ImportExportScreenAction
+    data class OnFormatSelected(val format: FormatModel) : ImportExportScreenAction
 
     data object OnImportClicked : ImportExportScreenAction
 
@@ -15,7 +15,3 @@ sealed interface ImportExportScreenAction {
 
     data object OnBackClicked : ImportExportScreenAction
 }
-
-enum class FileFormat {
-    CSV, XML, JSON
-} 
