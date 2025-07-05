@@ -17,6 +17,8 @@ sealed interface AddEditPasswordScreenAction {
 
     data object OnTogglePasswordVisibility : AddEditPasswordScreenAction
 
+    data object OnToggleAdditionalFields : AddEditPasswordScreenAction
+
     data object OnGeneratePassword : AddEditPasswordScreenAction
 
     data class OnAdditionalFieldNameChanged(val index: Int, val name: String) : AddEditPasswordScreenAction

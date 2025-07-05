@@ -17,6 +17,7 @@ sealed interface AddEditPasswordScreenState {
         val description: String,
         val additionalFields: List<AdditionalFieldsModel>,
         val isPasswordVisible: Boolean,
+        val isAdditionalFieldsVisible: Boolean,
         val isSaving: Boolean,
         val titleError: String?,
         val passwordError: String?,

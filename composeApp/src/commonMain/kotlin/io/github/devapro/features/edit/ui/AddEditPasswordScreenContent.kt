@@ -1,5 +1,7 @@
 package io.github.devapro.features.edit.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.GeneratingTokens
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Visibility
@@ -54,12 +58,12 @@ fun AddEditPasswordScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         text = if (state.isEditMode) "Edit Password" else "Add Password",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
-                    ) 
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = { onAction(AddEditPasswordScreenAction.OnBackClicked) }) {
@@ -131,36 +135,17 @@ fun AddEditPasswordScreenContent(
                 supportingText = state.passwordError?.let { { Text(it) } }
             )
 
-            // URL Field
-            EOutlinedTextField(
-                value = state.url,
-                onValueChange = { onAction(AddEditPasswordScreenAction.OnUrlChanged(it)) },
-                label = { Text("URL") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri)
-            )
-
-            // Description Field
-            EOutlinedTextField(
-                value = state.description,
-                onValueChange = { onAction(AddEditPasswordScreenAction.OnDescriptionChanged(it)) },
-                label = { Text("Description") },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 3,
-                maxLines = 5
-            )
-
-            // Additional Fields Section
+            // Collapsible Additional Fields Section
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onAction(AddEditPasswordScreenAction.OnToggleAdditionalFields) }
+                            .padding(vertical = 12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -169,62 +154,122 @@ fun AddEditPasswordScreenContent(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-                        IconButton(onClick = { onAction(AddEditPasswordScreenAction.OnAddAdditionalField) }) {
-                            Icon(
-                                Icons.Default.Add,
-                                contentDescription = "Add field",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                        Icon(
+                            imageVector = if (state.isAdditionalFieldsVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = if (state.isAdditionalFieldsVisible) "Collapse" else "Expand"
+                        )
                     }
 
-                    state.additionalFields.forEachIndexed { index, field ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(12.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    EOutlinedTextField(
-                                        value = field.name,
-                                        onValueChange = { onAction(AddEditPasswordScreenAction.OnAdditionalFieldNameChanged(index, it)) },
-                                        label = { Text("Field Name") },
-                                        modifier = Modifier.weight(1f)
+                    AnimatedVisibility(visible = state.isAdditionalFieldsVisible) {
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            // URL Field
+                            EOutlinedTextField(
+                                value = state.url,
+                                onValueChange = {
+                                    onAction(
+                                        AddEditPasswordScreenAction.OnUrlChanged(
+                                            it
+                                        )
                                     )
-                                    IconButton(onClick = { onAction(AddEditPasswordScreenAction.OnRemoveAdditionalField(index)) }) {
-                                        Icon(
-                                            Icons.Default.Remove,
-                                            contentDescription = "Remove field",
-                                            tint = MaterialTheme.colorScheme.error
+                                },
+                                label = { Text("URL") },
+                                modifier = Modifier.fillMaxWidth(),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri)
+                            )
+
+                            // Description Field
+                            EOutlinedTextField(
+                                value = state.description,
+                                onValueChange = {
+                                    onAction(
+                                        AddEditPasswordScreenAction.OnDescriptionChanged(
+                                            it
+                                        )
+                                    )
+                                },
+                                label = { Text("Description") },
+                                modifier = Modifier.fillMaxWidth(),
+                                minLines = 3,
+                                maxLines = 5
+                            )
+
+                            // Additional Fields Section
+                            Text(
+                                text = "Custom Fields",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            state.additionalFields.forEachIndexed { index, field ->
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(12.dp),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            EOutlinedTextField(
+                                                value = field.name,
+                                                onValueChange = {
+                                                    onAction(
+                                                        AddEditPasswordScreenAction.OnAdditionalFieldNameChanged(
+                                                            index,
+                                                            it
+                                                        )
+                                                    )
+                                                },
+                                                label = { Text("Field Name") },
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            IconButton(onClick = {
+                                                onAction(
+                                                    AddEditPasswordScreenAction.OnRemoveAdditionalField(
+                                                        index
+                                                    )
+                                                )
+                                            }) {
+                                                Icon(
+                                                    Icons.Default.Remove,
+                                                    contentDescription = "Remove field",
+                                                    tint = MaterialTheme.colorScheme.error
+                                                )
+                                            }
+                                        }
+                                        EOutlinedTextField(
+                                            value = field.value,
+                                            onValueChange = {
+                                                onAction(
+                                                    AddEditPasswordScreenAction.OnAdditionalFieldValueChanged(
+                                                        index,
+                                                        it
+                                                    )
+                                                )
+                                            },
+                                            label = { Text("Field Value") },
+                                            modifier = Modifier.fillMaxWidth()
                                         )
                                     }
                                 }
-                                EOutlinedTextField(
-                                    value = field.value,
-                                    onValueChange = { onAction(AddEditPasswordScreenAction.OnAdditionalFieldValueChanged(index, it)) },
-                                    label = { Text("Field Value") },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                            }
+
+                            TextButton(
+                                onClick = { onAction(AddEditPasswordScreenAction.OnAddAdditionalField) },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = "Add field")
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("Add Custom Field")
                             }
                         }
                     }
-
-                    if (state.additionalFields.isEmpty()) {
-                        Text(
-                            text = "No additional fields. Tap + to add one.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                    }
                 }
             }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -239,7 +284,7 @@ fun AddEditPasswordScreenContent(
                 ) {
                     Text("Cancel")
                 }
-                
+
                 FilledTonalButton(
                     onClick = { onAction(AddEditPasswordScreenAction.OnSaveClicked) },
                     modifier = Modifier.weight(1f),

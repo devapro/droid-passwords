@@ -5,17 +5,16 @@ import io.github.devapro.features.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.features.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState
 
-class InitScreenReducer
-    : Reducer<AddEditPasswordScreenAction.InitScreen, AddEditPasswordScreenState, AddEditPasswordScreenAction, AddEditPasswordScreenEvent> {
+class InitScreenReducer :
+    Reducer<AddEditPasswordScreenAction.InitScreen, AddEditPasswordScreenState, AddEditPasswordScreenAction, AddEditPasswordScreenEvent> {
 
     override val actionClass = AddEditPasswordScreenAction.InitScreen::class
 
     override suspend fun reduce(
         action: AddEditPasswordScreenAction.InitScreen,
         getState: () -> AddEditPasswordScreenState
-    ): Reducer.Result<AddEditPasswordScreenState, AddEditPasswordScreenAction.InitScreen, AddEditPasswordScreenEvent?> {
+    ): Reducer.Result<AddEditPasswordScreenState, AddEditPasswordScreenAction, AddEditPasswordScreenEvent?> {
         val item = action.item
-        
         return Reducer.Result(
             state = AddEditPasswordScreenState.Success(
                 isEditMode = item != null,
@@ -27,16 +26,15 @@ class InitScreenReducer
                 description = item?.description ?: "",
                 additionalFields = item?.additionalFields ?: emptyList(),
                 isPasswordVisible = false,
+                isAdditionalFieldsVisible = false,
                 isSaving = false,
                 titleError = null,
                 passwordError = null,
                 isFormValid = validateForm(item?.title ?: "", item?.password ?: "")
-            ),
-            action = null,
-            event = null
+            )
         )
     }
-    
+
     private fun validateForm(title: String, password: String): Boolean {
         return title.isNotBlank() && password.isNotBlank()
     }
