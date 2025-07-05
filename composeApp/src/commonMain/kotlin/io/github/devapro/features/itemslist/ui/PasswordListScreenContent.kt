@@ -73,7 +73,7 @@ fun PasswordListScreenContent(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { 
+                        IconButton(onClick = {
                             isSearchActive = false
                             onAction(PasswordListScreenAction.OnClearSearch)
                         }) {
@@ -84,10 +84,16 @@ fun PasswordListScreenContent(
             } else {
                 // Normal top bar
                 TopAppBar(
-                    title = { Text("Passwords") },
+                    title = {
+                        Text(
+                            text = state.title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = {
-                            // onAction(PasswordListScreenAction.OnBackClicked)
+                            onAction(PasswordListScreenAction.OnBackClicked)
                         }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                         }
@@ -157,7 +163,13 @@ fun PasswordListScreenContent(
                     ) { password ->
                         PasswordItem(
                             password = password,
-                            onItemClick = { onAction(PasswordListScreenAction.OnPasswordItemClicked(password)) }
+                            onItemClick = {
+                                onAction(
+                                    PasswordListScreenAction.OnPasswordItemClicked(
+                                        password
+                                    )
+                                )
+                            }
                         )
                     }
                 }

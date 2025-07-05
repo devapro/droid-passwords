@@ -12,6 +12,9 @@ data class PasswordListScreen(
 
     @Composable
     override fun Content() {
-        PasswordListScreenRoot()
+        PasswordListScreenRoot(
+            type = type,
+            tag = tag
+        )
     }
 } 

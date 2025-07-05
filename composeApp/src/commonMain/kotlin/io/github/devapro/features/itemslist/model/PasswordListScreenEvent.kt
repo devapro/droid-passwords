@@ -14,5 +14,5 @@ sealed interface PasswordListScreenEvent {
 
     data class DeletePassword(val item: ItemModel) : PasswordListScreenEvent
 
-    data object RefreshPasswordList : PasswordListScreenEvent
+    data object OnBackClicked : PasswordListScreenEvent
 } 

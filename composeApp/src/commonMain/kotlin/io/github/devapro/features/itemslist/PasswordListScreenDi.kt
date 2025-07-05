@@ -4,11 +4,11 @@ import io.github.devapro.features.itemslist.factory.PasswordListScreenInitStateF
 import io.github.devapro.features.itemslist.mapper.VaultItemMapper
 import io.github.devapro.features.itemslist.reducer.InitScreenReducer
 import io.github.devapro.features.itemslist.reducer.OnAddPasswordClickedReducer
+import io.github.devapro.features.itemslist.reducer.OnBackClickedReducer
 import io.github.devapro.features.itemslist.reducer.OnClearSearchReducer
 import io.github.devapro.features.itemslist.reducer.OnDeletePasswordClickedReducer
 import io.github.devapro.features.itemslist.reducer.OnImportExportClickedReducer
 import io.github.devapro.features.itemslist.reducer.OnPasswordItemClickedReducer
-import io.github.devapro.features.itemslist.reducer.OnRefreshReducer
 import io.github.devapro.features.itemslist.reducer.OnSearchChangedReducer
 import io.github.devapro.features.itemslist.reducer.OnSettingsClickedReducer
 import org.koin.core.module.Module
@@ -29,7 +29,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnDeletePasswordClickedReducer)
     factoryOf(::OnImportExportClickedReducer)
     factoryOf(::OnSettingsClickedReducer)
-    factoryOf(::OnRefreshReducer)
+    factoryOf(::OnBackClickedReducer)
     factoryOf(::OnClearSearchReducer)
     
     factory {
@@ -42,7 +42,7 @@ private fun Module.reducersDi() {
                 get(OnDeletePasswordClickedReducer::class),
                 get(OnImportExportClickedReducer::class),
                 get(OnSettingsClickedReducer::class),
-                get(OnRefreshReducer::class),
+                get(OnBackClickedReducer::class),
                 get(OnClearSearchReducer::class),
             ),
             initStateFactory = get(),

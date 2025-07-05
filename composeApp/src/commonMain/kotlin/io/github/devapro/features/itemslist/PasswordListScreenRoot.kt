@@ -6,24 +6,34 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.data.vault.VaultItemTag
 import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
 import io.github.devapro.features.importexport.navigation.ImportExportScreen
 import io.github.devapro.features.itemdetails.navigation.PasswordDetailScreen
 import io.github.devapro.features.itemslist.model.PasswordListScreenAction
 import io.github.devapro.features.itemslist.model.PasswordListScreenEvent
 import io.github.devapro.features.itemslist.model.PasswordListScreenState
+import io.github.devapro.features.itemslist.navigation.PasswordTagFilterType
 import io.github.devapro.features.itemslist.ui.PasswordListScreenContent
 import org.koin.compose.koinInject
 
 @Composable
-fun PasswordListScreenRoot() {
+fun PasswordListScreenRoot(
+    type: PasswordTagFilterType,
+    tag: VaultItemTag?
+) {
     val viewModel: PasswordListScreenViewModel = koinInject()
     val navigator = LocalNavigator.currentOrThrow
     
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.onAction(PasswordListScreenAction.InitScreen)
+        viewModel.onAction(
+            PasswordListScreenAction.InitScreen(
+                tagFilterType = type,
+                tag = tag
+            )
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -44,8 +54,8 @@ fun PasswordListScreenRoot() {
                 is PasswordListScreenEvent.DeletePassword -> {
                     // Handle password deletion
                 }
-                is PasswordListScreenEvent.RefreshPasswordList -> {
-                    // Handle password list refresh
+                is PasswordListScreenEvent.OnBackClicked -> {
+                    navigator.pop()
                 }
             }
         }

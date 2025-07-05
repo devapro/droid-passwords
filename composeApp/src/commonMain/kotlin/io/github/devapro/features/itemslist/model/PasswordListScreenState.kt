@@ -8,6 +8,7 @@ sealed interface PasswordListScreenState {
     data class Error(val message: String) : PasswordListScreenState
 
     data class Success(
+        val title: String,
         val passwords: List<ItemModel>,
         val filteredPasswords: List<ItemModel>,
         val searchQuery: String,

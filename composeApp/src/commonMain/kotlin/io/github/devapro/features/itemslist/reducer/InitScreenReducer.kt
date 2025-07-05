@@ -6,6 +6,7 @@ import io.github.devapro.features.itemslist.mapper.VaultItemMapper
 import io.github.devapro.features.itemslist.model.PasswordListScreenAction
 import io.github.devapro.features.itemslist.model.PasswordListScreenEvent
 import io.github.devapro.features.itemslist.model.PasswordListScreenState
+import io.github.devapro.features.itemslist.navigation.PasswordTagFilterType
 
 class InitScreenReducer(
     private val runtimeRepository: VaultRuntimeRepository,
@@ -19,7 +20,12 @@ class InitScreenReducer(
         getState: () -> PasswordListScreenState
     ): Reducer.Result<PasswordListScreenState, PasswordListScreenAction.InitScreen, PasswordListScreenEvent?> {
         val vault = runtimeRepository.getVault()
-        val items = vaultItemMapper.map(vault.items)
+        val filteredItems = when (action.tagFilterType) {
+            PasswordTagFilterType.ALL -> vault.items
+            PasswordTagFilterType.NO_TAG -> vault.items.filter { it.tags.isEmpty() }
+            PasswordTagFilterType.NORMAL -> vault.items.filter { it.tags.any { tag -> tag.id == action.tag?.id } }
+        }
+        val items = vaultItemMapper.map(filteredItems)
         return Reducer.Result(
             state = PasswordListScreenState.Success(
                 passwords = items,
@@ -27,10 +33,15 @@ class InitScreenReducer(
                 searchQuery = "",
                 isLoading = false,
                 isRefreshing = false,
-                hasSearchQuery = false
+                hasSearchQuery = false,
+                title = when (action.tagFilterType) {
+                    PasswordTagFilterType.ALL -> "All Passwords"
+                    PasswordTagFilterType.NO_TAG -> "No Tag Passwords"
+                    PasswordTagFilterType.NORMAL -> action.tag?.title ?: "Tagged Passwords"
+                }
             ),
             action = null,
-            event = PasswordListScreenEvent.RefreshPasswordList
+            event = null
         )
     }
 } 
