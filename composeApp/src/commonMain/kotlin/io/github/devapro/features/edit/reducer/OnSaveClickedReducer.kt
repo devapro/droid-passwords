@@ -11,7 +11,6 @@ import io.github.devapro.features.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState
 import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
-import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
 
 class OnSaveClickedReducer(
@@ -42,9 +41,7 @@ class OnSaveClickedReducer(
                         name = it.name,
                         value = it.value
                     )
-                },
-                createdAt = System.now().epochSeconds,
-                updatedAt = System.now().epochSeconds
+                }
             )
 
             runtimeRepository.addOrUpdateVault(item)
