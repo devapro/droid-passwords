@@ -6,7 +6,7 @@ sealed interface TagsScreenEvent {
 
     data object NavigateBack : TagsScreenEvent
 
-    data object RefreshTagsList : TagsScreenEvent
+    data object NavigateToAddPassword : TagsScreenEvent
 
     data class ShowMessage(val message: String) : TagsScreenEvent
 } 

@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
 import io.github.devapro.features.itemslist.navigation.PasswordListScreen
 import io.github.devapro.features.itemslist.navigation.PasswordTagFilterType
 import io.github.devapro.features.tags.model.TagItemType
@@ -33,6 +34,10 @@ fun TagsScreenRoot() {
                     navigator.pop()
                 }
 
+                is TagsScreenEvent.NavigateToAddPassword -> {
+                    navigator.push(AddEditPasswordScreen())
+                }
+
                 is TagsScreenEvent.NavigateToTagDetail -> {
                     navigator.push(
                         PasswordListScreen(
@@ -44,10 +49,6 @@ fun TagsScreenRoot() {
                             tag = it.tag.tag
                         )
                     )
-                }
-
-                is TagsScreenEvent.RefreshTagsList -> {
-                    // Handle refresh
                 }
 
                 is TagsScreenEvent.ShowMessage -> {

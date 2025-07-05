@@ -12,4 +12,6 @@ sealed interface TagsScreenAction {
     data object OnClearSearch : TagsScreenAction
 
     data object OnBackClicked : TagsScreenAction
+
+    data object OnAddPasswordClicked : TagsScreenAction
 } 

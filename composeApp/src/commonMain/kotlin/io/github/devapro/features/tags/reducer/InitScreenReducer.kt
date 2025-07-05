@@ -30,7 +30,7 @@ class InitScreenReducer(
                 hasSearchQuery = false
             ),
             action = null,
-            event = TagsScreenEvent.RefreshTagsList
+            event = null
         )
     }
 } 

@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenAction
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenEvent
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenState
@@ -33,8 +34,7 @@ fun PasswordDetailScreenRoot(
                     navigator.pop()
                 }
                 is PasswordDetailScreenEvent.NavigateToEdit -> {
-                    // Navigate to edit screen
-                    // navigator.push(AddEditPasswordScreen(it.item))
+                    navigator.push(AddEditPasswordScreen(it.item))
                 }
                 is PasswordDetailScreenEvent.CopyToClipboard -> {
                     // Handle clipboard copy

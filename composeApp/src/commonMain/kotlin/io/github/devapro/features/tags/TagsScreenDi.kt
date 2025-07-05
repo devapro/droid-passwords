@@ -3,6 +3,7 @@ package io.github.devapro.features.tags
 import io.github.devapro.features.tags.factory.TagsScreenInitStateFactory
 import io.github.devapro.features.tags.mapper.TagsMapper
 import io.github.devapro.features.tags.reducer.InitScreenReducer
+import io.github.devapro.features.tags.reducer.OnAddPasswordClickedReducer
 import io.github.devapro.features.tags.reducer.OnBackClickedReducer
 import io.github.devapro.features.tags.reducer.OnClearSearchReducer
 import io.github.devapro.features.tags.reducer.OnRefreshReducer
@@ -25,6 +26,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnRefreshReducer)
     factoryOf(::OnClearSearchReducer)
     factoryOf(::OnBackClickedReducer)
+    factoryOf(::OnAddPasswordClickedReducer)
 
     factory {
         TagsScreenActionProcessor(
@@ -35,6 +37,7 @@ private fun Module.reducersDi() {
                 get(OnRefreshReducer::class),
                 get(OnClearSearchReducer::class),
                 get(OnBackClickedReducer::class),
+                get(OnAddPasswordClickedReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()
