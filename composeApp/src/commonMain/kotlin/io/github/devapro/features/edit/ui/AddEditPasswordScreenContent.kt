@@ -27,8 +27,8 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -71,6 +71,24 @@ fun AddEditPasswordScreenContent(
                     }
                 },
                 actions = {
+                    if (state.isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
+                    } else {
+                        IconButton(
+                            onClick = { onAction(AddEditPasswordScreenAction.OnSaveClicked) },
+                            enabled = state.isFormValid
+                        ) {
+                            Icon(
+                                Icons.Default.Save,
+                                contentDescription = "Save",
+                                tint = if (state.isFormValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
+                                    alpha = 0.38f
+                                )
+                            )
+                        }
+                    }
                     if (state.isEditMode) {
                         IconButton(onClick = { onAction(AddEditPasswordScreenAction.OnDeleteClicked) }) {
                             Icon(Icons.Default.Delete, contentDescription = "Delete")
@@ -272,33 +290,6 @@ fun AddEditPasswordScreenContent(
 
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Action Buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                TextButton(
-                    onClick = { onAction(AddEditPasswordScreenAction.OnBackClicked) },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Cancel")
-                }
-
-                FilledTonalButton(
-                    onClick = { onAction(AddEditPasswordScreenAction.OnSaveClicked) },
-                    modifier = Modifier.weight(1f),
-                    enabled = state.isFormValid && !state.isSaving
-                ) {
-                    if (state.isSaving) {
-                        Text("Saving...")
-                    } else {
-                        Icon(Icons.Default.Save, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Save")
-                    }
-                }
-            }
 
             // Required fields note
             Text(
