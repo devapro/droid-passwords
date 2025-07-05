@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.github.devapro.features.itemslist.navigation.PasswordListScreen
+import io.github.devapro.features.tags.navigation.TagsScreen
 import io.github.devapro.features.unlock.model.UnLockVaultScreenAction
 import io.github.devapro.features.unlock.model.UnLockVaultScreenEvent
 import io.github.devapro.features.unlock.model.UnLockVaultScreenState
@@ -33,7 +33,7 @@ fun UnLockVaultScreenRoot() {
                 }
                 is UnLockVaultScreenEvent.UnlockSuccess -> {
                     navigator.pop()
-                    navigator.push(PasswordListScreen)
+                    navigator.push(TagsScreen)
                 }
 
                 is UnLockVaultScreenEvent.ShowError -> {

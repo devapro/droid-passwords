@@ -1,0 +1,43 @@
+package io.github.devapro.features.tags
+
+import io.github.devapro.features.tags.factory.TagsScreenInitStateFactory
+import io.github.devapro.features.tags.mapper.TagsMapper
+import io.github.devapro.features.tags.reducer.InitScreenReducer
+import io.github.devapro.features.tags.reducer.OnBackClickedReducer
+import io.github.devapro.features.tags.reducer.OnClearSearchReducer
+import io.github.devapro.features.tags.reducer.OnRefreshReducer
+import io.github.devapro.features.tags.reducer.OnSearchChangedReducer
+import io.github.devapro.features.tags.reducer.OnTagClickedReducer
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
+
+fun Module.registerTagsScreenDi() {
+    factoryOf(::TagsScreenViewModel)
+    factoryOf(::TagsScreenInitStateFactory)
+    factoryOf(::TagsMapper)
+    reducersDi()
+}
+
+private fun Module.reducersDi() {
+    factoryOf(::InitScreenReducer)
+    factoryOf(::OnSearchChangedReducer)
+    factoryOf(::OnTagClickedReducer)
+    factoryOf(::OnRefreshReducer)
+    factoryOf(::OnClearSearchReducer)
+    factoryOf(::OnBackClickedReducer)
+
+    factory {
+        TagsScreenActionProcessor(
+            reducers = setOf(
+                get(InitScreenReducer::class),
+                get(OnSearchChangedReducer::class),
+                get(OnTagClickedReducer::class),
+                get(OnRefreshReducer::class),
+                get(OnClearSearchReducer::class),
+                get(OnBackClickedReducer::class),
+            ),
+            initStateFactory = get(),
+            coroutineContextProvider = get()
+        )
+    }
+} 

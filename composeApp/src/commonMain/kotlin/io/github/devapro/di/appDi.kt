@@ -11,6 +11,7 @@ import io.github.devapro.features.importexport.registerImportExportScreenDi
 import io.github.devapro.features.itemdetails.registerPasswordDetailScreenDi
 import io.github.devapro.features.itemslist.registerPasswordListScreenDi
 import io.github.devapro.features.setlock.registerSetLockPasswordScreenDi
+import io.github.devapro.features.tags.registerTagsScreenDi
 import io.github.devapro.features.unlock.registerUnLockVaultScreenDi
 import io.github.devapro.features.welcome.WelcomeScreenViewModel
 import io.github.devapro.features.welcome.registerWelcomeScreenDi
@@ -40,6 +41,7 @@ val appModule: Module = module {
     registerPasswordListScreenDi()
     registerPasswordDetailScreenDi()
     registerAddEditPasswordScreenDi()
+    registerTagsScreenDi()
 }
 
 private fun Module.coreDi() {
