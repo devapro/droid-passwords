@@ -27,7 +27,6 @@ class InitScreenReducer(
                 searchQuery = "",
                 isLoading = false,
                 isRefreshing = false,
-                isEmpty = true,
                 hasSearchQuery = false
             ),
             action = null,

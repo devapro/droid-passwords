@@ -13,7 +13,6 @@ sealed interface PasswordListScreenState {
         val searchQuery: String,
         val isLoading: Boolean,
         val isRefreshing: Boolean,
-        val isEmpty: Boolean,
         val hasSearchQuery: Boolean
     ) : PasswordListScreenState
 } 
