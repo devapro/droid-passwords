@@ -137,6 +137,13 @@ compose.desktop {
         nativeDistributions {
             linux {
                 modules("jdk.security.auth")
+                iconFile.set(File("logo/Linux/appIcon.png"))
+            }
+            windows {
+                iconFile.set(File("logo/Windows/appIcon.ico"))
+            }
+            macOS {
+                iconFile.set(File("logo/macOS/appIcon.icns"))
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.devapro"
