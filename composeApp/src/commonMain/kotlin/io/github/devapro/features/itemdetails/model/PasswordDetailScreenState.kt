@@ -11,6 +11,6 @@ sealed interface PasswordDetailScreenState {
         val item: ItemModel,
         val isPasswordVisible: Boolean,
         val isLoading: Boolean,
-        val isFavorite: Boolean
+        val showDeleteConfirmation: Boolean
     ) : PasswordDetailScreenState
 } 

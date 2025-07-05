@@ -14,7 +14,5 @@ sealed interface PasswordDetailScreenEvent {
 
     data class DeleteItem(val item: ItemModel) : PasswordDetailScreenEvent
 
-    data class UpdateFavorite(val item: ItemModel, val isFavorite: Boolean) : PasswordDetailScreenEvent
-
     data class ShowMessage(val message: String) : PasswordDetailScreenEvent
 } 

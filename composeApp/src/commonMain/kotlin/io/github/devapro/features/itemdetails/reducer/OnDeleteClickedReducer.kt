@@ -18,9 +18,9 @@ class OnDeleteClickedReducer
 
         return if (currentState is PasswordDetailScreenState.Success) {
             Reducer.Result(
-                state = currentState.copy(isLoading = true),
+                state = currentState.copy(showDeleteConfirmation = true),
                 action = null,
-                event = PasswordDetailScreenEvent.DeleteItem(currentState.item)
+                event = null
             )
         } else {
             Reducer.Result(

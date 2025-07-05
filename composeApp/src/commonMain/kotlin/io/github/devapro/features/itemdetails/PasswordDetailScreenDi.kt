@@ -6,7 +6,6 @@ import io.github.devapro.features.itemdetails.reducer.OnBackClickedReducer
 import io.github.devapro.features.itemdetails.reducer.OnCopyFieldReducer
 import io.github.devapro.features.itemdetails.reducer.OnDeleteClickedReducer
 import io.github.devapro.features.itemdetails.reducer.OnEditClickedReducer
-import io.github.devapro.features.itemdetails.reducer.OnFavoriteClickedReducer
 import io.github.devapro.features.itemdetails.reducer.OnShareClickedReducer
 import io.github.devapro.features.itemdetails.reducer.OnTogglePasswordVisibilityReducer
 import org.koin.core.module.Module
@@ -26,7 +25,6 @@ private fun Module.reducersDi() {
     factoryOf(::OnTogglePasswordVisibilityReducer)
     factoryOf(::OnCopyFieldReducer)
     factoryOf(::OnShareClickedReducer)
-    factoryOf(::OnFavoriteClickedReducer)
     
     factory {
         PasswordDetailScreenActionProcessor(
@@ -38,7 +36,6 @@ private fun Module.reducersDi() {
                 get(OnTogglePasswordVisibilityReducer::class),
                 get(OnCopyFieldReducer::class),
                 get(OnShareClickedReducer::class),
-                get(OnFavoriteClickedReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()

@@ -9,6 +9,10 @@ sealed interface PasswordDetailScreenAction {
     
     data object OnDeleteClicked : PasswordDetailScreenAction
 
+    data object OnDeleteConfirmed : PasswordDetailScreenAction
+
+    data object OnDeleteCancelled : PasswordDetailScreenAction
+
     data object OnBackClicked : PasswordDetailScreenAction
 
     data object OnTogglePasswordVisibility : PasswordDetailScreenAction
@@ -16,6 +20,4 @@ sealed interface PasswordDetailScreenAction {
     data class OnCopyField(val fieldName: String, val value: String) : PasswordDetailScreenAction
 
     data object OnShareClicked : PasswordDetailScreenAction
-
-    data object OnFavoriteClicked : PasswordDetailScreenAction
 } 

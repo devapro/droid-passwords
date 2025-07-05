@@ -46,9 +46,6 @@ fun PasswordDetailScreenRoot(
                     // Handle item deletion and navigate back
                     navigator.pop()
                 }
-                is PasswordDetailScreenEvent.UpdateFavorite -> {
-                    // Handle favorite update
-                }
                 is PasswordDetailScreenEvent.ShowMessage -> {
                     // Show snackbar or toast
                 }

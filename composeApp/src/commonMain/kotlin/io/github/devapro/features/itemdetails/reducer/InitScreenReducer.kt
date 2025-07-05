@@ -19,7 +19,7 @@ class InitScreenReducer
                 item = action.item,
                 isPasswordVisible = false,
                 isLoading = false,
-                isFavorite = false // TODO: Get from repository
+                showDeleteConfirmation = false
             ),
             action = null,
             event = null

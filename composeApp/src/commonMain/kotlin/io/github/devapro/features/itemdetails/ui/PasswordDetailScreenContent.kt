@@ -108,4 +108,11 @@ fun PasswordDetailScreenContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+
+    // Delete confirmation dialog
+    if (state.showDeleteConfirmation) {
+        DeleteConfirmationDialog(
+            onAction = onAction
+        )
+    }
 } 
