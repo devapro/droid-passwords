@@ -4,7 +4,9 @@ import io.github.devapro.features.itemdetails.factory.PasswordDetailScreenInitSt
 import io.github.devapro.features.itemdetails.reducer.InitScreenReducer
 import io.github.devapro.features.itemdetails.reducer.OnBackClickedReducer
 import io.github.devapro.features.itemdetails.reducer.OnCopyFieldReducer
+import io.github.devapro.features.itemdetails.reducer.OnDeleteCancelledReducer
 import io.github.devapro.features.itemdetails.reducer.OnDeleteClickedReducer
+import io.github.devapro.features.itemdetails.reducer.OnDeleteConfirmedReducer
 import io.github.devapro.features.itemdetails.reducer.OnEditClickedReducer
 import io.github.devapro.features.itemdetails.reducer.OnShareClickedReducer
 import io.github.devapro.features.itemdetails.reducer.OnTogglePasswordVisibilityReducer
@@ -21,6 +23,8 @@ private fun Module.reducersDi() {
     factoryOf(::InitScreenReducer)
     factoryOf(::OnEditClickedReducer)
     factoryOf(::OnDeleteClickedReducer)
+    factoryOf(::OnDeleteConfirmedReducer)
+    factoryOf(::OnDeleteCancelledReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnTogglePasswordVisibilityReducer)
     factoryOf(::OnCopyFieldReducer)
@@ -32,6 +36,8 @@ private fun Module.reducersDi() {
                 get(InitScreenReducer::class),
                 get(OnEditClickedReducer::class),
                 get(OnDeleteClickedReducer::class),
+                get(OnDeleteConfirmedReducer::class),
+                get(OnDeleteCancelledReducer::class),
                 get(OnBackClickedReducer::class),
                 get(OnTogglePasswordVisibilityReducer::class),
                 get(OnCopyFieldReducer::class),
