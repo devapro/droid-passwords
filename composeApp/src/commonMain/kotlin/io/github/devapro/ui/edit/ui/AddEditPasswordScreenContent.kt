@@ -28,7 +28,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,6 +41,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.github.devapro.core.ui.EOutlinedTextField
 import io.github.devapro.ui.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.ui.edit.model.AddEditPasswordScreenState
 
@@ -85,7 +85,7 @@ fun AddEditPasswordScreenContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Title Field
-            OutlinedTextField(
+            EOutlinedTextField(
                 value = state.title,
                 onValueChange = { onAction(AddEditPasswordScreenAction.OnTitleChanged(it)) },
                 label = { Text("Title *") },
@@ -95,7 +95,7 @@ fun AddEditPasswordScreenContent(
             )
 
             // Username Field
-            OutlinedTextField(
+            EOutlinedTextField(
                 value = state.username,
                 onValueChange = { onAction(AddEditPasswordScreenAction.OnUsernameChanged(it)) },
                 label = { Text("Username") },
@@ -103,7 +103,7 @@ fun AddEditPasswordScreenContent(
             )
 
             // Password Field
-            OutlinedTextField(
+            EOutlinedTextField(
                 value = state.password,
                 onValueChange = { onAction(AddEditPasswordScreenAction.OnPasswordChanged(it)) },
                 label = { Text("Password *") },
@@ -132,7 +132,7 @@ fun AddEditPasswordScreenContent(
             )
 
             // URL Field
-            OutlinedTextField(
+            EOutlinedTextField(
                 value = state.url,
                 onValueChange = { onAction(AddEditPasswordScreenAction.OnUrlChanged(it)) },
                 label = { Text("URL") },
@@ -141,7 +141,7 @@ fun AddEditPasswordScreenContent(
             )
 
             // Description Field
-            OutlinedTextField(
+            EOutlinedTextField(
                 value = state.description,
                 onValueChange = { onAction(AddEditPasswordScreenAction.OnDescriptionChanged(it)) },
                 label = { Text("Description") },
@@ -191,7 +191,7 @@ fun AddEditPasswordScreenContent(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    OutlinedTextField(
+                                    EOutlinedTextField(
                                         value = field.name,
                                         onValueChange = { onAction(AddEditPasswordScreenAction.OnAdditionalFieldNameChanged(index, it)) },
                                         label = { Text("Field Name") },
@@ -205,7 +205,7 @@ fun AddEditPasswordScreenContent(
                                         )
                                     }
                                 }
-                                OutlinedTextField(
+                                EOutlinedTextField(
                                     value = field.value,
                                     onValueChange = { onAction(AddEditPasswordScreenAction.OnAdditionalFieldValueChanged(index, it)) },
                                     label = { Text("Field Value") },

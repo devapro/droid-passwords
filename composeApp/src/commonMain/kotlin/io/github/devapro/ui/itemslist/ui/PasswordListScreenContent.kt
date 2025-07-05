@@ -3,7 +3,6 @@ package io.github.devapro.ui.itemslist.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,11 +24,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.github.devapro.core.ui.EOutlinedTextField
 import io.github.devapro.model.ItemModel
 import io.github.devapro.ui.itemslist.model.PasswordListScreenAction
 import io.github.devapro.ui.itemslist.model.PasswordListScreenState
@@ -67,7 +65,7 @@ fun PasswordListScreenContent(
                 // Search bar as top bar
                 TopAppBar(
                     title = {
-                        OutlinedTextField(
+                        EOutlinedTextField(
                             value = state.searchQuery,
                             onValueChange = { onAction(PasswordListScreenAction.OnSearchChanged(it)) },
                             placeholder = { Text("Search passwords...") },

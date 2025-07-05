@@ -20,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import io.github.devapro.core.ui.EOutlinedTextField
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenAction
 import io.github.devapro.ui.setlock.model.SetLockPasswordScreenState
 
@@ -82,7 +82,7 @@ fun SetLockPasswordScreenContent(
                     )
 
                     if (state.isVaultExists) {
-                        OutlinedTextField(
+                        EOutlinedTextField(
                             value = state.currentPassword,
                             onValueChange = { onAction(SetLockPasswordScreenAction.OnCurrentPasswordChanged(it)) },
                             label = { Text("Current Password") },
@@ -116,7 +116,7 @@ fun SetLockPasswordScreenContent(
                         )
                     }
 
-                    OutlinedTextField(
+                    EOutlinedTextField(
                         value = state.newPassword,
                         onValueChange = { onAction(SetLockPasswordScreenAction.OnNewPasswordChanged(it)) },
                         label = { Text("New Password") },
@@ -149,7 +149,7 @@ fun SetLockPasswordScreenContent(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    OutlinedTextField(
+                    EOutlinedTextField(
                         value = state.confirmPassword,
                         onValueChange = { onAction(SetLockPasswordScreenAction.OnConfirmPasswordChanged(it)) },
                         label = { Text("Confirm Password") },
