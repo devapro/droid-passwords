@@ -41,7 +41,8 @@ class OnSaveClickedReducer(
                         name = it.name,
                         value = it.value
                     )
-                }
+                },
+                tags = currentState.tags
             )
 
             runtimeRepository.addOrUpdateVault(item)

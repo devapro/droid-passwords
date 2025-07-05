@@ -29,11 +29,22 @@ object ImportExportManager {
     
     private fun exportToCsv(items: List<ItemModel>): String {
         val csvBuilder = StringBuilder()
-        csvBuilder.appendLine("Title,Description,URL,Username,Password,Additional Fields")
+        csvBuilder.appendLine("Title,Description,URL,Username,Password,Additional Fields,Tags")
         
         items.forEach { item ->
             val additionalFieldsStr = item.additionalFields.joinToString(";") { "${it.name}:${it.value}" }
-            csvBuilder.appendLine("\"${escapeCsv(item.title)}\",\"${escapeCsv(item.description)}\",\"${escapeCsv(item.url)}\",\"${escapeCsv(item.username)}\",\"${escapeCsv(item.password)}\",\"${escapeCsv(additionalFieldsStr)}\"")
+            val tagsStr = item.tags.joinToString(";") { it.title }
+            csvBuilder.appendLine(
+                "\"${escapeCsv(item.title)}\",\"${escapeCsv(item.description)}\",\"${
+                    escapeCsv(
+                        item.url
+                    )
+                }\",\"${escapeCsv(item.username)}\",\"${escapeCsv(item.password)}\",\"${
+                    escapeCsv(
+                        additionalFieldsStr
+                    )
+                }\",\"${escapeCsv(tagsStr)}\""
+            )
         }
         
         return csvBuilder.toString()
@@ -60,6 +71,11 @@ object ImportExportManager {
                 xmlBuilder.appendLine("      </field>")
             }
             xmlBuilder.appendLine("    </additionalFields>")
+            xmlBuilder.appendLine("    <tags>")
+            item.tags.forEach { tag ->
+                xmlBuilder.appendLine("      <tag>${escapeXml(tag.title)}</tag>")
+            }
+            xmlBuilder.appendLine("    </tags>")
             xmlBuilder.appendLine("  </password>")
         }
         
@@ -91,7 +107,14 @@ object ImportExportManager {
                 if (fieldIndex < item.additionalFields.size - 1) jsonBuilder.append(",")
                 jsonBuilder.appendLine()
             }
-            
+
+            jsonBuilder.append("      ],")
+            jsonBuilder.appendLine("      \"tags\": [")
+            item.tags.forEachIndexed { tagIndex, tag ->
+                jsonBuilder.append("        \"${escapeJson(tag.title)}\"")
+                if (tagIndex < item.tags.size - 1) jsonBuilder.append(",")
+                jsonBuilder.appendLine()
+            }
             jsonBuilder.append("      ]")
             jsonBuilder.appendLine()
             jsonBuilder.append("    }")
@@ -125,7 +148,16 @@ object ImportExportManager {
                         } else null
                     }
                 } else emptyList()
-                
+
+                val tags = if (columns.size >= 7 && columns[6].isNotBlank()) {
+                    columns[6].split(";").map {
+                        io.github.devapro.data.vault.VaultItemTag(
+                            id = it,
+                            title = it
+                        )
+                    }
+                } else emptyList()
+
                 items.add(
                     ItemModel(
                         id = UUID.generateUUID().toString(),
@@ -134,7 +166,8 @@ object ImportExportManager {
                         url = columns[2],
                         username = columns[3],
                         password = columns[4],
-                        additionalFields = additionalFields
+                        additionalFields = additionalFields,
+                        tags = tags
                     )
                 )
             }
@@ -175,6 +208,23 @@ object ImportExportManager {
                         }
                     }
                 }
+
+                val tags = mutableListOf<io.github.devapro.data.vault.VaultItemTag>()
+                val tagsBlock = extractXmlValue(passwordData, "tags")
+                if (tagsBlock.isNotBlank()) {
+                    val tagBlocks = tagsBlock.split("<tag>").drop(1)
+                    tagBlocks.forEach { tagBlock ->
+                        if (tagBlock.contains("</tag>")) {
+                            val tag = tagBlock.substring(0, tagBlock.indexOf("</tag>"))
+                            tags.add(
+                                io.github.devapro.data.vault.VaultItemTag(
+                                    id = tag,
+                                    title = tag
+                                )
+                            )
+                        }
+                    }
+                }
                 
                 items.add(
                     ItemModel(
@@ -184,7 +234,8 @@ object ImportExportManager {
                         url = url,
                         username = username,
                         password = password,
-                        additionalFields = additionalFields
+                        additionalFields = additionalFields,
+                        tags = tags
                     )
                 )
             }
@@ -238,6 +289,25 @@ object ImportExportManager {
                         }
                     }
                 }
+
+                val tags = mutableListOf<io.github.devapro.data.vault.VaultItemTag>()
+                val tagsStart = obj.indexOf("\"tags\":")
+                if (tagsStart != -1) {
+                    val tagsArrayStart = obj.indexOf("[", tagsStart)
+                    val tagsArrayEnd = obj.indexOf("]", tagsArrayStart)
+                    if (tagsArrayStart != -1 && tagsArrayEnd != -1) {
+                        val tagsArray = obj.substring(tagsArrayStart + 1, tagsArrayEnd)
+                        val tagObjects = splitJsonObjects(tagsArray)
+                        tagObjects.forEach { tagObj ->
+                            tags.add(
+                                io.github.devapro.data.vault.VaultItemTag(
+                                    id = tagObj.replace("\\\"", ""),
+                                    title = tagObj.replace("\\\"", "")
+                                )
+                            )
+                        }
+                    }
+                }
                 
                 items.add(
                     ItemModel(
@@ -247,7 +317,8 @@ object ImportExportManager {
                         url = url,
                         username = username,
                         password = password,
-                        additionalFields = additionalFields
+                        additionalFields = additionalFields,
+                        tags = tags
                     )
                 )
             }
@@ -290,7 +361,7 @@ object ImportExportManager {
         for (i in line.indices) {
             val char = line[i]
             when {
-                char == '"' && (i == 0 || line[i - 1] != '\\') -> inQuotes = !inQuotes
+                char == '\"' && (i == 0 || line[i - 1] != '\\') -> inQuotes = !inQuotes
                 char == ',' && !inQuotes -> {
                     result.add(current.toString())
                     current = StringBuilder()
@@ -299,8 +370,8 @@ object ImportExportManager {
             }
         }
         result.add(current.toString())
-        
-        return result.map { it.trim('"') }
+
+        return result.map { it.trim('\"') }
     }
     
     private fun extractXmlValue(xml: String, tag: String): String {

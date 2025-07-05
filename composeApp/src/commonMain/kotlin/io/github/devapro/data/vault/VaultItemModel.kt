@@ -8,7 +8,7 @@ data class VaultItemModel(
     val title: String,
     val username: String,
     val password: String,
-    val tag: VaultItemTag? = null,
+    val tags: List<VaultItemTag> = emptyList(),
     val url: String? = null,
     val description: String? = null,
     val additionalFields: List<VaultAdditionalFieldModel> = emptyList()

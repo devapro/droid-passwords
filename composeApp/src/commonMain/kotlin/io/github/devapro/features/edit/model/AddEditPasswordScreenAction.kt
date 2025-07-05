@@ -1,5 +1,6 @@
 package io.github.devapro.features.edit.model
 
+import io.github.devapro.data.vault.VaultItemTag
 import io.github.devapro.model.ItemModel
 
 sealed interface AddEditPasswordScreenAction {
@@ -29,6 +30,12 @@ sealed interface AddEditPasswordScreenAction {
 
     data class OnRemoveAdditionalField(val index: Int) : AddEditPasswordScreenAction
 
+    data class OnTagInputChanged(val input: String) : AddEditPasswordScreenAction
+
+    data class OnTagSelected(val tag: VaultItemTag) : AddEditPasswordScreenAction
+
+    data class OnTagRemoved(val tag: VaultItemTag) : AddEditPasswordScreenAction
+    
     data object OnSaveClicked : AddEditPasswordScreenAction
 
     data object OnBackClicked : AddEditPasswordScreenAction

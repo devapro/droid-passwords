@@ -1,5 +1,6 @@
 package io.github.devapro.features.edit.model
 
+import io.github.devapro.data.vault.VaultItemTag
 import io.github.devapro.model.AdditionalFieldsModel
 
 sealed interface AddEditPasswordScreenState {
@@ -16,6 +17,9 @@ sealed interface AddEditPasswordScreenState {
         val url: String,
         val description: String,
         val additionalFields: List<AdditionalFieldsModel>,
+        val tags: List<VaultItemTag>,
+        val tagInput: String,
+        val allTags: List<VaultItemTag>,
         val isPasswordVisible: Boolean,
         val isAdditionalFieldsVisible: Boolean,
         val isSaving: Boolean,

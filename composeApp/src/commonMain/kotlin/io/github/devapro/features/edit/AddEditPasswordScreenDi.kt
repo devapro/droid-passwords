@@ -12,6 +12,9 @@ import io.github.devapro.features.edit.reducer.OnGeneratePasswordReducer
 import io.github.devapro.features.edit.reducer.OnPasswordChangedReducer
 import io.github.devapro.features.edit.reducer.OnRemoveAdditionalFieldReducer
 import io.github.devapro.features.edit.reducer.OnSaveClickedReducer
+import io.github.devapro.features.edit.reducer.OnTagInputChangedReducer
+import io.github.devapro.features.edit.reducer.OnTagRemovedReducer
+import io.github.devapro.features.edit.reducer.OnTagSelectedReducer
 import io.github.devapro.features.edit.reducer.OnTitleChangedReducer
 import io.github.devapro.features.edit.reducer.OnToggleAdditionalFieldsReducer
 import io.github.devapro.features.edit.reducer.OnTogglePasswordVisibilityReducer
@@ -27,7 +30,7 @@ fun Module.registerAddEditPasswordScreenDi() {
 }
 
 private fun Module.reducersDi() {
-    factoryOf(::InitScreenReducer)
+    factory { InitScreenReducer(get()) }
     factoryOf(::OnTitleChangedReducer)
     factoryOf(::OnUsernameChangedReducer)
     factoryOf(::OnPasswordChangedReducer)
@@ -40,6 +43,9 @@ private fun Module.reducersDi() {
     factoryOf(::OnAdditionalFieldValueChangedReducer)
     factoryOf(::OnAddAdditionalFieldReducer)
     factoryOf(::OnRemoveAdditionalFieldReducer)
+    factoryOf(::OnTagInputChangedReducer)
+    factoryOf(::OnTagSelectedReducer)
+    factoryOf(::OnTagRemovedReducer)
     factoryOf(::OnSaveClickedReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnDeleteClickedReducer)
@@ -60,6 +66,9 @@ private fun Module.reducersDi() {
                 get(OnAdditionalFieldValueChangedReducer::class),
                 get(OnAddAdditionalFieldReducer::class),
                 get(OnRemoveAdditionalFieldReducer::class),
+                get(OnTagInputChangedReducer::class),
+                get(OnTagSelectedReducer::class),
+                get(OnTagRemovedReducer::class),
                 get(OnSaveClickedReducer::class),
                 get(OnBackClickedReducer::class),
                 get(OnDeleteClickedReducer::class),

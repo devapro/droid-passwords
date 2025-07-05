@@ -20,7 +20,8 @@ class VaultItemMapper {
                         name = additionalField.name,
                         value = additionalField.value
                     )
-                }
+                },
+                tags = vaultItem.tags
             )
         }
     }

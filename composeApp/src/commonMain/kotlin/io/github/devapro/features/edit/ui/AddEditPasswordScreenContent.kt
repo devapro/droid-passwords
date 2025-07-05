@@ -45,6 +45,11 @@ fun AddEditPasswordScreenContent(
                 onAction = onAction
             )
 
+            TagsSection(
+                state = state,
+                onAction = onAction
+            )
+
             AdditionalFieldsSection(
                 state = state,
                 onAction = onAction

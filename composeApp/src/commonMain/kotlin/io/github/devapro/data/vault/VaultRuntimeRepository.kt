@@ -37,4 +37,8 @@ class VaultRuntimeRepository {
     fun getVault(): VaultModel {
         return vaultModel
     }
+
+    fun getAllTags(): List<VaultItemTag> {
+        return vaultModel.items.flatMap { it.tags }.distinct()
+    }
 }
