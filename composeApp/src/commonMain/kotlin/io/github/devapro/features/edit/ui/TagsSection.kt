@@ -37,6 +37,7 @@ fun TagsSection(
             value = state.tagInput,
             onValueChange = { onAction(AddEditPasswordScreenAction.OnTagInputChanged(it)) },
             label = { Text("Tags") },
+            forceUpdate = true,
             modifier = Modifier.fillMaxWidth()
         )
 
