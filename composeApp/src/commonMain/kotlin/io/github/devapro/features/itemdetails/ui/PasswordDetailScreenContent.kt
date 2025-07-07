@@ -1,5 +1,6 @@
 package io.github.devapro.features.itemdetails.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,13 +12,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.github.devapro.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenAction
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenState
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,11 +30,25 @@ fun PasswordDetailScreenContent(
     state: PasswordDetailScreenState.Success,
     onAction: (PasswordDetailScreenAction) -> Unit
 ) {
+    val snackBarManager: SnackbarHostStateManager = koinInject()
     Scaffold(
         topBar = {
             PasswordDetailTopAppBar(
                 state = state,
                 onAction = onAction
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                modifier = Modifier,
+                hostState = snackBarManager.state,
+                snackbar = { snackbarData ->
+                    Snackbar(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background),
+                        snackbarData = snackbarData
+                    )
+                }
             )
         }
     ) { paddingValues ->

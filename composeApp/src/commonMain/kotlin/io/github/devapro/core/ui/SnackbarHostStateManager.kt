@@ -15,9 +15,9 @@ class SnackbarHostStateManager(
 
     fun show(
         message: String,
-        actionButtonText: String?,
-        duration: SnackbarDuration,
-        actionButtonCallback: (() -> Unit)?
+        actionButtonText: String? = null,
+        duration: SnackbarDuration = SnackbarDuration.Short,
+        actionButtonCallback: (() -> Unit)? = null
     ) {
         scope.launch {
             val result = state.showSnackbar(

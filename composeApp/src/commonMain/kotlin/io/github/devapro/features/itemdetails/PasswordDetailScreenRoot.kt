@@ -4,8 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenAction
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenEvent
@@ -19,7 +22,10 @@ fun PasswordDetailScreenRoot(
     item: ItemModel
 ) {
     val viewModel: PasswordDetailScreenViewModel = koinInject()
+    val snackbarManager: SnackbarHostStateManager = koinInject()
+
     val navigator = LocalNavigator.currentOrThrow
+    val clipboard = LocalClipboardManager.current
     
     val state by viewModel.state.collectAsState()
 
@@ -37,7 +43,8 @@ fun PasswordDetailScreenRoot(
                     navigator.push(AddEditPasswordScreen(it.item))
                 }
                 is PasswordDetailScreenEvent.CopyToClipboard -> {
-                    // Handle clipboard copy
+                    clipboard.setText(AnnotatedString(it.value))
+                    snackbarManager.show("Copied to clipboard")
                 }
                 is PasswordDetailScreenEvent.ShareItem -> {
                     // Handle item sharing
