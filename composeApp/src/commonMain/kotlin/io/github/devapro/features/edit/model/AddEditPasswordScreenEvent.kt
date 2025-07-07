@@ -12,7 +12,5 @@ sealed interface AddEditPasswordScreenEvent {
 
     data class DeleteError(val message: String) : AddEditPasswordScreenEvent
 
-    data class ShowMessage(val message: String) : AddEditPasswordScreenEvent
-
     data class GeneratedPassword(val password: String) : AddEditPasswordScreenEvent
 } 

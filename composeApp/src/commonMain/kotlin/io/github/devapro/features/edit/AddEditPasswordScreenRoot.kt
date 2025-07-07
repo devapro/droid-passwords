@@ -1,11 +1,13 @@
 package io.github.devapro.features.edit
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.features.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState
@@ -18,6 +20,7 @@ fun AddEditPasswordScreenRoot(
     item: ItemModel? = null
 ) {
     val viewModel: AddEditPasswordScreenViewModel = koinInject()
+    val snackBarManager: SnackbarHostStateManager = koinInject()
     val navigator = LocalNavigator.currentOrThrow
     
     val state by viewModel.state.collectAsState()
@@ -33,24 +36,39 @@ fun AddEditPasswordScreenRoot(
                     navigator.pop()
                 }
                 is AddEditPasswordScreenEvent.SaveSuccess -> {
-                    // Handle save success - could save to repository here
-                    navigator.pop()
+                    snackBarManager.show(
+                        message = "Password saved successfully",
+                        actionButtonText = "OK",
+                        duration = SnackbarDuration.Short,
+                        actionButtonCallback = {
+                            navigator.pop()
+                        }
+                    )
                 }
                 is AddEditPasswordScreenEvent.SaveError -> {
                     // Handle save error - show snackbar
                 }
                 is AddEditPasswordScreenEvent.DeleteSuccess -> {
-                    // Handle delete success - could remove from repository here
+                    snackBarManager.show(
+                        message = "Password deleted successfully",
+                        actionButtonText = "OK",
+                        duration = SnackbarDuration.Short,
+                        actionButtonCallback = { }
+                    )
                     navigator.pop()
                 }
                 is AddEditPasswordScreenEvent.DeleteError -> {
                     // Handle delete error - show snackbar
                 }
-                is AddEditPasswordScreenEvent.ShowMessage -> {
-                    // Show snackbar or toast
-                }
                 is AddEditPasswordScreenEvent.GeneratedPassword -> {
-                    // Handle generated password - could show notification
+                    snackBarManager.show(
+                        message = "Password generated",
+                        actionButtonText = "Copy",
+                        duration = SnackbarDuration.Short,
+                        actionButtonCallback = {
+                            // Handle copy to clipboard
+                        }
+                    )
                 }
             }
         }

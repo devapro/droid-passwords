@@ -38,6 +38,8 @@ sealed interface AddEditPasswordScreenAction {
     
     data object OnSaveClicked : AddEditPasswordScreenAction
 
+    data object OnSave : AddEditPasswordScreenAction
+
     data object OnBackClicked : AddEditPasswordScreenAction
 
     data object OnDeleteClicked : AddEditPasswordScreenAction

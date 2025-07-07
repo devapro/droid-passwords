@@ -12,6 +12,7 @@ import io.github.devapro.features.edit.reducer.OnGeneratePasswordReducer
 import io.github.devapro.features.edit.reducer.OnPasswordChangedReducer
 import io.github.devapro.features.edit.reducer.OnRemoveAdditionalFieldReducer
 import io.github.devapro.features.edit.reducer.OnSaveClickedReducer
+import io.github.devapro.features.edit.reducer.OnSaveReducer
 import io.github.devapro.features.edit.reducer.OnTagInputChangedReducer
 import io.github.devapro.features.edit.reducer.OnTagRemovedReducer
 import io.github.devapro.features.edit.reducer.OnTagSelectedReducer
@@ -49,6 +50,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnSaveClickedReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnDeleteClickedReducer)
+    factoryOf(::OnSaveReducer)
 
     factory {
         AddEditPasswordScreenActionProcessor(
@@ -72,6 +74,7 @@ private fun Module.reducersDi() {
                 get(OnSaveClickedReducer::class),
                 get(OnBackClickedReducer::class),
                 get(OnDeleteClickedReducer::class),
+                get(OnSaveReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()
