@@ -13,6 +13,10 @@ sealed interface ImportExportScreenAction {
 
     data object OnExportClicked : ImportExportScreenAction
 
+    data class OnFileSelected(
+        val filePath: String
+    ) : ImportExportScreenAction
+
     data object OnExportStarted : ImportExportScreenAction
 
     data object OnBackClicked : ImportExportScreenAction

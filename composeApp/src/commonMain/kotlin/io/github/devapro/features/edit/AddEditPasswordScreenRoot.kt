@@ -58,7 +58,13 @@ fun AddEditPasswordScreenRoot(
                     navigator.pop()
                 }
                 is AddEditPasswordScreenEvent.DeleteError -> {
-                    // Handle delete error - show snackbar
+                    snackBarManager.show(
+                        message = it.message,
+                        actionButtonText = "OK",
+                        duration = SnackbarDuration.Short,
+                        actionButtonCallback = { }
+                    )
+                    navigator.pop()
                 }
                 is AddEditPasswordScreenEvent.GeneratedPassword -> {
                     snackBarManager.show(
