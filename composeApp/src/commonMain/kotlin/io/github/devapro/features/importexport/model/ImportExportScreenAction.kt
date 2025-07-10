@@ -13,5 +13,7 @@ sealed interface ImportExportScreenAction {
 
     data object OnExportClicked : ImportExportScreenAction
 
+    data object OnExportStarted : ImportExportScreenAction
+
     data object OnBackClicked : ImportExportScreenAction
 }

@@ -13,13 +13,13 @@ class OnExportClickedReducer
     override suspend fun reduce(
         action: ImportExportScreenAction.OnExportClicked,
         getState: () -> ImportExportScreenState
-    ): Reducer.Result<ImportExportScreenState, ImportExportScreenAction.OnExportClicked, ImportExportScreenEvent?> {
+    ): Reducer.Result<ImportExportScreenState, ImportExportScreenAction, ImportExportScreenEvent?> {
         val currentState = getState()
         return if (currentState is ImportExportScreenState.Loaded) {
             Reducer.Result(
                 state = currentState.copy(isProcessing = true),
-                action = null,
-                event = ImportExportScreenEvent.ExportFile(currentState.selectedFormat)
+                action = ImportExportScreenAction.OnExportStarted,
+                event = null
             )
         } else {
             Reducer.Result(
