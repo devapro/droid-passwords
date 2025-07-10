@@ -5,7 +5,8 @@ import io.github.devapro.features.importexport.factory.ImportExportScreenInitSta
 import io.github.devapro.features.importexport.reducer.InitScreenReducer
 import io.github.devapro.features.importexport.reducer.OnBackClickedReducer
 import io.github.devapro.features.importexport.reducer.OnExportClickedReducer
-import io.github.devapro.features.importexport.reducer.OnExportStartedReducer
+import io.github.devapro.features.importexport.reducer.OnFileSelectedReducer
+import io.github.devapro.features.importexport.reducer.OnFileSelectionCancelReducer
 import io.github.devapro.features.importexport.reducer.OnFormatSelectedReducer
 import io.github.devapro.features.importexport.reducer.OnImportClickedReducer
 import io.github.devapro.features.importexport.reducer.OnSwitchToExportReducer
@@ -28,7 +29,8 @@ private fun Module.reducersDi() {
     factoryOf(::OnImportClickedReducer)
     factoryOf(::OnExportClickedReducer)
     factoryOf(::OnBackClickedReducer)
-    factoryOf(::OnExportStartedReducer)
+    factoryOf(::OnFileSelectionCancelReducer)
+    factoryOf(::OnFileSelectedReducer)
     
     factory {
         ImportExportScreenActionProcessor(
@@ -40,7 +42,8 @@ private fun Module.reducersDi() {
                 get(OnImportClickedReducer::class),
                 get(OnExportClickedReducer::class),
                 get(OnBackClickedReducer::class),
-                get(OnExportStartedReducer::class),
+                get(OnFileSelectionCancelReducer::class),
+                get(OnFileSelectedReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()

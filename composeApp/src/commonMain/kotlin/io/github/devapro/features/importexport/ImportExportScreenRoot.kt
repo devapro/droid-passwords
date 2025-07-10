@@ -8,8 +8,11 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.features.importexport.model.ImportExportScreenAction
 import io.github.devapro.features.importexport.model.ImportExportScreenEvent
 import io.github.devapro.features.importexport.ui.ImportExportScreenContent
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.dialogs.openFileSaver
 import org.koin.compose.koinInject
 
 @Composable
@@ -50,16 +53,20 @@ fun ImportExportScreenRoot() {
                     )
                 }
 
-                is ImportExportScreenEvent.ExportFile -> {
-
-                }
-
                 is ImportExportScreenEvent.ImportFile -> {
 
                 }
 
                 is ImportExportScreenEvent.OpenFileSelector -> {
-
+                    val file = FileKit.openFileSaver(
+                        suggestedName = it.fileName,
+                        extension = it.fileExtension
+                    )
+                    if (file != null) {
+                        viewModel.onAction(ImportExportScreenAction.ExportFileSelected(file))
+                    } else {
+                        viewModel.onAction(ImportExportScreenAction.ExportFileCancelled)
+                    }
                 }
             }
         }

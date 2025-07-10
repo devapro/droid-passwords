@@ -73,9 +73,12 @@ class VaultFileRepository(
         return AppResult.Success(json.decodeFromString(vaultRawContent))
     }
 
-    suspend fun saveVault(vaultModel: VaultModel): AppResult<Unit> {
+    suspend fun saveVault(
+        vaultModel: VaultModel,
+        fileForExport: PlatformFile? = null
+    ): AppResult<Unit> {
         return try {
-            val file = getVaultFile()
+            val file = fileForExport ?: getVaultFile()
             val vaultRawContent = json.encodeToString(vaultModel)
 
             val vaultEncodedContent = cryptoMapper.encode(

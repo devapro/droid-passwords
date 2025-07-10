@@ -4,11 +4,12 @@ sealed interface ImportExportScreenEvent {
 
     data object NavigateBack : ImportExportScreenEvent
 
-    data class OpenFileSelector(val fileName: String) : ImportExportScreenEvent
+    data class OpenFileSelector(
+        val fileName: String,
+        val fileExtension: String
+    ) : ImportExportScreenEvent
 
     data class ImportFile(val format: FileFormat) : ImportExportScreenEvent
-
-    data class ExportFile(val format: FileFormat) : ImportExportScreenEvent
 
     data class ShowError(val message: String) : ImportExportScreenEvent
 
