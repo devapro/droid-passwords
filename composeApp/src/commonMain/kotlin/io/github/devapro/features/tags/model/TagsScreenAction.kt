@@ -13,5 +13,9 @@ sealed interface TagsScreenAction {
 
     data object OnBackClicked : TagsScreenAction
 
+    data object OnImportExportClicked : TagsScreenAction
+
+    data object OnSettingsClicked : TagsScreenAction
+
     data object OnAddPasswordClicked : TagsScreenAction
 } 

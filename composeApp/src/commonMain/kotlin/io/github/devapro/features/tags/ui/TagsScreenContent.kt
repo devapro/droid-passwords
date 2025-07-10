@@ -10,7 +10,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -36,6 +41,7 @@ fun TagsScreenContent(
     state: TagsScreenState.Success,
     onAction: (TagsScreenAction) -> Unit
 ) {
+    var showMenu by remember { mutableStateOf(false) }
     var isSearchActive by remember { mutableStateOf(state.hasSearchQuery) }
 
     // Update search active state when search query changes
@@ -75,6 +81,34 @@ fun TagsScreenContent(
                     actions = {
                         IconButton(onClick = { isSearchActive = true }) {
                             Icon(Icons.Default.Search, contentDescription = "Search")
+                        }
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Import/Export") },
+                                onClick = {
+                                    showMenu = false
+                                    onAction(TagsScreenAction.OnImportExportClicked)
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.ImportExport, contentDescription = null)
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Settings") },
+                                onClick = {
+                                    showMenu = false
+                                    onAction(TagsScreenAction.OnSettingsClicked)
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Settings, contentDescription = null)
+                                }
+                            )
                         }
                     }
                 )
