@@ -17,13 +17,6 @@ class FormatsListFactory {
                 isSelected = selectedFormat == "CSV"
             ),
             FormatModel(
-                name = "XML",
-                format = FileFormat.XML,
-                description = "Extensible Markup Language format",
-                shortDescription = "XML",
-                isSelected = selectedFormat == "XML"
-            ),
-            FormatModel(
                 name = "JSON",
                 format = FileFormat.JSON,
                 description = "JavaScript Object Notation format",

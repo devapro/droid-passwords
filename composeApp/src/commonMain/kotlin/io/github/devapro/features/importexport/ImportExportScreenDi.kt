@@ -5,12 +5,15 @@ import io.github.devapro.features.importexport.factory.ImportExportScreenInitSta
 import io.github.devapro.features.importexport.reducer.InitScreenReducer
 import io.github.devapro.features.importexport.reducer.OnBackClickedReducer
 import io.github.devapro.features.importexport.reducer.OnExportClickedReducer
-import io.github.devapro.features.importexport.reducer.OnFileSelectedReducer
+import io.github.devapro.features.importexport.reducer.OnExportFileSelectedReducer
 import io.github.devapro.features.importexport.reducer.OnFileSelectionCancelReducer
 import io.github.devapro.features.importexport.reducer.OnFormatSelectedReducer
 import io.github.devapro.features.importexport.reducer.OnImportClickedReducer
 import io.github.devapro.features.importexport.reducer.OnSwitchToExportReducer
 import io.github.devapro.features.importexport.reducer.OnSwitchToImportReducer
+import io.github.devapro.features.importexport.usecase.SaveCSVFileUseCase
+import io.github.devapro.features.importexport.usecase.SaveDataFileUseCase
+import io.github.devapro.features.importexport.usecase.SaveJsonFileUseCase
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 
@@ -19,6 +22,13 @@ fun Module.registerImportExportScreenDi() {
     factoryOf(::ImportExportScreenInitStateFactory)
     factoryOf(::FormatsListFactory)
     reducersDi()
+    useCaseDi()
+}
+
+private fun Module.useCaseDi() {
+    factoryOf(::SaveCSVFileUseCase)
+    factoryOf(::SaveDataFileUseCase)
+    factoryOf(::SaveJsonFileUseCase)
 }
 
 private fun Module.reducersDi() {
@@ -30,7 +40,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnExportClickedReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnFileSelectionCancelReducer)
-    factoryOf(::OnFileSelectedReducer)
+    factoryOf(::OnExportFileSelectedReducer)
     
     factory {
         ImportExportScreenActionProcessor(
@@ -43,7 +53,7 @@ private fun Module.reducersDi() {
                 get(OnExportClickedReducer::class),
                 get(OnBackClickedReducer::class),
                 get(OnFileSelectionCancelReducer::class),
-                get(OnFileSelectedReducer::class),
+                get(OnExportFileSelectedReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()

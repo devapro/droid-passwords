@@ -2,15 +2,18 @@ package io.github.devapro.features.importexport.reducer
 
 import io.github.devapro.core.mvi.AppResult
 import io.github.devapro.core.mvi.Reducer
-import io.github.devapro.data.vault.VaultFileRepository
-import io.github.devapro.data.vault.VaultRuntimeRepository
+import io.github.devapro.features.importexport.model.FileFormat
 import io.github.devapro.features.importexport.model.ImportExportScreenAction
 import io.github.devapro.features.importexport.model.ImportExportScreenEvent
 import io.github.devapro.features.importexport.model.ImportExportScreenState
+import io.github.devapro.features.importexport.usecase.SaveCSVFileUseCase
+import io.github.devapro.features.importexport.usecase.SaveDataFileUseCase
+import io.github.devapro.features.importexport.usecase.SaveJsonFileUseCase
 
-class OnFileSelectedReducer(
-    private val fileRepository: VaultFileRepository,
-    private val repository: VaultRuntimeRepository
+class OnExportFileSelectedReducer(
+    private val saveDataFileUseCase: SaveDataFileUseCase,
+    private val saveJsonFileUseCase: SaveJsonFileUseCase,
+    private val saveCSVFileUseCase: SaveCSVFileUseCase,
 ) : Reducer<ImportExportScreenAction.ExportFileSelected, ImportExportScreenState, ImportExportScreenAction, ImportExportScreenEvent> {
 
     override val actionClass = ImportExportScreenAction.ExportFileSelected::class
@@ -22,10 +25,20 @@ class OnFileSelectedReducer(
         val currentState = getState()
         return if (currentState is ImportExportScreenState.Loaded) {
 
-            val result = fileRepository.saveVault(
-                vaultModel = repository.getVault(),
-                fileForExport = action.file
-            )
+
+            val result = when (currentState.selectedFormat) {
+                FileFormat.CSV -> {
+                    saveCSVFileUseCase.execute(action.file)
+                }
+
+                FileFormat.JSON -> {
+                    saveJsonFileUseCase.execute(action.file)
+                }
+
+                FileFormat.DATA -> {
+                    saveDataFileUseCase.execute(action.file)
+                }
+            }
 
             when (result) {
                 is AppResult.Success -> {
