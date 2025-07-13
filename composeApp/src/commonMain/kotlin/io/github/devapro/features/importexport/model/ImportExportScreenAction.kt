@@ -20,4 +20,11 @@ sealed interface ImportExportScreenAction {
     data object ExportFileCancelled : ImportExportScreenAction
 
     data object OnBackClicked : ImportExportScreenAction
+
+    data class ImportFileSelected(
+        val file: PlatformFile,
+        val password: String
+    ) : ImportExportScreenAction
+
+    data object ImportFileCancelled : ImportExportScreenAction
 }

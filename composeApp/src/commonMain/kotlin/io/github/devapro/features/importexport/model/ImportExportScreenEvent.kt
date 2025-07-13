@@ -1,15 +1,17 @@
 package io.github.devapro.features.importexport.model
 
+import io.github.vinceglb.filekit.dialogs.FileKitType
+
 sealed interface ImportExportScreenEvent {
 
     data object NavigateBack : ImportExportScreenEvent
 
-    data class OpenFileSelector(
+    data class OpenFileForExport(
         val fileName: String,
         val fileExtension: String
     ) : ImportExportScreenEvent
 
-    data class ImportFile(val format: FileFormat) : ImportExportScreenEvent
+    data class OpenFileForImport(val type: FileKitType) : ImportExportScreenEvent
 
     data class ShowError(val message: String) : ImportExportScreenEvent
 

@@ -19,7 +19,7 @@ class OnExportClickedReducer
             Reducer.Result(
                 state = currentState.copy(isProcessing = true),
                 action = null,
-                event = ImportExportScreenEvent.OpenFileSelector(
+                event = ImportExportScreenEvent.OpenFileForExport(
                     fileName = "exported_data",
                     fileExtension = currentState.selectedFormat.fileExtension
                 )

@@ -12,6 +12,7 @@ import io.github.devapro.features.importexport.model.ImportExportScreenAction
 import io.github.devapro.features.importexport.model.ImportExportScreenEvent
 import io.github.devapro.features.importexport.ui.ImportExportScreenContent
 import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.dialogs.openFileSaver
 import org.koin.compose.koinInject
 
@@ -53,11 +54,24 @@ fun ImportExportScreenRoot() {
                     )
                 }
 
-                is ImportExportScreenEvent.ImportFile -> {
-
+                is ImportExportScreenEvent.OpenFileForImport -> {
+                    val file = FileKit.openFilePicker(
+                        type = it.type,
+                        title = "Select File",
+                    )
+                    if (file != null) {
+                        viewModel.onAction(
+                            ImportExportScreenAction.ImportFileSelected(
+                                file = file,
+                                password = "" //TODO: Implement password input if needed
+                            )
+                        )
+                    } else {
+                        viewModel.onAction(ImportExportScreenAction.ImportFileCancelled)
+                    }
                 }
 
-                is ImportExportScreenEvent.OpenFileSelector -> {
+                is ImportExportScreenEvent.OpenFileForExport -> {
                     val file = FileKit.openFileSaver(
                         suggestedName = it.fileName,
                         extension = it.fileExtension

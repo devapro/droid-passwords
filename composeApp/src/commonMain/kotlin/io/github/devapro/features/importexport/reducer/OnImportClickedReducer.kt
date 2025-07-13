@@ -4,6 +4,7 @@ import io.github.devapro.core.mvi.Reducer
 import io.github.devapro.features.importexport.model.ImportExportScreenAction
 import io.github.devapro.features.importexport.model.ImportExportScreenEvent
 import io.github.devapro.features.importexport.model.ImportExportScreenState
+import io.github.vinceglb.filekit.dialogs.FileKitType
 
 class OnImportClickedReducer
     : Reducer<ImportExportScreenAction.OnImportClicked, ImportExportScreenState, ImportExportScreenAction, ImportExportScreenEvent> {
@@ -19,7 +20,9 @@ class OnImportClickedReducer
             Reducer.Result(
                 state = currentState.copy(isProcessing = true),
                 action = null,
-                event = ImportExportScreenEvent.ImportFile(currentState.selectedFormat)
+                event = ImportExportScreenEvent.OpenFileForImport(
+                    type = FileKitType.File(setOf(currentState.selectedFormat.fileExtension))
+                )
             )
         } else {
             Reducer.Result(

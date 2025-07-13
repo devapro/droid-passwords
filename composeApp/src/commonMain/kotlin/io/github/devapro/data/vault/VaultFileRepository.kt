@@ -63,8 +63,11 @@ class VaultFileRepository(
         }
     }
 
-    suspend fun getVault(password: String): AppResult<VaultModel> {
-        val file = getVaultFile()
+    suspend fun getVault(
+        password: String,
+        fileForImport: PlatformFile? = null
+    ): AppResult<VaultModel> {
+        val file = fileForImport ?: getVaultFile()
         if (!file.exists()) {
             return AppResult.Failure(Exception("Vault does not exist"))
         }
