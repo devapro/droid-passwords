@@ -2,6 +2,7 @@ package io.github.devapro.features.importdata.usecase
 
 import io.github.devapro.core.mvi.AppResult
 import io.github.devapro.data.vault.VaultAdditionalFieldModel
+import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.data.vault.VaultItemModel
 import io.github.devapro.data.vault.VaultModel
 import io.github.devapro.data.vault.VaultRuntimeRepository
@@ -11,7 +12,8 @@ import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
 
 class ImportFromJsonUseCase(
-    private val repository: VaultRuntimeRepository
+    private val repository: VaultRuntimeRepository,
+    private val fileRepository: VaultFileRepository
 ) {
 
     suspend fun execute(
@@ -25,6 +27,7 @@ class ImportFromJsonUseCase(
                 password = password
             )
             repository.loadVault(model)
+            fileRepository.saveVault(model)
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Failure(e)

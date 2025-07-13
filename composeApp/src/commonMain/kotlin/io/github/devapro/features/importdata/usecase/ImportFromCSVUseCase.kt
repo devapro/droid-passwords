@@ -2,6 +2,7 @@ package io.github.devapro.features.importdata.usecase
 
 import io.github.devapro.core.mvi.AppResult
 import io.github.devapro.data.vault.VaultAdditionalFieldModel
+import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.data.vault.VaultItemModel
 import io.github.devapro.data.vault.VaultItemTag
 import io.github.devapro.data.vault.VaultModel
@@ -10,7 +11,8 @@ import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.readString
 
 class ImportFromCSVUseCase(
-    private val repository: VaultRuntimeRepository
+    private val repository: VaultRuntimeRepository,
+    private val fileRepository: VaultFileRepository
 ) {
 
     suspend fun execute(
@@ -20,12 +22,12 @@ class ImportFromCSVUseCase(
         val fileContent = file.readString()
         return try {
             val items = parseCsv(fileContent)
-            repository.loadVault(
-                VaultModel(
-                    items = items,
-                    password = password
-                )
+            val model = VaultModel(
+                items = items,
+                password = password
             )
+            repository.loadVault(model)
+            fileRepository.saveVault(model)
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Failure(e)

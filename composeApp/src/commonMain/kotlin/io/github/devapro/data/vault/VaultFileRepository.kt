@@ -67,13 +67,17 @@ class VaultFileRepository(
         password: String,
         fileForImport: PlatformFile? = null
     ): AppResult<VaultModel> {
-        val file = fileForImport ?: getVaultFile()
-        if (!file.exists()) {
-            return AppResult.Failure(Exception("Vault does not exist"))
+        try {
+            val file = fileForImport ?: getVaultFile()
+            if (!file.exists()) {
+                return AppResult.Failure(Exception("Vault does not exist"))
+            }
+            val vaultEncodedContent = file.readBytes()
+            val vaultRawContent = cryptoMapper.decode(password, vaultEncodedContent)
+            return AppResult.Success(json.decodeFromString(vaultRawContent))
+        } catch (_: Exception) {
+            return AppResult.Failure(Exception("Failed to load vault. Please check your password or file."))
         }
-        val vaultEncodedContent = file.readBytes()
-        val vaultRawContent = cryptoMapper.decode(password, vaultEncodedContent)
-        return AppResult.Success(json.decodeFromString(vaultRawContent))
     }
 
     suspend fun saveVault(

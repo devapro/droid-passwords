@@ -1,11 +1,13 @@
 package io.github.devapro.features.unlock
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.tags.navigation.TagsScreen
 import io.github.devapro.features.unlock.model.UnLockVaultScreenAction
 import io.github.devapro.features.unlock.model.UnLockVaultScreenEvent
@@ -16,6 +18,7 @@ import org.koin.compose.koinInject
 @Composable
 fun UnLockVaultScreenRoot() {
     val viewModel: UnLockVaultScreenViewModel = koinInject()
+    val snackBarManager: SnackbarHostStateManager = koinInject()
     val navigator = LocalNavigator.currentOrThrow
     
     val state by viewModel.state.collectAsState()
@@ -37,7 +40,12 @@ fun UnLockVaultScreenRoot() {
                 }
 
                 is UnLockVaultScreenEvent.ShowError -> {
-                    // Handle unlock vault event
+                    snackBarManager.show(
+                        message = it.error,
+                        actionButtonText = "OK",
+                        duration = SnackbarDuration.Short,
+                        actionButtonCallback = { }
+                    )
                 }
             }
         }

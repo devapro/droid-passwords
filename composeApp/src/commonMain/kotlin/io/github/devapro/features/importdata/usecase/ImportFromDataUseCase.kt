@@ -21,6 +21,7 @@ class ImportFromDataUseCase(
         return when (model) {
             is AppResult.Success -> {
                 repository.loadVault(model.value)
+                fileRepository.saveVault(model.value)
                 AppResult.Success(Unit)
             }
 
