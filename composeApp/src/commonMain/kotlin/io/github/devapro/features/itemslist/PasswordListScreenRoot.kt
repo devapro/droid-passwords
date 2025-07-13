@@ -8,7 +8,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.data.vault.VaultItemTag
 import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
-import io.github.devapro.features.importexport.navigation.ImportExportScreen
+import io.github.devapro.features.export.navigation.ExportScreen
 import io.github.devapro.features.itemdetails.navigation.PasswordDetailScreen
 import io.github.devapro.features.itemslist.model.PasswordListScreenAction
 import io.github.devapro.features.itemslist.model.PasswordListScreenEvent
@@ -45,8 +45,8 @@ fun PasswordListScreenRoot(
                 is PasswordListScreenEvent.NavigateToPasswordDetail -> {
                     navigator.push(PasswordDetailScreen(it.item))
                 }
-                is PasswordListScreenEvent.NavigateToImportExport -> {
-                    navigator.push(ImportExportScreen)
+                is PasswordListScreenEvent.NavigateToExport -> {
+                    navigator.push(ExportScreen)
                 }
                 is PasswordListScreenEvent.NavigateToSettings -> {
                     //navigator.push(SettingsScreen())

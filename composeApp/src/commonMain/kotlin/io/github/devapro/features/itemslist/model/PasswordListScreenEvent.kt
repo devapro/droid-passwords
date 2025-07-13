@@ -8,7 +8,7 @@ sealed interface PasswordListScreenEvent {
 
     data class NavigateToPasswordDetail(val item: ItemModel) : PasswordListScreenEvent
 
-    data object NavigateToImportExport : PasswordListScreenEvent
+    data object NavigateToExport : PasswordListScreenEvent
 
     data object NavigateToSettings : PasswordListScreenEvent
 

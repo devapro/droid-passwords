@@ -7,18 +7,18 @@ import io.github.devapro.features.tags.model.TagsScreenState
 
 class OnImportExportClickedReducer
     :
-    Reducer<TagsScreenAction.OnImportExportClicked, TagsScreenState, TagsScreenAction, TagsScreenEvent> {
+    Reducer<TagsScreenAction.OnExportClicked, TagsScreenState, TagsScreenAction, TagsScreenEvent> {
 
-    override val actionClass = TagsScreenAction.OnImportExportClicked::class
+    override val actionClass = TagsScreenAction.OnExportClicked::class
 
     override suspend fun reduce(
-        action: TagsScreenAction.OnImportExportClicked,
+        action: TagsScreenAction.OnExportClicked,
         getState: () -> TagsScreenState
-    ): Reducer.Result<TagsScreenState, TagsScreenAction.OnImportExportClicked, TagsScreenEvent?> {
+    ): Reducer.Result<TagsScreenState, TagsScreenAction.OnExportClicked, TagsScreenEvent?> {
         return Reducer.Result(
             state = getState(),
             action = null,
-            event = TagsScreenEvent.NavigateToImportExport
+            event = TagsScreenEvent.NavigateToExport
         )
     }
 } 

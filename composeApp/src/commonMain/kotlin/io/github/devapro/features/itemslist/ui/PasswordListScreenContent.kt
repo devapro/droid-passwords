@@ -110,10 +110,10 @@ fun PasswordListScreenContent(
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Import/Export") },
+                                text = { Text("Export") },
                                 onClick = {
                                     showMenu = false
-                                    onAction(PasswordListScreenAction.OnImportExportClicked)
+                                    onAction(PasswordListScreenAction.OnExportClicked)
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Default.ImportExport, contentDescription = null)

@@ -7,7 +7,7 @@ import io.github.devapro.features.itemslist.reducer.OnAddPasswordClickedReducer
 import io.github.devapro.features.itemslist.reducer.OnBackClickedReducer
 import io.github.devapro.features.itemslist.reducer.OnClearSearchReducer
 import io.github.devapro.features.itemslist.reducer.OnDeletePasswordClickedReducer
-import io.github.devapro.features.itemslist.reducer.OnImportExportClickedReducer
+import io.github.devapro.features.itemslist.reducer.OnExportClickedReducer
 import io.github.devapro.features.itemslist.reducer.OnPasswordItemClickedReducer
 import io.github.devapro.features.itemslist.reducer.OnSearchChangedReducer
 import io.github.devapro.features.itemslist.reducer.OnSettingsClickedReducer
@@ -27,7 +27,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnAddPasswordClickedReducer)
     factoryOf(::OnPasswordItemClickedReducer)
     factoryOf(::OnDeletePasswordClickedReducer)
-    factoryOf(::OnImportExportClickedReducer)
+    factoryOf(::OnExportClickedReducer)
     factoryOf(::OnSettingsClickedReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnClearSearchReducer)
@@ -40,7 +40,7 @@ private fun Module.reducersDi() {
                 get(OnAddPasswordClickedReducer::class),
                 get(OnPasswordItemClickedReducer::class),
                 get(OnDeletePasswordClickedReducer::class),
-                get(OnImportExportClickedReducer::class),
+                get(OnExportClickedReducer::class),
                 get(OnSettingsClickedReducer::class),
                 get(OnBackClickedReducer::class),
                 get(OnClearSearchReducer::class),

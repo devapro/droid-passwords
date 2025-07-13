@@ -8,7 +8,7 @@ sealed interface TagsScreenEvent {
 
     data object NavigateToAddPassword : TagsScreenEvent
 
-    data object NavigateToImportExport : TagsScreenEvent
+    data object NavigateToExport : TagsScreenEvent
 
     data object NavigateToSettings : TagsScreenEvent
 } 

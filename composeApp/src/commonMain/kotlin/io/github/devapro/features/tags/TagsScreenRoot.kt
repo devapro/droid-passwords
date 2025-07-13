@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
-import io.github.devapro.features.importexport.navigation.ImportExportScreen
+import io.github.devapro.features.export.navigation.ExportScreen
 import io.github.devapro.features.itemslist.navigation.PasswordListScreen
 import io.github.devapro.features.itemslist.navigation.PasswordTagFilterType
 import io.github.devapro.features.tags.model.TagItemType
@@ -52,8 +52,8 @@ fun TagsScreenRoot() {
                     )
                 }
 
-                is TagsScreenEvent.NavigateToImportExport -> {
-                    navigator.push(ImportExportScreen)
+                is TagsScreenEvent.NavigateToExport -> {
+                    navigator.push(ExportScreen)
                 }
 
                 is TagsScreenEvent.NavigateToSettings -> {
@@ -66,10 +66,6 @@ fun TagsScreenRoot() {
     when (state) {
         is TagsScreenState.Loading -> {
             // Show loading indicator if needed
-        }
-
-        is TagsScreenState.Error -> {
-            // Show error state if needed
         }
 
         is TagsScreenState.Success -> {

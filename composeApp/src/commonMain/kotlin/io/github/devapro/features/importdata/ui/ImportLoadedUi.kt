@@ -1,0 +1,120 @@
+package io.github.devapro.features.importdata.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.features.importdata.model.ImportScreenAction
+import io.github.devapro.features.importdata.model.ImportScreenState
+import org.koin.compose.koinInject
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ImportLoadedUi(
+    state: ImportScreenState.Loaded,
+    onAction: (ImportScreenAction) -> Unit
+) {
+    val snackBarManager: SnackbarHostStateManager = koinInject()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Import Passwords") },
+                navigationIcon = {
+                    IconButton(onClick = { onAction(ImportScreenAction.OnBackClicked) }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                modifier = Modifier,
+                hostState = snackBarManager.state,
+                snackbar = { snackbarData ->
+                    Snackbar(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background),
+                        snackbarData = snackbarData
+                    )
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            // File Format Selection
+            FormatSelectionCard(
+                state = state,
+                onFormatSelected = { format ->
+                    onAction(ImportScreenAction.OnFormatSelected(format))
+                }
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Action Button
+            Button(
+                onClick = {
+                    onAction(ImportScreenAction.OnImportClicked)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !state.isProcessing,
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                if (state.isProcessing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Upload,
+                        contentDescription = null
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Import from ${state.selectedFormat.name}",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            // Warning/Info Text
+            Text(
+                text = "⚠️ Import will add new passwords to your existing collection. Duplicates may be created.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+        }
+    }
+}

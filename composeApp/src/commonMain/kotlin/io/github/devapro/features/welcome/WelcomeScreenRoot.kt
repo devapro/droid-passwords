@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.github.devapro.features.importexport.navigation.ImportExportScreen
+import io.github.devapro.features.importdata.navigation.ImportScreen
 import io.github.devapro.features.setlock.navigation.SetLockPasswordScreen
 import io.github.devapro.features.unlock.navigation.UnLockVaultScreen
 import io.github.devapro.features.welcome.model.WelcomeScreenAction
@@ -29,7 +29,7 @@ fun WelcomeScreenRoot() {
         viewModel.event.collect {
             when (it) {
                 is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(SetLockPasswordScreen)
-                is WelcomeScreenEvent.OnOpenExistingVault -> navigator.push(ImportExportScreen)
+                is WelcomeScreenEvent.OnOpenExistingVault -> navigator.push(ImportScreen)
                 is WelcomeScreenEvent.OnLoadVault -> navigator.push(UnLockVaultScreen)
             }
         }

@@ -9,7 +9,7 @@ import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.data.vault.VaultRuntimeRepository
 import io.github.devapro.features.edit.registerAddEditPasswordScreenDi
 import io.github.devapro.features.export.registerExportScreenDi
-import io.github.devapro.features.importexport.registerImportExportScreenDi
+import io.github.devapro.features.importdata.registerImportScreenDi
 import io.github.devapro.features.itemdetails.registerPasswordDetailScreenDi
 import io.github.devapro.features.itemslist.registerPasswordListScreenDi
 import io.github.devapro.features.setlock.registerSetLockPasswordScreenDi
@@ -37,7 +37,7 @@ val appModule: Module = module {
     dataDi()
 
     registerWelcomeScreenDi()
-    registerImportExportScreenDi()
+    registerImportScreenDi()
     registerExportScreenDi()
     registerSetLockPasswordScreenDi()
     registerUnLockVaultScreenDi()

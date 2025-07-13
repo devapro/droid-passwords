@@ -20,7 +20,7 @@ sealed interface PasswordListScreenAction {
 
     data class OnDeletePasswordClicked(val item: ItemModel) : PasswordListScreenAction
 
-    data object OnImportExportClicked : PasswordListScreenAction
+    data object OnExportClicked : PasswordListScreenAction
 
     data object OnSettingsClicked : PasswordListScreenAction
 
