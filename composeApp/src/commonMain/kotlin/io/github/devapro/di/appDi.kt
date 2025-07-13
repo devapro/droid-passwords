@@ -8,6 +8,7 @@ import io.github.devapro.data.vault.CryptoMapper
 import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.data.vault.VaultRuntimeRepository
 import io.github.devapro.features.edit.registerAddEditPasswordScreenDi
+import io.github.devapro.features.export.registerExportScreenDi
 import io.github.devapro.features.importexport.registerImportExportScreenDi
 import io.github.devapro.features.itemdetails.registerPasswordDetailScreenDi
 import io.github.devapro.features.itemslist.registerPasswordListScreenDi
@@ -37,6 +38,7 @@ val appModule: Module = module {
 
     registerWelcomeScreenDi()
     registerImportExportScreenDi()
+    registerExportScreenDi()
     registerSetLockPasswordScreenDi()
     registerUnLockVaultScreenDi()
     registerPasswordListScreenDi()
