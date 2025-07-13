@@ -10,10 +10,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,7 +31,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import io.github.devapro.core.ui.EOutlinedTextField
 import io.github.devapro.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.importdata.model.ImportScreenAction
 import io.github.devapro.features.importdata.model.ImportScreenState
@@ -39,6 +50,7 @@ fun ImportLoadedUi(
     onAction: (ImportScreenAction) -> Unit
 ) {
     val snackBarManager: SnackbarHostStateManager = koinInject()
+    val keyboardController = LocalSoftwareKeyboardController.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -71,6 +83,55 @@ fun ImportLoadedUi(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                EOutlinedTextField(
+                    value = state.password,
+                    onValueChange = { onAction(ImportScreenAction.OnPasswordChanged(it)) },
+                    label = { Text("Password") },
+                    placeholder = { Text("Enter your password") },
+                    visualTransformation = if (state.isPasswordVisible) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { onAction(ImportScreenAction.OnTogglePasswordVisibility) }
+                        ) {
+                            Icon(
+                                imageVector = if (state.isPasswordVisible) {
+                                    Icons.Default.VisibilityOff
+                                } else {
+                                    Icons.Default.Visibility
+                                },
+                                contentDescription = if (state.isPasswordVisible) {
+                                    "Hide password"
+                                } else {
+                                    "Show password"
+                                }
+                            )
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            if (state.isValid) {
+                                onAction(ImportScreenAction.OnUnlockClicked)
+                            }
+                        }
+                    ),
+                    isError = state.passwordError != null,
+                    supportingText = state.passwordError?.let { { Text(it) } },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+            }
             // File Format Selection
             FormatSelectionCard(
                 state = state,
@@ -87,7 +148,7 @@ fun ImportLoadedUi(
                     onAction(ImportScreenAction.OnImportClicked)
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isProcessing,
+                enabled = !state.isProcessing && state.isValid,
                 contentPadding = PaddingValues(16.dp)
             ) {
                 if (state.isProcessing) {

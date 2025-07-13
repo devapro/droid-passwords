@@ -8,6 +8,8 @@ import io.github.devapro.features.importdata.reducer.OnFormatSelectedReducer
 import io.github.devapro.features.importdata.reducer.OnImportClickedReducer
 import io.github.devapro.features.importdata.reducer.OnImportFileCancelledReducer
 import io.github.devapro.features.importdata.reducer.OnImportFileSelectedReducer
+import io.github.devapro.features.importdata.reducer.OnPasswordChangedReducer
+import io.github.devapro.features.importdata.reducer.OnTogglePasswordVisibilityReducer
 import io.github.devapro.features.importdata.usecase.ImportFromCSVUseCase
 import io.github.devapro.features.importdata.usecase.ImportFromDataUseCase
 import io.github.devapro.features.importdata.usecase.ImportFromJsonUseCase
@@ -35,6 +37,8 @@ private fun Module.reducersDi() {
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnImportFileCancelledReducer)
     factoryOf(::OnImportFileSelectedReducer)
+    factoryOf(::OnPasswordChangedReducer)
+    factoryOf(::OnTogglePasswordVisibilityReducer)
     
     factory {
         ImportActionProcessor(
@@ -45,6 +49,8 @@ private fun Module.reducersDi() {
                 get(OnBackClickedReducer::class),
                 get(OnImportFileCancelledReducer::class),
                 get(OnImportFileSelectedReducer::class),
+                get(OnPasswordChangedReducer::class),
+                get(OnTogglePasswordVisibilityReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()

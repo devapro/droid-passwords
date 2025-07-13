@@ -16,9 +16,16 @@ sealed interface ImportScreenAction {
     data object OnBackClicked : ImportScreenAction
 
     data class ImportFileSelected(
-        val file: PlatformFile,
-        val password: String
+        val file: PlatformFile
     ) : ImportScreenAction
 
     data object ImportFileCancelled : ImportScreenAction
+
+    data class OnPasswordChanged(
+        val password: String
+    ) : ImportScreenAction
+
+    data object OnTogglePasswordVisibility : ImportScreenAction
+
+    data object OnUnlockClicked : ImportScreenAction
 }

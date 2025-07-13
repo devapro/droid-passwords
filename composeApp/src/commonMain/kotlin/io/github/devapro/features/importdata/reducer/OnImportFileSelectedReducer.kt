@@ -25,26 +25,25 @@ class OnImportFileSelectedReducer(
         val currentState = getState()
         return if (currentState is ImportScreenState.Loaded) {
 
-
             val result = when (currentState.selectedFormat) {
                 FileFormat.CSV -> {
                     importFromCsvFile.execute(
                         file = action.file,
-                        password = action.password
+                        password = currentState.password
                     )
                 }
 
                 FileFormat.JSON -> {
                     importFromJsonFile.execute(
                         file = action.file,
-                        password = action.password
+                        password = currentState.password
                     )
                 }
 
                 FileFormat.DATA -> {
                     importFromDataFile.execute(
                         file = action.file,
-                        password = action.password
+                        password = currentState.password
                     )
                 }
             }

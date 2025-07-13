@@ -19,6 +19,10 @@ class InitScreenReducer(
     ): Reducer.Result<ImportScreenState, ImportScreenAction.InitScreen, ImportScreenEvent?> {
         return Reducer.Result(
             state = ImportScreenState.Loaded(
+                password = "",
+                passwordError = null,
+                isValid = false,
+                isPasswordVisible = false,
                 selectedFormat = FileFormat.JSON,
                 isProcessing = false,
                 formats = formatsListFactory.createFormatsList(),

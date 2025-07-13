@@ -62,8 +62,7 @@ fun ImportScreenRoot() {
                     if (file != null) {
                         viewModel.onAction(
                             ImportScreenAction.ImportFileSelected(
-                                file = file,
-                                password = "" //TODO: Implement password input if needed
+                                file = file
                             )
                         )
                     } else {
