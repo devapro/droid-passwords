@@ -15,6 +15,7 @@ import io.github.devapro.features.itemslist.model.PasswordListScreenEvent
 import io.github.devapro.features.itemslist.model.PasswordListScreenState
 import io.github.devapro.features.itemslist.navigation.PasswordTagFilterType
 import io.github.devapro.features.itemslist.ui.PasswordListScreenContent
+import io.github.devapro.features.settings.navigation.SettingsScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -49,7 +50,7 @@ fun PasswordListScreenRoot(
                     navigator.push(ExportScreen)
                 }
                 is PasswordListScreenEvent.NavigateToSettings -> {
-                    //navigator.push(SettingsScreen())
+                    navigator.push(SettingsScreen)
                 }
                 is PasswordListScreenEvent.DeletePassword -> {
                     // Handle password deletion

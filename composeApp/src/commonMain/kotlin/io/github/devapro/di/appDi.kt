@@ -4,6 +4,7 @@ import io.github.devapro.core.mvi.CoroutineContextProvider
 import io.github.devapro.core.ui.SnackbarHostStateManager
 import io.github.devapro.data.LocalStorage
 import io.github.devapro.data.LockManager
+import io.github.devapro.data.ThemeManager
 import io.github.devapro.data.vault.CryptoMapper
 import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.data.vault.VaultRuntimeRepository
@@ -13,6 +14,7 @@ import io.github.devapro.features.importdata.registerImportScreenDi
 import io.github.devapro.features.itemdetails.registerPasswordDetailScreenDi
 import io.github.devapro.features.itemslist.registerPasswordListScreenDi
 import io.github.devapro.features.setlock.registerSetLockPasswordScreenDi
+import io.github.devapro.features.settings.registerSettingsScreenDi
 import io.github.devapro.features.tags.registerTagsScreenDi
 import io.github.devapro.features.unlock.registerUnLockVaultScreenDi
 import io.github.devapro.features.welcome.WelcomeScreenViewModel
@@ -44,6 +46,7 @@ val appModule: Module = module {
     registerPasswordListScreenDi()
     registerPasswordDetailScreenDi()
     registerAddEditPasswordScreenDi()
+    registerSettingsScreenDi()
     registerTagsScreenDi()
 }
 
@@ -66,6 +69,7 @@ private fun Module.dataDi() {
     factoryOf(::VaultFileRepository)
     singleOf(::VaultRuntimeRepository)
     singleOf(::CryptoMapper)
+    singleOf(::ThemeManager)
     single {
         Json { ignoreUnknownKeys = true }
     }
