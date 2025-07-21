@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.map
 
 class LocalStorage {
 
-    private val dataStore = createDataStore { "app" }
+    private val dataStore = createDataStore { "app.preferences_pb" }
 
     suspend fun saveString(key: String, value: String) {
         dataStore.edit {
