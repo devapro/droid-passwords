@@ -1,0 +1,2 @@
+-keep class dev.whyoleg.cryptography.*
+-keep class dev.whyoleg.cryptography.providers.jdk.*
