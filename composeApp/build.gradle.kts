@@ -15,7 +15,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
     
@@ -42,7 +42,7 @@ kotlin {
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-android")
             implementation(libs.kstore.file)
-            implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.4.0")
+            implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.5.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -82,7 +82,8 @@ kotlin {
             // Enables FileKit dialogs with Composable utilities
             implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta04")
 
-            implementation("dev.whyoleg.cryptography:cryptography-core:0.4.0")
+            implementation("dev.whyoleg.cryptography:cryptography-core:0.5.0")
+            implementation("dev.whyoleg.cryptography:cryptography-provider-optimal:0.5.0")
 
         }
         commonTest.dependencies {
@@ -91,10 +92,10 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-            implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.4.0")
+            implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.5.0")
         }
         iosMain.dependencies {
-            implementation("dev.whyoleg.cryptography:cryptography-provider-apple:0.4.0")
+            implementation("dev.whyoleg.cryptography:cryptography-provider-apple:0.5.0")
         }
     }
 }
@@ -133,6 +134,11 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "io.github.devapro.MainKt"
+
+        buildTypes.release.proguard {
+            obfuscate = true
+            configurationFiles.from(project.file("compose-desktop.pro"))
+        }
 
         nativeDistributions {
             linux {
