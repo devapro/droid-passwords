@@ -3,16 +3,31 @@ package io.github.devapro.features.settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.features.itemslist.model.PasswordListScreenAction
 import io.github.devapro.features.settings.model.SettingsScreenAction
 import io.github.devapro.features.settings.model.SettingsScreenEvent
 import io.github.devapro.features.settings.model.SettingsScreenState
@@ -39,6 +54,7 @@ import org.koin.compose.koinInject
  * - 5.4: Integrates with ViewModel for state management
  * - 5.5: Provides user feedback through snackbar messages
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenRoot() {
     val viewModel: SettingsScreenViewModel = koinInject()
@@ -82,6 +98,25 @@ fun SettingsScreenRoot() {
 
     // Main UI structure with Scaffold for snackbar integration
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Settings",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navigator.pop()
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {}
+            )
+        },
         snackbarHost = {
             SnackbarHost(hostState = snackbarManager.state)
         }
