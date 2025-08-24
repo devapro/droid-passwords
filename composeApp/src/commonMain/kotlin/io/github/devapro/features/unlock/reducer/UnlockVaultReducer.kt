@@ -38,7 +38,7 @@ class UnlockVaultReducer(
                     Reducer.Result(
                         state = currentState.copy(isProcessing = false),
                         action = null,
-                        event = UnLockVaultScreenEvent.ShowError("Failed to read the vault.")
+                        event = UnLockVaultScreenEvent.ShowError("Wrong password.")
                     )
                 }
             }
