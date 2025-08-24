@@ -38,11 +38,11 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.4"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-android")
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.android)
             implementation(libs.kstore.file)
-            implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.5.0")
+            implementation(libs.cryptography.provider.jdk)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -56,34 +56,38 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.kotlinx.uuid)
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.4"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-compose")
+
+            // Koin
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
             implementation(libs.viewmodel)
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+            implementation(libs.kotlinx.serialization.json)
+
             // DataStore library
-            implementation("androidx.datastore:datastore:1.1.7")
+            implementation(libs.androidx.datastore)
+
             // The Preferences DataStore library
-            implementation("androidx.datastore:datastore-preferences:1.1.7")
+            implementation(libs.androidx.datastore.preferences)
 
             // Navigator
-            implementation("cafe.adriel.voyager:voyager-navigator:1.0.1")
+            implementation(libs.voyager.navigator)
 
             // TabNavigator
-            implementation("cafe.adriel.voyager:voyager-tab-navigator:1.0.1")
+            implementation(libs.voyager.tab.navigator)
 
             // Transitions
-            implementation("cafe.adriel.voyager:voyager-transitions:1.0.1")
+            implementation(libs.voyager.transitions)
 
             // FileKit
-            implementation("io.github.vinceglb:filekit-core:0.10.0-beta04")
+            implementation(libs.filekit.core)
             // Enables FileKit dialogs without Compose dependencies
-            implementation("io.github.vinceglb:filekit-dialogs:0.10.0-beta04")
+            implementation(libs.filekit.dialogs)
             // Enables FileKit dialogs with Composable utilities
-            implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta04")
+            implementation(libs.filekit.dialogs.compose)
 
-            implementation("dev.whyoleg.cryptography:cryptography-core:0.5.0")
-            implementation("dev.whyoleg.cryptography:cryptography-provider-optimal:0.5.0")
+            implementation(libs.cryptography.core)
+            implementation(libs.cryptography.provider.optimal)
 
         }
         commonTest.dependencies {
@@ -92,10 +96,10 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-            implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.5.0")
+            implementation(libs.cryptography.provider.jdk)
         }
         iosMain.dependencies {
-            implementation("dev.whyoleg.cryptography:cryptography-provider-apple:0.5.0")
+            implementation(libs.cryptography.provider.apple)
         }
     }
 }

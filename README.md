@@ -15,6 +15,7 @@ The main features include:
 - Compose Multiplatform.
 - MVI (Model-View-Intent) architecture for state management.
 - Koin DI (Dependency Injection) for managing dependencies.
+- androidx.datastore for setting storage.
 - [Voyager for navigation](https://github.com/adrielcafe/voyager).
 - [FileKit for file handling](https://github.com/vinceglb/FileKit).
 - [CryptoKit for encryption](https://github.com/whyoleg/cryptography-kotlin).
