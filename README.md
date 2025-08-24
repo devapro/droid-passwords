@@ -15,12 +15,15 @@ The main features include:
 - Compose Multiplatform.
 - MVI (Model-View-Intent) architecture for state management.
 - Koin DI (Dependency Injection) for managing dependencies.
+- [Voyager for navigation](https://github.com/adrielcafe/voyager).
+- [FileKit for file handling](https://github.com/vinceglb/FileKit).
+- [CryptoKit for encryption](https://github.com/whyoleg/cryptography-kotlin).
 - Multi-modules architecture for better code organization.
 
 This project is inspired by [Buttercup Desktop](https://github.com/buttercup/buttercup-desktop)
 
 ### TODO
-- [ ] Import / export to/from file
 - [ ] Modularize the project
 - [ ] Add CI for iOS and Android, desktop builds
-- [ ] Implement showing errors in the UI
+- [ ] Add tests
+- [ ] Add ability to have a few vaults
