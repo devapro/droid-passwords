@@ -10,6 +10,7 @@ import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
 import io.github.devapro.features.export.navigation.ExportScreen
 import io.github.devapro.features.itemslist.navigation.PasswordListScreen
 import io.github.devapro.features.itemslist.navigation.PasswordTagFilterType
+import io.github.devapro.features.settings.navigation.SettingsScreen
 import io.github.devapro.features.tags.model.TagItemType
 import io.github.devapro.features.tags.model.TagsScreenAction
 import io.github.devapro.features.tags.model.TagsScreenEvent
@@ -57,7 +58,7 @@ fun TagsScreenRoot() {
                 }
 
                 is TagsScreenEvent.NavigateToSettings -> {
-
+                    navigator.push(SettingsScreen)
                 }
             }
         }

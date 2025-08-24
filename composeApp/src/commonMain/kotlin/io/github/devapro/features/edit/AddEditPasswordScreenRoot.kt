@@ -13,6 +13,7 @@ import io.github.devapro.features.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState
 import io.github.devapro.features.edit.ui.AddEditPasswordScreenContent
 import io.github.devapro.model.ItemModel
+import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
 @Composable
@@ -44,6 +45,8 @@ fun AddEditPasswordScreenRoot(
                             navigator.pop()
                         }
                     )
+                    delay(1000L)
+                    navigator.pop()
                 }
                 is AddEditPasswordScreenEvent.SaveError -> {
                     // Handle save error - show snackbar

@@ -13,4 +13,4 @@ fun createDataStore(producePath: () -> String): DataStore<Preferences> =
         produceFile = { producePath().toPath() }
     )
 
-internal const val dataStoreFileName = "dice.preferences_pb"
+internal const val dataStoreFileName = "settings.plist"
