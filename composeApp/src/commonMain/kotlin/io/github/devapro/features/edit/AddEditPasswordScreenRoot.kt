@@ -8,11 +8,11 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.droid.core.ui.SnackbarHostStateManager
+import io.github.devapro.droid.data.model.ItemModel
 import io.github.devapro.features.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.features.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState
 import io.github.devapro.features.edit.ui.AddEditPasswordScreenContent
-import io.github.devapro.model.ItemModel
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 

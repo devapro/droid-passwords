@@ -2,8 +2,8 @@ package io.github.devapro.features.settings.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.github.devapro.model.LockInterval
-import io.github.devapro.model.ThemeMode
+import io.github.devapro.droid.data.model.LockInterval
+import io.github.devapro.droid.data.model.ThemeMode
 
 /**
  * Convenience composable for LockInterval radio group.

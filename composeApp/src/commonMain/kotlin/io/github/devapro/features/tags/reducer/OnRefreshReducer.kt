@@ -1,7 +1,7 @@
 package io.github.devapro.features.tags.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
-import io.github.devapro.data.vault.VaultRuntimeRepository
+import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.features.tags.mapper.TagsMapper
 import io.github.devapro.features.tags.model.TagsScreenAction
 import io.github.devapro.features.tags.model.TagsScreenEvent

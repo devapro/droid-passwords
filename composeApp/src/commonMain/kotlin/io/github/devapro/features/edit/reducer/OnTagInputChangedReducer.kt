@@ -1,7 +1,7 @@
 package io.github.devapro.features.edit.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
-import io.github.devapro.data.vault.VaultItemTag
+import io.github.devapro.droid.data.vault.VaultItemTag
 import io.github.devapro.features.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.features.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState

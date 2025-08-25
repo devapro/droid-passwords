@@ -1,6 +1,6 @@
 package io.github.devapro.features.tags.mapper
 
-import io.github.devapro.data.vault.VaultItemModel
+import io.github.devapro.droid.data.vault.VaultItemModel
 import io.github.devapro.features.tags.model.TagItemModel
 import io.github.devapro.features.tags.model.TagItemType
 

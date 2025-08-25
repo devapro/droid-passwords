@@ -1,7 +1,7 @@
 package io.github.devapro.features.setlock.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
-import io.github.devapro.data.vault.VaultFileRepository
+import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.features.setlock.model.SetLockPasswordScreenAction
 import io.github.devapro.features.setlock.model.SetLockPasswordScreenEvent
 import io.github.devapro.features.setlock.model.SetLockPasswordScreenState

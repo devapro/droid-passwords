@@ -1,7 +1,7 @@
 package io.github.devapro.features.settings.model
 
-import io.github.devapro.model.LockInterval
-import io.github.devapro.model.ThemeMode
+import io.github.devapro.droid.data.model.LockInterval
+import io.github.devapro.droid.data.model.ThemeMode
 
 sealed interface SettingsScreenState {
     data object Loading : SettingsScreenState

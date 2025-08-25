@@ -1,8 +1,8 @@
 package io.github.devapro
 
 import android.app.Application
-import io.github.devapro.data.AndroidThemeDetector
 import io.github.devapro.di.initKoin
+import io.github.devapro.droid.data.AndroidThemeDetector
 
 class DroidPasswordApplication: Application() {
 

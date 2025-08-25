@@ -1,8 +1,8 @@
 package io.github.devapro.features.settings
 
-import io.github.devapro.data.SettingsRepository
-import io.github.devapro.data.SettingsRepositoryImpl
-import io.github.devapro.data.ThemeManager
+import io.github.devapro.droid.data.SettingsRepository
+import io.github.devapro.droid.data.SettingsRepositoryImpl
+import io.github.devapro.droid.data.ThemeManager
 import io.github.devapro.features.settings.factory.SettingsScreenInitStateFactory
 import io.github.devapro.features.settings.reducer.InitScreenReducer
 import io.github.devapro.features.settings.reducer.OnBackClickedReducer

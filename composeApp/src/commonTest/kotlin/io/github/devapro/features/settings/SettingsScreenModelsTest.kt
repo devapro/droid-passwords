@@ -1,10 +1,10 @@
 package io.github.devapro.features.settings
 
+import io.github.devapro.data.model.LockInterval
+import io.github.devapro.data.model.ThemeMode
 import io.github.devapro.features.settings.model.SettingsScreenAction
 import io.github.devapro.features.settings.model.SettingsScreenEvent
 import io.github.devapro.features.settings.model.SettingsScreenState
-import io.github.devapro.model.LockInterval
-import io.github.devapro.model.ThemeMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

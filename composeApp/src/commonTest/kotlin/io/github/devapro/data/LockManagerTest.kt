@@ -1,6 +1,6 @@
 package io.github.devapro.data
 
-import io.github.devapro.model.LockInterval
+import io.github.devapro.data.model.LockInterval
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.github.devapro.data.vault.VaultItemTag
+import io.github.devapro.droid.data.vault.VaultItemTag
 import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
 import io.github.devapro.features.export.navigation.ExportScreen
 import io.github.devapro.features.itemdetails.navigation.PasswordDetailScreen

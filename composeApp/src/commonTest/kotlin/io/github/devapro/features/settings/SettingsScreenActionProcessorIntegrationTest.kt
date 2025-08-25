@@ -1,5 +1,7 @@
 package io.github.devapro.features.settings
 
+import io.github.devapro.data.model.LockInterval
+import io.github.devapro.data.model.ThemeMode
 import io.github.devapro.features.settings.factory.SettingsScreenInitStateFactory
 import io.github.devapro.features.settings.model.SettingsScreenState
 import kotlin.test.Test
@@ -38,8 +40,8 @@ class SettingsScreenActionProcessorIntegrationTest {
         assertEquals("Test error", errorState.message)
 
         val successState = SettingsScreenState.Success(
-            lockInterval = io.github.devapro.model.LockInterval.NEVER,
-            themeMode = io.github.devapro.model.ThemeMode.LIGHT,
+            lockInterval = LockInterval.NEVER,
+            themeMode = ThemeMode.LIGHT,
             vaultFilePath = "/test/path"
         )
         assertTrue(successState is SettingsScreenState.Success)
@@ -57,7 +59,7 @@ class SettingsScreenActionProcessorIntegrationTest {
 
         val lockIntervalAction =
             io.github.devapro.features.settings.model.SettingsScreenAction.OnLockIntervalChanged(
-                io.github.devapro.model.LockInterval.FIFTEEN_MINUTES
+                LockInterval.FIFTEEN_MINUTES
             )
         assertTrue(lockIntervalAction is io.github.devapro.features.settings.model.SettingsScreenAction.OnLockIntervalChanged)
     }
@@ -86,8 +88,8 @@ class SettingsScreenActionProcessorIntegrationTest {
         val loadingState = SettingsScreenState.Loading
         val errorState = SettingsScreenState.Error("Failed to load")
         val successState = SettingsScreenState.Success(
-            lockInterval = io.github.devapro.model.LockInterval.THIRTY_MINUTES,
-            themeMode = io.github.devapro.model.ThemeMode.SYSTEM,
+            lockInterval = LockInterval.THIRTY_MINUTES,
+            themeMode = ThemeMode.SYSTEM,
             vaultFilePath = "default_cache_directory"
         )
 
@@ -98,8 +100,8 @@ class SettingsScreenActionProcessorIntegrationTest {
 
         // Test state properties
         assertEquals("Failed to load", errorState.message)
-        assertEquals(io.github.devapro.model.LockInterval.THIRTY_MINUTES, successState.lockInterval)
-        assertEquals(io.github.devapro.model.ThemeMode.SYSTEM, successState.themeMode)
+        assertEquals(LockInterval.THIRTY_MINUTES, successState.lockInterval)
+        assertEquals(ThemeMode.SYSTEM, successState.themeMode)
         assertEquals("default_cache_directory", successState.vaultFilePath)
     }
 
@@ -107,8 +109,8 @@ class SettingsScreenActionProcessorIntegrationTest {
     fun testDialogStates() {
         // Test dialog state management
         val initialState = SettingsScreenState.Success(
-            lockInterval = io.github.devapro.model.LockInterval.NEVER,
-            themeMode = io.github.devapro.model.ThemeMode.LIGHT,
+            lockInterval = LockInterval.NEVER,
+            themeMode = ThemeMode.LIGHT,
             vaultFilePath = "/test/path"
         )
 

@@ -1,11 +1,12 @@
 package io.github.devapro.features.importdata.usecase
 
 import io.github.devapro.droid.core.mvi.AppResult
-import io.github.devapro.data.vault.VaultAdditionalFieldModel
-import io.github.devapro.data.vault.VaultFileRepository
-import io.github.devapro.data.vault.VaultItemModel
-import io.github.devapro.data.vault.VaultModel
-import io.github.devapro.data.vault.VaultRuntimeRepository
+import io.github.devapro.droid.data.vault.VaultAdditionalFieldModel
+import io.github.devapro.droid.data.vault.VaultFileRepository
+import io.github.devapro.droid.data.vault.VaultItemModel
+import io.github.devapro.droid.data.vault.VaultItemTag
+import io.github.devapro.droid.data.vault.VaultModel
+import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.readString
 import kotlinx.uuid.UUID
@@ -79,7 +80,7 @@ class ImportFromJsonUseCase(
                 }
             }
 
-            val tags = mutableListOf<io.github.devapro.data.vault.VaultItemTag>()
+            val tags = mutableListOf<VaultItemTag>()
             val tagsStart = obj.indexOf("\"tags\":")
             if (tagsStart != -1) {
                 val tagsArrayStart = obj.indexOf("[", tagsStart)
@@ -89,7 +90,7 @@ class ImportFromJsonUseCase(
                     val tagObjects = splitJsonObjects(tagsArray)
                     tagObjects.forEach { tagObj ->
                         tags.add(
-                            io.github.devapro.data.vault.VaultItemTag(
+                            VaultItemTag(
                                 id = tagObj.replace("\\\"", ""),
                                 title = tagObj.replace("\\\"", "")
                             )

@@ -1,8 +1,8 @@
 package io.github.devapro.data
 
+import io.github.devapro.data.model.LockInterval
+import io.github.devapro.data.model.ThemeMode
 import io.github.devapro.droid.core.mvi.AppResult
-import io.github.devapro.model.LockInterval
-import io.github.devapro.model.ThemeMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

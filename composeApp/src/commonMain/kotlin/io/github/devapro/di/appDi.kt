@@ -2,12 +2,12 @@ package io.github.devapro.di
 
 import io.github.devapro.droid.core.mvi.CoroutineContextProvider
 import io.github.devapro.droid.core.ui.SnackbarHostStateManager
-import io.github.devapro.data.LocalStorage
-import io.github.devapro.data.LockManager
-import io.github.devapro.data.ThemeManager
-import io.github.devapro.data.vault.CryptoMapper
-import io.github.devapro.data.vault.VaultFileRepository
-import io.github.devapro.data.vault.VaultRuntimeRepository
+import io.github.devapro.droid.data.LocalStorage
+import io.github.devapro.droid.data.LockManager
+import io.github.devapro.droid.data.ThemeManager
+import io.github.devapro.droid.data.vault.CryptoMapper
+import io.github.devapro.droid.data.vault.VaultFileRepository
+import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.features.edit.registerAddEditPasswordScreenDi
 import io.github.devapro.features.export.registerExportScreenDi
 import io.github.devapro.features.importdata.registerImportScreenDi

@@ -1,8 +1,8 @@
 package io.github.devapro.features.export.usecase
 
 import io.github.devapro.droid.core.mvi.AppResult
-import io.github.devapro.data.vault.VaultItemModel
-import io.github.devapro.data.vault.VaultRuntimeRepository
+import io.github.devapro.droid.data.vault.VaultItemModel
+import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.writeString
 

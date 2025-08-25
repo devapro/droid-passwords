@@ -1,6 +1,6 @@
 package io.github.devapro.features.itemslist.model
 
-import io.github.devapro.model.ItemModel
+import io.github.devapro.droid.data.model.ItemModel
 
 sealed interface PasswordListScreenState {
     data object Loading : PasswordListScreenState

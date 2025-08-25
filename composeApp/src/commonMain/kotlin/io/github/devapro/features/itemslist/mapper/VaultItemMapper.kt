@@ -1,8 +1,8 @@
 package io.github.devapro.features.itemslist.mapper
 
-import io.github.devapro.data.vault.VaultItemModel
-import io.github.devapro.model.AdditionalFieldsModel
-import io.github.devapro.model.ItemModel
+import io.github.devapro.droid.data.model.AdditionalFieldsModel
+import io.github.devapro.droid.data.model.ItemModel
+import io.github.devapro.droid.data.vault.VaultItemModel
 
 class VaultItemMapper {
 

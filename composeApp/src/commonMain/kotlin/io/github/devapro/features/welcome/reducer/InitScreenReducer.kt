@@ -1,7 +1,7 @@
 package io.github.devapro.features.welcome.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
-import io.github.devapro.data.vault.VaultFileRepository
+import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.features.welcome.model.WelcomeScreenAction
 import io.github.devapro.features.welcome.model.WelcomeScreenEvent
 import io.github.devapro.features.welcome.model.WelcomeScreenState

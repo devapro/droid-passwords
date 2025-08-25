@@ -34,3 +34,5 @@ plugins {
 
 include(":composeApp")
 include(":core")
+include(":data")
+include(":features:welcome")

@@ -1,8 +1,8 @@
 package io.github.devapro.features.settings.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
-import io.github.devapro.data.LockManager
-import io.github.devapro.data.SettingsRepository
+import io.github.devapro.droid.data.LockManager
+import io.github.devapro.droid.data.SettingsRepository
 import io.github.devapro.features.settings.model.SettingsScreenAction
 import io.github.devapro.features.settings.model.SettingsScreenEvent
 import io.github.devapro.features.settings.model.SettingsScreenState

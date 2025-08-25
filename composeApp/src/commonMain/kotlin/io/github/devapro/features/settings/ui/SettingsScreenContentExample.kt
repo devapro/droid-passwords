@@ -11,8 +11,8 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.devapro.model.LockInterval
-import io.github.devapro.model.ThemeMode
+import io.github.devapro.droid.data.model.LockInterval
+import io.github.devapro.droid.data.model.ThemeMode
 
 /**
  * Example usage of the settings UI components.

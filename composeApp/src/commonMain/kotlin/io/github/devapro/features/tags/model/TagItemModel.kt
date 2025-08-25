@@ -1,6 +1,6 @@
 package io.github.devapro.features.tags.model
 
-import io.github.devapro.data.vault.VaultItemTag
+import io.github.devapro.droid.data.vault.VaultItemTag
 
 data class TagItemModel(
     val id: String,

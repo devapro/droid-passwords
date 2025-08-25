@@ -1,6 +1,6 @@
 package io.github.devapro.data
 
-import io.github.devapro.model.ThemeMode
+import io.github.devapro.data.model.ThemeMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

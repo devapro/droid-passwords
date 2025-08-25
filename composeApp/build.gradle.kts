@@ -91,6 +91,8 @@ kotlin {
 
             // Modules
             implementation(projects.core)
+            implementation(projects.data)
+            implementation(projects.features.welcome)
 
         }
         commonTest.dependencies {

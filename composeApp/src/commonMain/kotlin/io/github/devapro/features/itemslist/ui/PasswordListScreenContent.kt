@@ -38,9 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.devapro.droid.core.ui.EOutlinedTextField
+import io.github.devapro.droid.data.model.ItemModel
 import io.github.devapro.features.itemslist.model.PasswordListScreenAction
 import io.github.devapro.features.itemslist.model.PasswordListScreenState
-import io.github.devapro.model.ItemModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

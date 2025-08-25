@@ -1,7 +1,7 @@
 package io.github.devapro.features.edit.model
 
-import io.github.devapro.data.vault.VaultItemTag
-import io.github.devapro.model.AdditionalFieldsModel
+import io.github.devapro.droid.data.model.AdditionalFieldsModel
+import io.github.devapro.droid.data.vault.VaultItemTag
 
 sealed interface AddEditPasswordScreenState {
     data object Loading : AddEditPasswordScreenState
