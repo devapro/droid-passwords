@@ -1,5 +1,22 @@
 App for managing your passwords.
 
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img.png?raw=true" height="200px" />
+    </td>
+    <td>
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_1.png?raw=true" height="200px" />
+    </td>
+    <td>
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_2.png?raw=true" height="200px" />
+    </td>
+    <td>
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_3.png?raw=true" height="200px" />
+    </td>
+  </tr>
+</table>
+
 # Password Manager
 
 This is a password manager application built using Kotlin Multiplatform and Jetpack Compose.
