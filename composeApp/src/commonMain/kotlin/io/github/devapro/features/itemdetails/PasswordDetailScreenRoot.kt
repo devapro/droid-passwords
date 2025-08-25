@@ -10,7 +10,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.droid.data.model.ItemModel
-import io.github.devapro.features.edit.navigation.AddEditPasswordScreen
+import io.github.devapro.droid.edit.navigation.AddEditPasswordScreen
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenAction
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenEvent
 import io.github.devapro.features.itemdetails.model.PasswordDetailScreenState

@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
@@ -18,7 +18,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -29,12 +29,12 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -89,32 +89,13 @@ kotlin {
             implementation(libs.cryptography.core)
             implementation(libs.cryptography.provider.optimal)
 
-            // Modules
             implementation(projects.core)
             implementation(projects.data)
 
-            implementation(projects.features.edit)
-            implementation(projects.features.export)
-            implementation(projects.features.importdata)
-            implementation(projects.features.itemdetails)
-            implementation(projects.features.itemlist)
-            implementation(projects.features.setlock)
-            implementation(projects.features.settings)
-            implementation(projects.features.tags)
-            implementation(projects.features.unlock)
-            implementation(projects.features.welcome)
-
-
-            implementation(projects.featuresApi.edit)
-            implementation(projects.featuresApi.export)
-            implementation(projects.featuresApi.importdata)
-            implementation(projects.featuresApi.itemdetails)
-            implementation(projects.featuresApi.itemlist)
-            implementation(projects.featuresApi.setlock)
-            implementation(projects.featuresApi.settings)
-            implementation(projects.featuresApi.tags)
-            implementation(projects.featuresApi.unlock)
             implementation(projects.featuresApi.welcome)
+            implementation(projects.featuresApi.unlock)
+            implementation(projects.featuresApi.setlock)
+            implementation(projects.featuresApi.importdata)
 
         }
         commonTest.dependencies {
@@ -132,15 +113,12 @@ kotlin {
 }
 
 android {
-    namespace = "io.github.devapro"
+    namespace = "io.github.devapro.droid.export"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "io.github.devapro"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
     }
     packaging {
         resources {
