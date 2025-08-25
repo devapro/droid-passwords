@@ -1,7 +1,7 @@
 package io.github.devapro.features.export.reducer
 
-import io.github.devapro.core.mvi.AppResult
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.AppResult
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.export.model.ExportScreenAction
 import io.github.devapro.features.export.model.ExportScreenEvent
 import io.github.devapro.features.export.model.ExportScreenState

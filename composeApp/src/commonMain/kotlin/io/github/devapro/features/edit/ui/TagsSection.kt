@@ -15,7 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.devapro.core.ui.EOutlinedTextField
+import io.github.devapro.droid.core.ui.EOutlinedTextField
 import io.github.devapro.data.vault.VaultItemTag
 import io.github.devapro.features.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState

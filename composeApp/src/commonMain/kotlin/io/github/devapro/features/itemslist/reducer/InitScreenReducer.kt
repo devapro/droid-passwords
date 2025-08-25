@@ -1,6 +1,6 @@
 package io.github.devapro.features.itemslist.reducer
 
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.data.vault.VaultRuntimeRepository
 import io.github.devapro.features.itemslist.mapper.VaultItemMapper
 import io.github.devapro.features.itemslist.model.PasswordListScreenAction

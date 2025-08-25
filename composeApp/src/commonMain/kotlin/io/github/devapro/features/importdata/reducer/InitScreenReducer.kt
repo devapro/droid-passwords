@@ -1,6 +1,6 @@
 package io.github.devapro.features.importdata.reducer
 
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.importdata.factory.FormatsListFactory
 import io.github.devapro.features.importdata.model.FileFormat
 import io.github.devapro.features.importdata.model.ImportScreenAction

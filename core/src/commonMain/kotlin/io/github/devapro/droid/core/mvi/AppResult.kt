@@ -1,4 +1,4 @@
-package io.github.devapro.core.mvi
+package io.github.devapro.droid.core.mvi
 
 sealed class AppResult<T : Any?> {
 

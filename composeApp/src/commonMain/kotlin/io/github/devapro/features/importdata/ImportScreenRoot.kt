@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.importdata.model.ImportScreenAction
 import io.github.devapro.features.importdata.model.ImportScreenEvent
 import io.github.devapro.features.importdata.ui.ImportScreenContent

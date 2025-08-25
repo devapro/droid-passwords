@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.itemslist.model.PasswordListScreenAction
 import io.github.devapro.features.settings.model.SettingsScreenAction
 import io.github.devapro.features.settings.model.SettingsScreenEvent

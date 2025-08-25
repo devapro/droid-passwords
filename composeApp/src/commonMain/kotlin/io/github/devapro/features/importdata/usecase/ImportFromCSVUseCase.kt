@@ -1,6 +1,6 @@
 package io.github.devapro.features.importdata.usecase
 
-import io.github.devapro.core.mvi.AppResult
+import io.github.devapro.droid.core.mvi.AppResult
 import io.github.devapro.data.vault.VaultAdditionalFieldModel
 import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.data.vault.VaultItemModel

@@ -39,8 +39,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.github.devapro.core.ui.EOutlinedTextField
-import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.droid.core.ui.EOutlinedTextField
+import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.unlock.model.UnLockVaultScreenAction
 import io.github.devapro.features.unlock.model.UnLockVaultScreenState
 import org.koin.compose.koinInject

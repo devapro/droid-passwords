@@ -18,7 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState
 import org.koin.compose.koinInject

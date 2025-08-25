@@ -1,6 +1,6 @@
 package io.github.devapro.features.unlock.reducer
 
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.unlock.model.UnLockVaultScreenAction
 import io.github.devapro.features.unlock.model.UnLockVaultScreenEvent
 import io.github.devapro.features.unlock.model.UnLockVaultScreenState

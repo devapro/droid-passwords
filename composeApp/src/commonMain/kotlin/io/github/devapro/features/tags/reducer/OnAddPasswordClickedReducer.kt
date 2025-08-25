@@ -1,6 +1,6 @@
 package io.github.devapro.features.tags.reducer
 
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.tags.model.TagsScreenAction
 import io.github.devapro.features.tags.model.TagsScreenEvent
 import io.github.devapro.features.tags.model.TagsScreenState

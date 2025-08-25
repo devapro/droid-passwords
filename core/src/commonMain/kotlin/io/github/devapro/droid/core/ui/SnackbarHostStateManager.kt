@@ -1,9 +1,9 @@
-package io.github.devapro.core.ui
+package io.github.devapro.droid.core.ui
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import io.github.devapro.core.mvi.CoroutineContextProvider
+import io.github.devapro.droid.core.mvi.CoroutineContextProvider
 import kotlinx.coroutines.launch
 
 class SnackbarHostStateManager(

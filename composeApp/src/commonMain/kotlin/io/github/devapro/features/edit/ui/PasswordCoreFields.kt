@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import io.github.devapro.core.ui.EOutlinedTextField
+import io.github.devapro.droid.core.ui.EOutlinedTextField
 import io.github.devapro.features.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.features.edit.model.AddEditPasswordScreenState
 

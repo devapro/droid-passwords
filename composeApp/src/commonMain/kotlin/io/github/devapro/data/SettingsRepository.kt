@@ -1,6 +1,6 @@
 package io.github.devapro.data
 
-import io.github.devapro.core.mvi.AppResult
+import io.github.devapro.droid.core.mvi.AppResult
 import io.github.devapro.model.LockInterval
 import io.github.devapro.model.ThemeMode
 

@@ -1,8 +1,8 @@
 package io.github.devapro.features.edit
 
-import io.github.devapro.core.mvi.ActionProcessor
-import io.github.devapro.core.mvi.CoroutineContextProvider
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.ActionProcessor
+import io.github.devapro.droid.core.mvi.CoroutineContextProvider
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.edit.factory.AddEditPasswordScreenInitStateFactory
 import io.github.devapro.features.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.features.edit.model.AddEditPasswordScreenEvent

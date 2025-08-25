@@ -31,7 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.devapro.core.ui.EOutlinedTextField
+import io.github.devapro.droid.core.ui.EOutlinedTextField
 import io.github.devapro.features.tags.model.TagsScreenAction
 import io.github.devapro.features.tags.model.TagsScreenState
 

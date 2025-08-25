@@ -1,6 +1,6 @@
 package io.github.devapro.features.settings
 
-import io.github.devapro.core.mvi.MviViewModel
+import io.github.devapro.droid.core.mvi.MviViewModel
 import io.github.devapro.features.settings.model.SettingsScreenAction
 import io.github.devapro.features.settings.model.SettingsScreenEvent
 import io.github.devapro.features.settings.model.SettingsScreenState

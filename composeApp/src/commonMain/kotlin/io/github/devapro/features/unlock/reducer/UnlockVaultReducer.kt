@@ -1,7 +1,7 @@
 package io.github.devapro.features.unlock.reducer
 
-import io.github.devapro.core.mvi.AppResult
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.AppResult
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.data.vault.VaultFileRepository
 import io.github.devapro.data.vault.VaultRuntimeRepository
 import io.github.devapro.features.unlock.model.UnLockVaultScreenAction

@@ -1,8 +1,8 @@
 package io.github.devapro.features.itemslist
 
-import io.github.devapro.core.mvi.ActionProcessor
-import io.github.devapro.core.mvi.CoroutineContextProvider
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.ActionProcessor
+import io.github.devapro.droid.core.mvi.CoroutineContextProvider
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.itemslist.factory.PasswordListScreenInitStateFactory
 import io.github.devapro.features.itemslist.model.PasswordListScreenAction
 import io.github.devapro.features.itemslist.model.PasswordListScreenEvent

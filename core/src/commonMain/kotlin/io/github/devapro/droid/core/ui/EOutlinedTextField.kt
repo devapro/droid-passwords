@@ -1,4 +1,4 @@
-package io.github.devapro.core.ui
+package io.github.devapro.droid.core.ui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.shape.ZeroCornerSize

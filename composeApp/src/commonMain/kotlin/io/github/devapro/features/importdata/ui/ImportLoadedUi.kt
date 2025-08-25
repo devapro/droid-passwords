@@ -37,8 +37,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import io.github.devapro.core.ui.EOutlinedTextField
-import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.droid.core.ui.EOutlinedTextField
+import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.importdata.model.ImportScreenAction
 import io.github.devapro.features.importdata.model.ImportScreenState
 import org.koin.compose.koinInject

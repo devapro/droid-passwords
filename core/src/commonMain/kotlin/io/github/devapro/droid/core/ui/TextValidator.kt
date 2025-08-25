@@ -1,4 +1,4 @@
-package io.github.devapro.core.ui
+package io.github.devapro.droid.core.ui
 
 interface TextValidator {
 

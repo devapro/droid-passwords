@@ -89,6 +89,9 @@ kotlin {
             implementation(libs.cryptography.core)
             implementation(libs.cryptography.provider.optimal)
 
+            // Modules
+            implementation(projects.core)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

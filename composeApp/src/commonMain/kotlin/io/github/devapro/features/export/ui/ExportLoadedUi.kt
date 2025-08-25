@@ -27,7 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.features.export.model.ExportScreenAction
 import io.github.devapro.features.export.model.ExportScreenState
 import org.koin.compose.koinInject

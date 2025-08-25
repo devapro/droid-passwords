@@ -1,8 +1,8 @@
 package io.github.devapro.features.importdata
 
-import io.github.devapro.core.mvi.ActionProcessor
-import io.github.devapro.core.mvi.CoroutineContextProvider
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.ActionProcessor
+import io.github.devapro.droid.core.mvi.CoroutineContextProvider
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.importdata.factory.ImportScreenInitStateFactory
 import io.github.devapro.features.importdata.model.ImportScreenAction
 import io.github.devapro.features.importdata.model.ImportScreenEvent

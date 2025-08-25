@@ -1,8 +1,8 @@
 package io.github.devapro.features.settings
 
-import io.github.devapro.core.mvi.ActionProcessor
-import io.github.devapro.core.mvi.CoroutineContextProvider
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.ActionProcessor
+import io.github.devapro.droid.core.mvi.CoroutineContextProvider
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.settings.factory.SettingsScreenInitStateFactory
 import io.github.devapro.features.settings.model.SettingsScreenAction
 import io.github.devapro.features.settings.model.SettingsScreenEvent

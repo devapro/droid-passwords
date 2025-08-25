@@ -1,6 +1,6 @@
 package io.github.devapro.features.importdata.factory
 
-import io.github.devapro.core.mvi.InitStateFactory
+import io.github.devapro.droid.core.mvi.InitStateFactory
 import io.github.devapro.features.importdata.model.ImportScreenState
 
 class ImportScreenInitStateFactory : InitStateFactory<ImportScreenState> {

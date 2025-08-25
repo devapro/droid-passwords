@@ -1,4 +1,4 @@
-package io.github.devapro.core.mvi
+package io.github.devapro.droid.core.mvi
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

@@ -1,8 +1,8 @@
 package io.github.devapro.features.unlock
 
-import io.github.devapro.core.mvi.ActionProcessor
-import io.github.devapro.core.mvi.CoroutineContextProvider
-import io.github.devapro.core.mvi.Reducer
+import io.github.devapro.droid.core.mvi.ActionProcessor
+import io.github.devapro.droid.core.mvi.CoroutineContextProvider
+import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.features.unlock.factory.UnLockVaultScreenInitStateFactory
 import io.github.devapro.features.unlock.model.UnLockVaultScreenAction
 import io.github.devapro.features.unlock.model.UnLockVaultScreenEvent

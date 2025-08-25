@@ -1,7 +1,7 @@
 package io.github.devapro.di
 
-import io.github.devapro.core.mvi.CoroutineContextProvider
-import io.github.devapro.core.ui.SnackbarHostStateManager
+import io.github.devapro.droid.core.mvi.CoroutineContextProvider
+import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.data.LocalStorage
 import io.github.devapro.data.LockManager
 import io.github.devapro.data.ThemeManager
