@@ -89,14 +89,6 @@ kotlin {
             implementation(libs.cryptography.core)
             implementation(libs.cryptography.provider.optimal)
 
-            implementation(projects.core)
-            implementation(projects.data)
-
-            implementation(projects.featuresApi.welcome)
-            implementation(projects.featuresApi.unlock)
-            implementation(projects.featuresApi.setlock)
-            implementation(projects.featuresApi.importdata)
-
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -113,7 +105,7 @@ kotlin {
 }
 
 android {
-    namespace = "io.github.devapro.droid.welcome"
+    namespace = "io.github.devapro.droid.unlock"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

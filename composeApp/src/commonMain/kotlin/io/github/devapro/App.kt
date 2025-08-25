@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.Navigator
 import io.github.devapro.droid.data.ThemeManager
 import io.github.devapro.droid.data.model.ThemeMode
-import io.github.devapro.features.welcome.navigation.WelcomeScreen
+import io.github.devapro.droid.welcome.navigation.WelcomeScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 

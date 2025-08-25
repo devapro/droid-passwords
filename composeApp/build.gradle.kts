@@ -94,6 +94,11 @@ kotlin {
             implementation(projects.data)
             implementation(projects.features.welcome)
 
+            implementation(projects.featuresApi.welcome)
+            implementation(projects.featuresApi.unlock)
+            implementation(projects.featuresApi.setlock)
+            implementation(projects.featuresApi.importdata)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

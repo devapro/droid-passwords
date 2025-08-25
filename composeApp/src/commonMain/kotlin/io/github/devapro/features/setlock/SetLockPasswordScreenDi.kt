@@ -1,5 +1,7 @@
 package io.github.devapro.features.setlock
 
+import io.github.devapro.droid.setlock.SetLockPasswordScreenFactory
+import io.github.devapro.features.setlock.factory.SetLockPasswordScreenFactoryImpl
 import io.github.devapro.features.setlock.factory.SetLockPasswordScreenInitStateFactory
 import io.github.devapro.features.setlock.reducer.InitScreenReducer
 import io.github.devapro.features.setlock.reducer.OnBackClickedReducer
@@ -13,10 +15,12 @@ import io.github.devapro.features.setlock.reducer.OnToggleCurrentPasswordVisibil
 import io.github.devapro.features.setlock.reducer.OnToggleNewPasswordVisibilityReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.bind
 
 fun Module.registerSetLockPasswordScreenDi() {
     factoryOf(::SetLockPasswordScreenViewModel)
     factoryOf(::SetLockPasswordScreenInitStateFactory)
+    factoryOf(::SetLockPasswordScreenFactoryImpl).bind(SetLockPasswordScreenFactory::class)
     reducersDi()
 }
 

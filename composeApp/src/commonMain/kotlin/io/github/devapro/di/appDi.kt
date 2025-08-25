@@ -8,6 +8,7 @@ import io.github.devapro.droid.data.ThemeManager
 import io.github.devapro.droid.data.vault.CryptoMapper
 import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
+import io.github.devapro.droid.welcome.registerWelcomeScreenDi
 import io.github.devapro.features.edit.registerAddEditPasswordScreenDi
 import io.github.devapro.features.export.registerExportScreenDi
 import io.github.devapro.features.importdata.registerImportScreenDi
@@ -17,8 +18,6 @@ import io.github.devapro.features.setlock.registerSetLockPasswordScreenDi
 import io.github.devapro.features.settings.registerSettingsScreenDi
 import io.github.devapro.features.tags.registerTagsScreenDi
 import io.github.devapro.features.unlock.registerUnLockVaultScreenDi
-import io.github.devapro.features.welcome.WelcomeScreenViewModel
-import io.github.devapro.features.welcome.registerWelcomeScreenDi
 import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -34,8 +33,6 @@ fun initKoin(){
 
 val appModule: Module = module {
     coreDi()
-    factoriesDi()
-    viewModelsDi()
     dataDi()
 
     registerWelcomeScreenDi()
@@ -53,14 +50,6 @@ val appModule: Module = module {
 private fun Module.coreDi() {
     factoryOf(::CoroutineContextProvider)
     singleOf(::SnackbarHostStateManager)
-}
-
-private fun Module.factoriesDi() {
-
-}
-
-private fun Module.viewModelsDi() {
-    factoryOf(::WelcomeScreenViewModel)
 }
 
 private fun Module.dataDi() {

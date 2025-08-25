@@ -89,14 +89,6 @@ kotlin {
             implementation(libs.cryptography.core)
             implementation(libs.cryptography.provider.optimal)
 
-            implementation(projects.core)
-            implementation(projects.data)
-
-            implementation(projects.featuresApi.welcome)
-            implementation(projects.featuresApi.unlock)
-            implementation(projects.featuresApi.setlock)
-            implementation(projects.featuresApi.importdata)
-
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
