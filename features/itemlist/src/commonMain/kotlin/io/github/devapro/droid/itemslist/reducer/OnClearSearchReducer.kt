@@ -1,0 +1,38 @@
+package io.github.devapro.droid.itemslist.reducer
+
+import io.github.devapro.droid.core.mvi.Reducer
+import io.github.devapro.droid.itemslist.model.PasswordListScreenAction
+import io.github.devapro.droid.itemslist.model.PasswordListScreenEvent
+import io.github.devapro.droid.itemslist.model.PasswordListScreenState
+
+class OnClearSearchReducer
+    : Reducer<PasswordListScreenAction.OnClearSearch, PasswordListScreenState, PasswordListScreenAction, PasswordListScreenEvent> {
+
+    override val actionClass = PasswordListScreenAction.OnClearSearch::class
+
+    override suspend fun reduce(
+        action: PasswordListScreenAction.OnClearSearch,
+        getState: () -> PasswordListScreenState
+    ): Reducer.Result<PasswordListScreenState, PasswordListScreenAction.OnClearSearch, PasswordListScreenEvent?> {
+        val currentState = getState()
+
+        return if (currentState is PasswordListScreenState.Success) {
+            val newState = currentState.copy(
+                searchQuery = "",
+                filteredPasswords = currentState.passwords,
+                hasSearchQuery = false
+            )
+            Reducer.Result(
+                state = newState,
+                action = null,
+                event = null
+            )
+        } else {
+            Reducer.Result(
+                state = currentState,
+                action = null,
+                event = null
+            )
+        }
+    }
+} 

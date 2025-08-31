@@ -95,7 +95,7 @@ kotlin {
             implementation(projects.featuresApi.welcome)
             implementation(projects.featuresApi.unlock)
             implementation(projects.featuresApi.setlock)
-            implementation(projects.featuresApi.importdata)
+            implementation(projects.featuresApi.tags)
 
         }
         commonTest.dependencies {

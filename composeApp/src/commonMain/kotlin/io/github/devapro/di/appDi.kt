@@ -11,10 +11,10 @@ import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.droid.edit.registerAddEditPasswordScreenDi
 import io.github.devapro.droid.export.registerExportScreenDi
 import io.github.devapro.droid.importdata.registerImportScreenDi
+import io.github.devapro.droid.itemdetails.registerPasswordDetailScreenDi
+import io.github.devapro.droid.itemslist.registerPasswordListScreenDi
+import io.github.devapro.droid.setlock.registerSetLockPasswordScreenDi
 import io.github.devapro.droid.welcome.registerWelcomeScreenDi
-import io.github.devapro.features.itemdetails.registerPasswordDetailScreenDi
-import io.github.devapro.features.itemslist.registerPasswordListScreenDi
-import io.github.devapro.features.setlock.registerSetLockPasswordScreenDi
 import io.github.devapro.features.settings.registerSettingsScreenDi
 import io.github.devapro.features.tags.registerTagsScreenDi
 import io.github.devapro.features.unlock.registerUnLockVaultScreenDi

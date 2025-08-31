@@ -94,7 +94,7 @@ kotlin {
 
             implementation(projects.featuresApi.welcome)
             implementation(projects.featuresApi.unlock)
-            implementation(projects.featuresApi.setlock)
+            implementation(projects.featuresApi.settings)
             implementation(projects.featuresApi.importdata)
 
         }
