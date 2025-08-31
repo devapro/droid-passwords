@@ -92,10 +92,11 @@ kotlin {
             implementation(projects.core)
             implementation(projects.data)
 
-            implementation(projects.featuresApi.welcome)
-            implementation(projects.featuresApi.unlock)
-            implementation(projects.featuresApi.setlock)
-            implementation(projects.featuresApi.importdata)
+            implementation(projects.featuresApi.tags)
+            implementation(projects.featuresApi.settings)
+            implementation(projects.featuresApi.export)
+            implementation(projects.featuresApi.itemlist)
+            implementation(projects.featuresApi.edit)
 
         }
         commonTest.dependencies {

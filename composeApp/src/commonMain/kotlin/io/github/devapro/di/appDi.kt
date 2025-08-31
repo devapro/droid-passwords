@@ -14,10 +14,10 @@ import io.github.devapro.droid.importdata.registerImportScreenDi
 import io.github.devapro.droid.itemdetails.registerPasswordDetailScreenDi
 import io.github.devapro.droid.itemslist.registerPasswordListScreenDi
 import io.github.devapro.droid.setlock.registerSetLockPasswordScreenDi
+import io.github.devapro.droid.settings.registerSettingsScreenDi
+import io.github.devapro.droid.tags.registerTagsScreenDi
+import io.github.devapro.droid.unlock.registerUnLockVaultScreenDi
 import io.github.devapro.droid.welcome.registerWelcomeScreenDi
-import io.github.devapro.features.settings.registerSettingsScreenDi
-import io.github.devapro.features.tags.registerTagsScreenDi
-import io.github.devapro.features.unlock.registerUnLockVaultScreenDi
 import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
