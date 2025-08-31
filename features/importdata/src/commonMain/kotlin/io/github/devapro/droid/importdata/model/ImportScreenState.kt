@@ -1,0 +1,19 @@
+package io.github.devapro.droid.importdata.model
+
+sealed interface ImportScreenState {
+    data object Loading : ImportScreenState
+
+    data class Error(val message: String) : ImportScreenState
+
+    data class Loaded(
+        val isValid: Boolean,
+        val password: String,
+        val isPasswordVisible: Boolean,
+        val passwordError: String?,
+        val selectedFormat: FileFormat,
+        val isProcessing: Boolean,
+        val formats: List<FormatModel>,
+        val formatDescription: String
+    ) : ImportScreenState
+}
+
