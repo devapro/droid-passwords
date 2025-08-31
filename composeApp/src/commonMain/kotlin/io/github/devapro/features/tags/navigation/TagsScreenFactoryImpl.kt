@@ -1,13 +1,13 @@
 package io.github.devapro.features.tags.navigation
 
 import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.core.screen.Screen
+import io.github.devapro.droid.tags.TagsScreenFactory
 import io.github.devapro.features.tags.TagsScreenRoot
 
-object TagsScreen : Screen {
+class TagsScreenFactoryImpl: TagsScreenFactory {
 
     @Composable
-    override fun Content() {
+    override fun CreateTagsScreen() {
         TagsScreenRoot()
     }
-} 
+}

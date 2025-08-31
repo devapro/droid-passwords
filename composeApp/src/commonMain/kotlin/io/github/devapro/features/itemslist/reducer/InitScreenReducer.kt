@@ -2,11 +2,11 @@ package io.github.devapro.features.itemslist.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
+import io.github.devapro.droid.itemlist.PasswordTagFilterType
 import io.github.devapro.features.itemslist.mapper.VaultItemMapper
 import io.github.devapro.features.itemslist.model.PasswordListScreenAction
 import io.github.devapro.features.itemslist.model.PasswordListScreenEvent
 import io.github.devapro.features.itemslist.model.PasswordListScreenState
-import io.github.devapro.features.itemslist.navigation.PasswordTagFilterType
 
 class InitScreenReducer(
     private val runtimeRepository: VaultRuntimeRepository,

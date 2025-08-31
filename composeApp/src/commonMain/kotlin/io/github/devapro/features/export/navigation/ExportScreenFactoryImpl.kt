@@ -1,13 +1,13 @@
 package io.github.devapro.features.export.navigation
 
 import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.core.screen.Screen
+import io.github.devapro.droid.export.ExportScreenFactory
 import io.github.devapro.features.export.ExportScreenRoot
 
-object ExportScreen : Screen {
+class ExportScreenFactoryImpl: ExportScreenFactory {
 
     @Composable
-    override fun Content() {
+    override fun CreateExportScreen() {
         ExportScreenRoot()
     }
 }

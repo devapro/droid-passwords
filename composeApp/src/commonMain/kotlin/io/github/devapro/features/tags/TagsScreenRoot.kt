@@ -7,10 +7,10 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.droid.edit.navigation.AddEditPasswordScreen
-import io.github.devapro.features.export.navigation.ExportScreen
-import io.github.devapro.features.itemslist.navigation.PasswordListScreen
-import io.github.devapro.features.itemslist.navigation.PasswordTagFilterType
-import io.github.devapro.features.settings.navigation.SettingsScreen
+import io.github.devapro.droid.export.navigation.ExportScreen
+import io.github.devapro.droid.itemlist.PasswordTagFilterType
+import io.github.devapro.droid.itemlist.navigation.PasswordListScreen
+import io.github.devapro.droid.settings.navigation.SettingsScreen
 import io.github.devapro.features.tags.model.TagItemType
 import io.github.devapro.features.tags.model.TagsScreenAction
 import io.github.devapro.features.tags.model.TagsScreenEvent

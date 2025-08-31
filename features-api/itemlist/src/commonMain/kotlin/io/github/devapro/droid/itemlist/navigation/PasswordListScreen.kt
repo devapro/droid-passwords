@@ -1,9 +1,11 @@
-package io.github.devapro.features.itemslist.navigation
+package io.github.devapro.droid.itemlist.navigation
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import io.github.devapro.droid.data.vault.VaultItemTag
-import io.github.devapro.features.itemslist.PasswordListScreenRoot
+import io.github.devapro.droid.itemlist.PasswordListScreenFactory
+import io.github.devapro.droid.itemlist.PasswordTagFilterType
+import org.koin.compose.koinInject
 
 data class PasswordListScreen(
     val type: PasswordTagFilterType,
@@ -12,9 +14,10 @@ data class PasswordListScreen(
 
     @Composable
     override fun Content() {
-        PasswordListScreenRoot(
+        val factory: PasswordListScreenFactory = koinInject()
+        factory.CreatePasswordListScreen(
             type = type,
             tag = tag
         )
     }
-} 
+}

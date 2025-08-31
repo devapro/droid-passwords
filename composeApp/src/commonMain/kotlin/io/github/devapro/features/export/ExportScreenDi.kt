@@ -1,7 +1,9 @@
 package io.github.devapro.features.export
 
+import io.github.devapro.droid.export.ExportScreenFactory
 import io.github.devapro.features.export.factory.ExportScreenInitStateFactory
 import io.github.devapro.features.export.factory.FormatsListFactory
+import io.github.devapro.features.export.navigation.ExportScreenFactoryImpl
 import io.github.devapro.features.export.reducer.InitScreenReducer
 import io.github.devapro.features.export.reducer.OnBackClickedReducer
 import io.github.devapro.features.export.reducer.OnExportClickedReducer
@@ -13,11 +15,13 @@ import io.github.devapro.features.export.usecase.SaveDataFileUseCase
 import io.github.devapro.features.export.usecase.SaveJsonFileUseCase
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.bind
 
 fun Module.registerExportScreenDi() {
     factoryOf(::ExportScreenViewModel)
     factoryOf(::ExportScreenInitStateFactory)
     factoryOf(::FormatsListFactory)
+    factoryOf(::ExportScreenFactoryImpl).bind(ExportScreenFactory::class)
     reducersDi()
     useCaseDi()
 }

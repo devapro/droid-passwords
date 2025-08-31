@@ -1,13 +1,13 @@
 package io.github.devapro.features.settings.navigation
 
 import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.core.screen.Screen
+import io.github.devapro.droid.settings.SettingsScreenFactory
 import io.github.devapro.features.settings.SettingsScreenRoot
 
-data object SettingsScreen : Screen {
+class SettingsScreenFactoryImpl: SettingsScreenFactory {
 
     @Composable
-    override fun Content() {
+    override fun CreateSettingsScreen() {
         SettingsScreenRoot()
     }
 }

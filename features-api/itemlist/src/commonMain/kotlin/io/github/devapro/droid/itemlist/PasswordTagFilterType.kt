@@ -1,4 +1,4 @@
-package io.github.devapro.features.itemslist.navigation
+package io.github.devapro.droid.itemlist
 
 enum class PasswordTagFilterType {
     ALL,
