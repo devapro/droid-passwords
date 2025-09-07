@@ -13,7 +13,7 @@ class SaveDataFileUseCase(
     suspend fun execute(
         file: PlatformFile
     ): AppResult<Unit> {
-        return fileRepository.saveVault(
+        return fileRepository.saveVaultToSpecificFile(
             vaultModel = repository.getVault(),
             fileForExport = file
         )

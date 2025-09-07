@@ -81,11 +81,10 @@ class VaultFileRepository(
     }
 
     suspend fun saveVault(
-        vaultModel: VaultModel,
-        fileForExport: PlatformFile? = null
+        vaultModel: VaultModel
     ): AppResult<Unit> {
         return try {
-            val file = fileForExport ?: getVaultFile()
+            val file = getVaultFile()
             val vaultRawContent = json.encodeToString(vaultModel)
 
             val vaultEncodedContent = cryptoMapper.encode(
@@ -93,6 +92,24 @@ class VaultFileRepository(
             )
 
             file.write(vaultEncodedContent)
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Failure(e)
+        }
+    }
+
+    suspend fun saveVaultToSpecificFile(
+        vaultModel: VaultModel,
+        fileForExport: PlatformFile
+    ): AppResult<Unit> {
+        return try {
+            val vaultRawContent = json.encodeToString(vaultModel)
+
+            val vaultEncodedContent = cryptoMapper.encode(
+                vaultModel.password, vaultRawContent
+            )
+
+            fileForExport.write(vaultEncodedContent)
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Failure(e)

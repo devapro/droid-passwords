@@ -42,12 +42,10 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.android)
             implementation(libs.kstore.file)
-            implementation(libs.cryptography.provider.jdk)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material3)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
             implementation(compose.ui)
@@ -55,7 +53,6 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(libs.kotlinx.uuid)
 
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
@@ -63,12 +60,6 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.viewmodel)
             implementation(libs.kotlinx.serialization.json)
-
-            // DataStore library
-            implementation(libs.androidx.datastore)
-
-            // The Preferences DataStore library
-            implementation(libs.androidx.datastore.preferences)
 
             // Navigator
             implementation(libs.voyager.navigator)
@@ -86,9 +77,6 @@ kotlin {
             // Enables FileKit dialogs with Composable utilities
             implementation(libs.filekit.dialogs.compose)
 
-            implementation(libs.cryptography.core)
-            implementation(libs.cryptography.provider.optimal)
-
             implementation(projects.core)
             implementation(projects.data)
 
@@ -102,10 +90,8 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-            implementation(libs.cryptography.provider.jdk)
         }
         iosMain.dependencies {
-            implementation(libs.cryptography.provider.apple)
         }
     }
 }
