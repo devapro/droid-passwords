@@ -1,13 +1,7 @@
 package io.github.devapro.di
 
-import io.github.devapro.droid.core.mvi.CoroutineContextProvider
-import io.github.devapro.droid.core.ui.SnackbarHostStateManager
-import io.github.devapro.droid.data.LocalStorage
-import io.github.devapro.droid.data.LockManager
-import io.github.devapro.droid.data.ThemeManager
-import io.github.devapro.droid.data.vault.CryptoMapper
-import io.github.devapro.droid.data.vault.VaultFileRepository
-import io.github.devapro.droid.data.vault.VaultRuntimeRepository
+import io.github.devapro.droid.core.registerCoreDi
+import io.github.devapro.droid.data.registerDataDi
 import io.github.devapro.droid.edit.registerAddEditPasswordScreenDi
 import io.github.devapro.droid.export.registerExportScreenDi
 import io.github.devapro.droid.importdata.registerImportScreenDi
@@ -18,11 +12,8 @@ import io.github.devapro.droid.settings.registerSettingsScreenDi
 import io.github.devapro.droid.tags.registerTagsScreenDi
 import io.github.devapro.droid.unlock.registerUnLockVaultScreenDi
 import io.github.devapro.droid.welcome.registerWelcomeScreenDi
-import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 fun initKoin(){
@@ -32,8 +23,8 @@ fun initKoin(){
 }
 
 val appModule: Module = module {
-    coreDi()
-    dataDi()
+    registerCoreDi()
+    registerDataDi()
 
     registerWelcomeScreenDi()
     registerImportScreenDi()
@@ -45,21 +36,4 @@ val appModule: Module = module {
     registerAddEditPasswordScreenDi()
     registerSettingsScreenDi()
     registerTagsScreenDi()
-}
-
-private fun Module.coreDi() {
-    factoryOf(::CoroutineContextProvider)
-    singleOf(::SnackbarHostStateManager)
-}
-
-private fun Module.dataDi() {
-     factoryOf(::LocalStorage)
-     single { LockManager }
-    factoryOf(::VaultFileRepository)
-    singleOf(::VaultRuntimeRepository)
-    singleOf(::CryptoMapper)
-    singleOf(::ThemeManager)
-    single {
-        Json { ignoreUnknownKeys = true }
-    }
 }
