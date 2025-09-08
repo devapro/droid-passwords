@@ -9,8 +9,8 @@ import io.github.devapro.droid.data.vault.VaultModel
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.readString
-import kotlinx.uuid.UUID
-import kotlinx.uuid.generateUUID
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class ImportFromJsonUseCase(
     private val repository: VaultRuntimeRepository,
@@ -35,6 +35,7 @@ class ImportFromJsonUseCase(
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     private fun importFromJson(content: String): List<VaultItemModel> {
         // Simple JSON parsing - in a real app, you'd use a proper JSON parser like kotlinx.serialization
         val items = mutableListOf<VaultItemModel>()
@@ -101,7 +102,7 @@ class ImportFromJsonUseCase(
 
             items.add(
                 VaultItemModel(
-                    id = UUID.generateUUID().toString(),
+                    id = Uuid.random().toHexDashString(),
                     title = title,
                     description = description,
                     url = url,

@@ -6,20 +6,11 @@ import io.github.devapro.droid.data.AndroidThemeDetector
 
 class DroidPasswordApplication: Application() {
 
-    companion object {
-        lateinit var instance: DroidPasswordApplication
-            private set
-    }
-    init {
-        instance = this
-    }
-
     override fun onCreate() {
         super.onCreate()
+        initKoin()
 
         // Initialize theme detector with application context
         AndroidThemeDetector.initialize(this)
-        
-        initKoin()
     }
 }

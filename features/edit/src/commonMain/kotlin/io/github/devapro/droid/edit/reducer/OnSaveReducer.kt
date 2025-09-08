@@ -9,9 +9,9 @@ import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenState
-import kotlinx.uuid.UUID
-import kotlinx.uuid.generateUUID
 import kotlin.time.ExperimentalTime
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class OnSaveReducer(
     private val runtimeRepository: VaultRuntimeRepository,
@@ -20,7 +20,7 @@ class OnSaveReducer(
 
     override val actionClass = AddEditPasswordScreenAction.OnSave::class
 
-    @OptIn(ExperimentalTime::class)
+    @OptIn(ExperimentalTime::class, ExperimentalUuidApi::class)
     override suspend fun reduce(
         action: AddEditPasswordScreenAction.OnSave,
         getState: () -> AddEditPasswordScreenState
@@ -29,7 +29,7 @@ class OnSaveReducer(
 
         return if (currentState is AddEditPasswordScreenState.Success && currentState.isFormValid) {
             val item = VaultItemModel(
-                id = currentState.itemId ?: UUID.generateUUID().toString(),
+                id = currentState.itemId ?: Uuid.random().toHexDashString(),
                 title = currentState.title,
                 username = currentState.username,
                 password = currentState.password,

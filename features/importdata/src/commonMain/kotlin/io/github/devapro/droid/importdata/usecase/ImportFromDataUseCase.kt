@@ -14,7 +14,7 @@ class ImportFromDataUseCase(
         file: PlatformFile,
         password: String
     ): AppResult<Unit> {
-        val model = fileRepository.getVault(
+        val model = fileRepository.getVaultFromSpecificFile(
             fileForImport = file,
             password = password
         )
