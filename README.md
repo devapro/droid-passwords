@@ -41,7 +41,6 @@ The main features include:
 This project is inspired by [Buttercup Desktop](https://github.com/buttercup/buttercup-desktop)
 
 ### TODO
-- [ ] Modularize the project
 - [ ] Add CI for iOS and Android, desktop builds
 - [ ] Add tests
 - [ ] Add ability to have a few vaults
