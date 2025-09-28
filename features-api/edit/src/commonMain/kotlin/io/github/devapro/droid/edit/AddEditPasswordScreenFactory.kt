@@ -6,5 +6,5 @@ import io.github.devapro.droid.data.model.ItemModel
 interface AddEditPasswordScreenFactory {
 
     @Composable
-    fun CreateAddEditPasswordScreen(item: ItemModel? = null)
+    fun CreateAddEditPasswordScreen(item: ItemModel?)
 }

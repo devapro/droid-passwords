@@ -186,6 +186,8 @@ compose.desktop {
             }
             macOS {
                 iconFile.set(File("logo/macOS/appIcon.icns"))
+                packageName = "Droid Password"
+                dockName = "Droid Password"
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.devapro"
