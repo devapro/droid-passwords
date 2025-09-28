@@ -40,6 +40,20 @@ The main features include:
 
 This project is inspired by [Buttercup Desktop](https://github.com/buttercup/buttercup-desktop)
 
+## Building and Running
+
+### Android
+
+Run: `./gradlew :composeApp:installDebug`
+
+### Desktop
+
+Run: `./gradlew :composeApp:run`
+
+Packaging: 
+
+`./gradlew :composeApp:packageReleaseDmg` (macOS), `./gradlew :composeApp:packageReleaseMsi` (Windows), `./gradlew :composeApp:packageReleaseDeb` (Linux)
+
 ### TODO
 - [ ] Add CI for iOS and Android, desktop builds
 - [ ] Add tests
