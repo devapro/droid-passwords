@@ -8,6 +8,6 @@ interface PasswordListScreenFactory {
     @Composable
     fun CreatePasswordListScreen(
         type: PasswordTagFilterType,
-        tag: VaultItemTag? = null
+        tag: VaultItemTag?
     )
 }

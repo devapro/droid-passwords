@@ -16,7 +16,7 @@ class TagsMapper {
                 itemsWithoutTags++
             } else {
                 item.tags.forEach { tag ->
-                    tagCounts[tag.id] = tagCounts.getOrDefault(tag.id, 0) + 1
+                    tagCounts[tag.id] = (tagCounts[tag.id] ?: 0) + 1
                 }
             }
         }

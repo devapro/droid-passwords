@@ -1,6 +1,7 @@
 package io.github.devapro.droid.itemdetails
 
 import io.github.devapro.droid.itemdetails.factory.PasswordDetailScreenInitStateFactory
+import io.github.devapro.droid.itemdetails.navigation.PasswordDetailScreenFactoryImpl
 import io.github.devapro.droid.itemdetails.reducer.InitScreenReducer
 import io.github.devapro.droid.itemdetails.reducer.OnBackClickedReducer
 import io.github.devapro.droid.itemdetails.reducer.OnCopyFieldReducer
@@ -12,10 +13,12 @@ import io.github.devapro.droid.itemdetails.reducer.OnShareClickedReducer
 import io.github.devapro.droid.itemdetails.reducer.OnTogglePasswordVisibilityReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.bind
 
 fun Module.registerPasswordDetailScreenDi() {
     factoryOf(::PasswordDetailScreenViewModel)
     factoryOf(::PasswordDetailScreenInitStateFactory)
+    factoryOf(::PasswordDetailScreenFactoryImpl).bind(PasswordDetailScreenFactory::class)
     reducersDi()
 }
 

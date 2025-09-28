@@ -4,6 +4,7 @@ import io.github.devapro.droid.data.SettingsRepository
 import io.github.devapro.droid.data.SettingsRepositoryImpl
 import io.github.devapro.droid.data.ThemeManager
 import io.github.devapro.droid.settings.factory.SettingsScreenInitStateFactory
+import io.github.devapro.droid.settings.navigation.SettingsScreenFactoryImpl
 import io.github.devapro.droid.settings.reducer.InitScreenReducer
 import io.github.devapro.droid.settings.reducer.OnBackClickedReducer
 import io.github.devapro.droid.settings.reducer.OnChangePasswordClickedReducer
@@ -16,34 +17,16 @@ import io.github.devapro.droid.settings.reducer.OnPasswordChangeSubmittedReducer
 import io.github.devapro.droid.settings.reducer.OnThemeModeChangedReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.bind
 
-/**
- * Dependency injection configuration for the Settings Screen.
- *
- * This function registers all components needed for the settings screen including:
- * - SettingsRepository and ThemeManager for data management
- * - ViewModel and ActionProcessor for MVI architecture
- * - All reducers for handling user actions
- * - Factory for initial state creation
- *
- * Requirements covered:
- * - 5.1: Register all settings screen components with Koin DI container
- */
 fun Module.registerSettingsScreenDi() {
-    // Data layer components
     dataDi()
-
-    // MVI components
     factoryOf(::SettingsScreenViewModel)
     factoryOf(::SettingsScreenInitStateFactory)
-
-    // Reducers
+    factoryOf(::SettingsScreenFactoryImpl).bind(SettingsScreenFactory::class)
     reducersDi()
 }
 
-/**
- * Registers data layer components for settings functionality.
- */
 private fun Module.dataDi() {
     // SettingsRepository - interface and implementation
     single<SettingsRepository> { SettingsRepositoryImpl(get(), get()) }
