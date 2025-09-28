@@ -4,6 +4,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import io.github.devapro.di.initKoin
 import io.github.vinceglb.filekit.FileKit
+import java.lang.System.setProperty
 
 fun main() = application {
     /**
@@ -13,6 +14,7 @@ fun main() = application {
      * macOS: ~/Library/Application Support/your.application.id/
      * Linux: ~/.local/share/your.application.id/
      */
+    setProperty("apple.awt.application.name", "Droid Passwords")
     FileKit.init(appId = "DroidPasswords")
     initKoin()
     Window(

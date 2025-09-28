@@ -1,5 +1,6 @@
 package io.github.devapro.droid.itemslist.ui
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +35,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,6 +60,8 @@ fun PasswordListScreenContent(
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var isSearchActive by remember { mutableStateOf(state.hasSearchQuery) }
+    val focusRequester = remember { FocusRequester() }
+    val searchFieldFocusRequester = remember { FocusRequester() }
 
     // Update search active state when search query changes
     LaunchedEffect(state.hasSearchQuery) {
@@ -58,7 +70,45 @@ fun PasswordListScreenContent(
         }
     }
 
+    // Request focus on initial load to enable hotkey detection
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    // Focus search field when search mode is activated
+    LaunchedEffect(isSearchActive) {
+        if (isSearchActive) {
+            searchFieldFocusRequester.requestFocus()
+        }
+    }
+
     Scaffold(
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .focusable()
+            .onKeyEvent { keyEvent ->
+                if (keyEvent.type == KeyEventType.KeyDown) {
+                    when {
+                        // Cmd+F / Ctrl+F to activate search mode
+                        keyEvent.key == Key.F &&
+                        (keyEvent.isCtrlPressed || keyEvent.isMetaPressed) &&
+                        !isSearchActive -> {
+                            isSearchActive = true
+                            true
+                        }
+                        // Esc to cancel search mode
+                        keyEvent.key == Key.Escape && isSearchActive -> {
+                            isSearchActive = false
+                            onAction(PasswordListScreenAction.OnClearSearch)
+                            focusRequester.requestFocus()
+                            true
+                        }
+                        else -> false
+                    }
+                } else {
+                    false
+                }
+            },
         topBar = {
             if (isSearchActive) {
                 // Search bar as top bar
@@ -69,7 +119,9 @@ fun PasswordListScreenContent(
                             onValueChange = { onAction(PasswordListScreenAction.OnSearchChanged(it)) },
                             placeholder = { Text("Search passwords...") },
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(searchFieldFocusRequester)
                         )
                     },
                     navigationIcon = {
