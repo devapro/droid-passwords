@@ -28,9 +28,9 @@ class VaultRuntimeRepository {
         }
     }
 
-    fun deleteVault(vaultItemModel: VaultItemModel) {
+    fun deleteVaultById(itemId: String) {
         vaultModel = vaultModel.copy(
-            items = vaultModel.items.filter { it.id != vaultItemModel.id }
+            items = vaultModel.items.filter { it.id != itemId }
         )
     }
 

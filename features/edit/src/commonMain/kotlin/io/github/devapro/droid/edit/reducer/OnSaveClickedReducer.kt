@@ -28,7 +28,7 @@ class OnSaveClickedReducer()
             Reducer.Result(
                 state = currentState,
                 action = null,
-                event = AddEditPasswordScreenEvent.SaveError("Please fill in all required fields")
+                event = AddEditPasswordScreenEvent.ShowMessage("Please fill in all required fields")
             )
         }
     }

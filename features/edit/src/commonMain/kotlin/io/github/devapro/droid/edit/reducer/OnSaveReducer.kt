@@ -59,7 +59,7 @@ class OnSaveReducer(
                     return Reducer.Result(
                         state = currentState.copy(isSaving = false),
                         action = null,
-                        event = AddEditPasswordScreenEvent.SaveError(result.error.message.orEmpty())
+                        event = AddEditPasswordScreenEvent.ShowMessage(result.error.message.orEmpty())
                     )
                 }
             }
@@ -67,7 +67,7 @@ class OnSaveReducer(
             Reducer.Result(
                 state = currentState,
                 action = null,
-                event = AddEditPasswordScreenEvent.SaveError("Please fill in all required fields")
+                event = AddEditPasswordScreenEvent.ShowMessage("Please fill in all required fields")
             )
         }
     }
