@@ -7,7 +7,9 @@ import io.github.devapro.droid.edit.reducer.OnAddAdditionalFieldReducer
 import io.github.devapro.droid.edit.reducer.OnAdditionalFieldNameChangedReducer
 import io.github.devapro.droid.edit.reducer.OnAdditionalFieldValueChangedReducer
 import io.github.devapro.droid.edit.reducer.OnBackClickedReducer
+import io.github.devapro.droid.edit.reducer.OnDeleteCancelledReducer
 import io.github.devapro.droid.edit.reducer.OnDeleteClickedReducer
+import io.github.devapro.droid.edit.reducer.OnDeleteConfirmedReducer
 import io.github.devapro.droid.edit.reducer.OnDescriptionChangedReducer
 import io.github.devapro.droid.edit.reducer.OnGeneratePasswordReducer
 import io.github.devapro.droid.edit.reducer.OnPasswordChangedReducer
@@ -53,6 +55,8 @@ private fun Module.reducersDi() {
     factoryOf(::OnSaveClickedReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnDeleteClickedReducer)
+    factory { OnDeleteConfirmedReducer(get(), get()) }
+    factoryOf(::OnDeleteCancelledReducer)
     factoryOf(::OnSaveReducer)
 
     factory {
@@ -77,6 +81,8 @@ private fun Module.reducersDi() {
                 get(OnSaveClickedReducer::class),
                 get(OnBackClickedReducer::class),
                 get(OnDeleteClickedReducer::class),
+                get(OnDeleteConfirmedReducer::class),
+                get(OnDeleteCancelledReducer::class),
                 get(OnSaveReducer::class),
             ),
             initStateFactory = get(),

@@ -25,6 +25,7 @@ sealed interface AddEditPasswordScreenState {
         val isSaving: Boolean,
         val titleError: String?,
         val passwordError: String?,
-        val isFormValid: Boolean
+        val isFormValid: Boolean,
+        val showDeleteConfirmation: Boolean = false
     ) : AddEditPasswordScreenState
 } 

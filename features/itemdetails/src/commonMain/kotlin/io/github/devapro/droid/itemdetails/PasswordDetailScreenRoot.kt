@@ -40,7 +40,7 @@ fun PasswordDetailScreenRoot(
                     navigator.pop()
                 }
                 is PasswordDetailScreenEvent.NavigateToEdit -> {
-                    navigator.push(AddEditPasswordScreen(it.item))
+                    navigator.replace(AddEditPasswordScreen(it.item))
                 }
                 is PasswordDetailScreenEvent.CopyToClipboard -> {
                     clipboard.setText(AnnotatedString(it.value))

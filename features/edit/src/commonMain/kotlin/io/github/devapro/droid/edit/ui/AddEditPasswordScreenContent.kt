@@ -66,4 +66,11 @@ fun AddEditPasswordScreenContent(
             )
         }
     }
+
+    // Delete confirmation dialog
+    if (state.showDeleteConfirmation) {
+        DeleteConfirmationDialog(
+            onAction = onAction
+        )
+    }
 } 

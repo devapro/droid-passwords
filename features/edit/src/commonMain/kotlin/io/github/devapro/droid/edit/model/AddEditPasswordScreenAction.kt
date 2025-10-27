@@ -46,4 +46,8 @@ sealed interface AddEditPasswordScreenAction {
     data object OnBackClicked : AddEditPasswordScreenAction
 
     data object OnDeleteClicked : AddEditPasswordScreenAction
+
+    data object OnDeleteConfirmed : AddEditPasswordScreenAction
+
+    data object OnDeleteCancelled : AddEditPasswordScreenAction
 } 
