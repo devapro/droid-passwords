@@ -2,6 +2,7 @@ package io.github.devapro
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import io.github.devapro.droid.core.ui.AppSnackbarHost
 import io.github.devapro.droid.data.ThemeManager
 import io.github.devapro.droid.data.model.ThemeMode
 import io.github.devapro.droid.welcome.navigation.WelcomeScreen
@@ -36,8 +38,13 @@ fun App() {
     MaterialTheme(
         colorScheme = colorScheme
     ) {
-        Navigator(WelcomeScreen) { navigator ->
-            SlideTransition(navigator)
-        }
+        Scaffold(
+            snackbarHost = { AppSnackbarHost() },
+            content = {
+                Navigator(WelcomeScreen) { navigator ->
+                    SlideTransition(navigator)
+                }
+            }
+        )
     }
 }

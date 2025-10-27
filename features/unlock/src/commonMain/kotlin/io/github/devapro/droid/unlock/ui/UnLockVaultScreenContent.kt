@@ -1,6 +1,5 @@
 package io.github.devapro.droid.unlock.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,8 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -40,10 +37,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.devapro.droid.core.ui.EOutlinedTextField
-import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.droid.unlock.model.UnLockVaultScreenAction
 import io.github.devapro.droid.unlock.model.UnLockVaultScreenState
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +47,6 @@ fun UnLockVaultScreenContent(
     onAction: (UnLockVaultScreenAction) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackBarManager: SnackbarHostStateManager = koinInject()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,19 +58,6 @@ fun UnLockVaultScreenContent(
                 }
             )
         },
-        snackbarHost = {
-            SnackbarHost(
-                modifier = Modifier,
-                hostState = snackBarManager.state,
-                snackbar = { snackbarData ->
-                    Snackbar(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background),
-                        snackbarData = snackbarData
-                    )
-                }
-            )
-        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
