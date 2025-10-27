@@ -38,7 +38,8 @@ class InitScreenReducer(
                     PasswordTagFilterType.ALL -> "All Passwords"
                     PasswordTagFilterType.NO_TAG -> "No Tag Passwords"
                     PasswordTagFilterType.NORMAL -> action.tag?.title ?: "Tagged Passwords"
-                }
+                },
+                selectedTag = action.tag
             ),
             action = null,
             event = null

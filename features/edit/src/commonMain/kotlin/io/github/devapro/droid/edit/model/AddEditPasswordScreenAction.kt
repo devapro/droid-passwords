@@ -4,7 +4,10 @@ import io.github.devapro.droid.data.model.ItemModel
 import io.github.devapro.droid.data.vault.VaultItemTag
 
 sealed interface AddEditPasswordScreenAction {
-    data class InitScreen(val item: ItemModel?) : AddEditPasswordScreenAction
+    data class InitScreen(
+        val item: ItemModel?,
+        val selectedTag: VaultItemTag?
+    ) : AddEditPasswordScreenAction
 
     data class OnTitleChanged(val title: String) : AddEditPasswordScreenAction
 

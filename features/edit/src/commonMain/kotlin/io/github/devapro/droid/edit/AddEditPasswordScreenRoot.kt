@@ -9,6 +9,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.droid.data.model.ItemModel
+import io.github.devapro.droid.data.vault.VaultItemTag
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenState
@@ -18,7 +19,8 @@ import org.koin.compose.koinInject
 
 @Composable
 fun AddEditPasswordScreenRoot(
-    item: ItemModel? = null
+    item: ItemModel? = null,
+    selectedTag: VaultItemTag?
 ) {
     val viewModel: AddEditPasswordScreenViewModel = koinInject()
     val snackBarManager: SnackbarHostStateManager = koinInject()
@@ -27,7 +29,12 @@ fun AddEditPasswordScreenRoot(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.onAction(AddEditPasswordScreenAction.InitScreen(item))
+        viewModel.onAction(
+            action = AddEditPasswordScreenAction.InitScreen(
+                item = item,
+                selectedTag = selectedTag
+            )
+        )
     }
 
     LaunchedEffect(Unit) {

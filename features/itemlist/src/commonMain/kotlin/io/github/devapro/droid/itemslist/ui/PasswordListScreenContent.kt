@@ -4,30 +4,15 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,11 +29,7 @@ import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.github.devapro.droid.core.ui.EOutlinedTextField
-import io.github.devapro.droid.data.model.ItemModel
 import io.github.devapro.droid.itemslist.model.PasswordListScreenAction
 import io.github.devapro.droid.itemslist.model.PasswordListScreenState
 
@@ -58,10 +39,8 @@ fun PasswordListScreenContent(
     state: PasswordListScreenState.Success,
     onAction: (PasswordListScreenAction) -> Unit
 ) {
-    var showMenu by remember { mutableStateOf(false) }
     var isSearchActive by remember { mutableStateOf(state.hasSearchQuery) }
     val focusRequester = remember { FocusRequester() }
-    val searchFieldFocusRequester = remember { FocusRequester() }
 
     // Update search active state when search query changes
     LaunchedEffect(state.hasSearchQuery) {
@@ -73,13 +52,6 @@ fun PasswordListScreenContent(
     // Request focus on initial load to enable hotkey detection
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-    }
-
-    // Focus search field when search mode is activated
-    LaunchedEffect(isSearchActive) {
-        if (isSearchActive) {
-            searchFieldFocusRequester.requestFocus()
-        }
     }
 
     Scaffold(
@@ -111,78 +83,19 @@ fun PasswordListScreenContent(
             },
         topBar = {
             if (isSearchActive) {
-                // Search bar as top bar
-                TopAppBar(
-                    title = {
-                        EOutlinedTextField(
-                            value = state.searchQuery,
-                            onValueChange = { onAction(PasswordListScreenAction.OnSearchChanged(it)) },
-                            placeholder = { Text("Search passwords...") },
-                            singleLine = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(searchFieldFocusRequester)
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            isSearchActive = false
-                            onAction(PasswordListScreenAction.OnClearSearch)
-                        }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Close search")
-                        }
+                SearchTopAppBar(
+                    state = state,
+                    onAction = onAction,
+                    onCancelButtonClicked = {
+                        isSearchActive = false
+                        onAction(PasswordListScreenAction.OnClearSearch)
                     }
                 )
             } else {
-                // Normal top bar
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = state.title,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            onAction(PasswordListScreenAction.OnBackClicked)
-                        }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { isSearchActive = true }) {
-                            Icon(Icons.Default.Search, contentDescription = "Search")
-                        }
-                        IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
-                        }
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Export") },
-                                onClick = {
-                                    showMenu = false
-                                    onAction(PasswordListScreenAction.OnExportClicked)
-                                },
-                                leadingIcon = {
-                                    Icon(Icons.Default.ImportExport, contentDescription = null)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Settings") },
-                                onClick = {
-                                    showMenu = false
-                                    onAction(PasswordListScreenAction.OnSettingsClicked)
-                                },
-                                leadingIcon = {
-                                    Icon(Icons.Default.Settings, contentDescription = null)
-                                }
-                            )
-                        }
-                    }
+                ScreenTopAppBar(
+                    state = state,
+                    onAction = onAction,
+                    onSearchButtonClick = { isSearchActive = true }
                 )
             }
         },
@@ -229,50 +142,3 @@ fun PasswordListScreenContent(
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PasswordItem(
-    password: ItemModel,
-    onItemClick: () -> Unit
-) {
-    Card(
-        onClick = onItemClick,
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = password.title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            if (password.username.isNotEmpty()) {
-                Text(
-                    text = password.username,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-            }
-            if (password.url.isNotEmpty()) {
-                Text(
-                    text = password.url,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-            }
-        }
-    }
-} 

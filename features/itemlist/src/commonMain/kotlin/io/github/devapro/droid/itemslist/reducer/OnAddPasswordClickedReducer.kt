@@ -6,18 +6,20 @@ import io.github.devapro.droid.itemslist.model.PasswordListScreenEvent
 import io.github.devapro.droid.itemslist.model.PasswordListScreenState
 
 class OnAddPasswordClickedReducer
-    : Reducer<PasswordListScreenAction.OnAddPasswordClicked, PasswordListScreenState, PasswordListScreenAction, PasswordListScreenEvent> {
+    : Reducer<PasswordListScreenAction.OnAddPasswordClicked, PasswordListScreenState.Success, PasswordListScreenAction, PasswordListScreenEvent> {
 
     override val actionClass = PasswordListScreenAction.OnAddPasswordClicked::class
 
     override suspend fun reduce(
         action: PasswordListScreenAction.OnAddPasswordClicked,
-        getState: () -> PasswordListScreenState
-    ): Reducer.Result<PasswordListScreenState, PasswordListScreenAction.OnAddPasswordClicked, PasswordListScreenEvent?> {
+        getState: () -> PasswordListScreenState.Success
+    ): Reducer.Result<PasswordListScreenState.Success, PasswordListScreenAction.OnAddPasswordClicked, PasswordListScreenEvent?> {
         return Reducer.Result(
             state = getState(),
             action = null,
-            event = PasswordListScreenEvent.NavigateToAddPassword
+            event = PasswordListScreenEvent.NavigateToAddPassword(
+                tag = getState().selectedTag
+            )
         )
     }
 } 

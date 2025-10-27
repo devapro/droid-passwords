@@ -29,7 +29,7 @@ class InitScreenReducer(
                 url = item?.url ?: "",
                 description = item?.description ?: "",
                 additionalFields = item?.additionalFields ?: emptyList(),
-                tags = item?.tags ?: emptyList(),
+                tags = item?.tags ?: action.selectedTag?.let { listOf(it) } ?: emptyList(),
                 tagInput = "",
                 allTags = allTags,
                 isPasswordVisible = false,

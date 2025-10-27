@@ -41,7 +41,7 @@ fun PasswordListScreenRoot(
         viewModel.event.collect {
             when (it) {
                 is PasswordListScreenEvent.NavigateToAddPassword -> {
-                    navigator.push(AddEditPasswordScreen())
+                    navigator.push(AddEditPasswordScreen(selectedTag = it.tag))
                 }
                 is PasswordListScreenEvent.NavigateToPasswordDetail -> {
                     navigator.push(PasswordDetailScreen(it.item))

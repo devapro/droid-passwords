@@ -1,10 +1,13 @@
 package io.github.devapro.droid.itemslist.model
 
 import io.github.devapro.droid.data.model.ItemModel
+import io.github.devapro.droid.data.vault.VaultItemTag
 
 sealed interface PasswordListScreenEvent {
 
-    data object NavigateToAddPassword : PasswordListScreenEvent
+    data class NavigateToAddPassword(
+        val tag: VaultItemTag?
+    ) : PasswordListScreenEvent
 
     data class NavigateToPasswordDetail(val item: ItemModel) : PasswordListScreenEvent
 
