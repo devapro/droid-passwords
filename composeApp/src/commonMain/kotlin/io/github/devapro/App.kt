@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
 import io.github.devapro.droid.data.ThemeManager
 import io.github.devapro.droid.data.model.ThemeMode
 import io.github.devapro.droid.welcome.navigation.WelcomeScreen
@@ -35,6 +36,8 @@ fun App() {
     MaterialTheme(
         colorScheme = colorScheme
     ) {
-        Navigator(WelcomeScreen)
+        Navigator(WelcomeScreen) { navigator ->
+            SlideTransition(navigator)
+        }
     }
 }
