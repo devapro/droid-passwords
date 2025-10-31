@@ -173,7 +173,7 @@ compose.desktop {
 
         buildTypes.release.proguard {
             obfuscate = true
-            configurationFiles.from(project.file("compose-desktop.pro"))
+            configurationFiles.from(rootProject.file("compose-desktop.pro"))
         }
 
         nativeDistributions {
@@ -186,11 +186,10 @@ compose.desktop {
             }
             macOS {
                 iconFile.set(File("logo/macOS/appIcon.icns"))
-                packageName = "Droid Password"
                 dockName = "Droid Password"
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "io.github.devapro"
+            packageName = "Droid Password"
             packageVersion = "1.0.0"
         }
     }

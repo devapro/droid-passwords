@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -89,31 +88,4 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-}
-
-compose.desktop {
-    application {
-        mainClass = "io.github.devapro.MainKt"
-
-        buildTypes.release.proguard {
-            obfuscate = true
-            configurationFiles.from(project.file("compose-desktop.pro"))
-        }
-
-        nativeDistributions {
-            linux {
-                modules("jdk.security.auth")
-                iconFile.set(File("logo/Linux/appIcon.png"))
-            }
-            windows {
-                iconFile.set(File("logo/Windows/appIcon.ico"))
-            }
-            macOS {
-                iconFile.set(File("logo/macOS/appIcon.icns"))
-            }
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "io.github.devapro"
-            packageVersion = "1.0.0"
-        }
-    }
 }
