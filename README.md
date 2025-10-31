@@ -15,21 +15,21 @@ App for managing your passwords.
       <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_3.png?raw=true" height="200px" width="200" />
     </td>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_8.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_8.png?raw=true" width="200" />
     </td>
   </tr>
   <tr>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_4.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_4.png?raw=true" width="200" />
     </td>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_5.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_5.png?raw=true" width="200" />
     </td>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_6.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_6.png?raw=true" width="200" />
     </td>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_7.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_7.png?raw=true" width="200" />
     </td>
   </tr>
 </table>
@@ -69,7 +69,9 @@ Run: `./gradlew :composeApp:run`
 
 Packaging: 
 
-`./gradlew :composeApp:packageReleaseDmg` (macOS), `./gradlew :composeApp:packageReleaseMsi` (Windows), `./gradlew :composeApp:packageReleaseDeb` (Linux)
+`./gradlew :composeApp:packageReleaseDmg` (macOS),
+`./gradlew :composeApp:packageReleaseMsi` (Windows),
+`./gradlew :composeApp:packageReleaseDeb` (Linux)
 
 ### TODO
 - [ ] Add CI for iOS and Android, desktop builds
