@@ -54,6 +54,9 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.viewmodel)
             implementation(libs.kotlinx.serialization.json)
+
+            // Navigator
+            implementation(libs.voyager.navigator)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

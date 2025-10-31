@@ -1,12 +1,9 @@
 package io.github.devapro.droid.itemslist.ui
 
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -107,7 +104,7 @@ fun PasswordListScreenContent(
             }
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -119,25 +116,10 @@ fun PasswordListScreenContent(
                     hasSearchQuery = state.hasSearchQuery
                 )
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(
-                        items = state.filteredPasswords,
-                        key = { it.id }
-                    ) { password ->
-                        PasswordItem(
-                            password = password,
-                            onItemClick = {
-                                onAction(
-                                    PasswordListScreenAction.OnPasswordItemClicked(
-                                        password
-                                    )
-                                )
-                            }
-                        )
-                    }
-                }
+                ItemsList(
+                    state = state,
+                    onAction = onAction
+                )
             }
         }
     }

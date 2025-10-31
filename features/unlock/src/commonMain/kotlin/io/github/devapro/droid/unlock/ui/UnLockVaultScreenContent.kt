@@ -1,6 +1,8 @@
 package io.github.devapro.droid.unlock.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -59,119 +62,190 @@ fun UnLockVaultScreenContent(
             )
         },
     ) { paddingValues ->
-        Column(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(24.dp)
         ) {
-            // Vault icon and title
-            Icon(
-                imageVector = Icons.Default.Lock,
-                contentDescription = null,
-                modifier = Modifier.padding(bottom = 24.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
+            val isWideLayout = maxWidth >= 600.dp
 
-            Text(
-                text = "Enter your vault password",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            Text(
-                text = "Please enter your password to unlock the vault",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
-
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+            if (isWideLayout) {
+                // Two-column layout for landscape/large devices
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(48.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    EOutlinedTextField(
-                        value = state.password,
-                        onValueChange = { onAction(UnLockVaultScreenAction.OnPasswordChanged(it)) },
-                        label = { Text("Password") },
-                        placeholder = { Text("Enter your password") },
-                        visualTransformation = if (state.isPasswordVisible) {
-                            VisualTransformation.None
-                        } else {
-                            PasswordVisualTransformation()
-                        },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = { onAction(UnLockVaultScreenAction.OnTogglePasswordVisibility) }
-                            ) {
-                                Icon(
-                                    imageVector = if (state.isPasswordVisible) {
-                                        Icons.Default.VisibilityOff
-                                    } else {
-                                        Icons.Default.Visibility
-                                    },
-                                    contentDescription = if (state.isPasswordVisible) {
-                                        "Hide password"
-                                    } else {
-                                        "Show password"
-                                    }
-                                )
-                            }
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                keyboardController?.hide()
-                                if (state.isValid) {
-                                    onAction(UnLockVaultScreenAction.OnUnlockClicked)
-                                }
-                            }
-                        ),
-                        isError = state.passwordError != null,
-                        supportingText = state.passwordError?.let { { Text(it) } },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-
-                    Button(
-                        onClick = { 
-                            keyboardController?.hide()
-                            onAction(UnLockVaultScreenAction.OnUnlockClicked) 
-                        },
-                        enabled = state.isValid && !state.isProcessing,
-                        modifier = Modifier.fillMaxWidth()
+                    // Left column: Icon and branding
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        if (state.isProcessing) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.padding(4.dp)
-                                )
-                                Text("Unlocking...")
-                            }
-                        } else {
-                            Text("Unlock Vault")
-                        }
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            modifier = Modifier.size(100.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Text(
+                            text = "Enter your vault password",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = "Please enter your password to unlock the vault",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    // Right column: Password form
+                    Box(modifier = Modifier.weight(1f)) {
+                        PasswordCard(
+                            state = state,
+                            onAction = onAction,
+                            keyboardController = keyboardController
+                        )
                     }
                 }
-            }
+            } else {
+                // Single-column layout for portrait/small devices
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "Enter your vault password",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Please enter your password to unlock the vault",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    PasswordCard(
+                        state = state,
+                        onAction = onAction,
+                        keyboardController = keyboardController
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PasswordCard(
+    state: UnLockVaultScreenState.Loaded,
+    onAction: (UnLockVaultScreenAction) -> Unit,
+    keyboardController: androidx.compose.ui.platform.SoftwareKeyboardController?
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            EOutlinedTextField(
+                value = state.password,
+                onValueChange = { onAction(UnLockVaultScreenAction.OnPasswordChanged(it)) },
+                label = { Text("Password") },
+                placeholder = { Text("Enter your password") },
+                visualTransformation = if (state.isPasswordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                trailingIcon = {
+                    IconButton(
+                        onClick = { onAction(UnLockVaultScreenAction.OnTogglePasswordVisibility) }
+                    ) {
+                        Icon(
+                            imageVector = if (state.isPasswordVisible) {
+                                Icons.Default.VisibilityOff
+                            } else {
+                                Icons.Default.Visibility
+                            },
+                            contentDescription = if (state.isPasswordVisible) {
+                                "Hide password"
+                            } else {
+                                "Show password"
+                            }
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        if (state.isValid) {
+                            onAction(UnLockVaultScreenAction.OnUnlockClicked)
+                        }
+                    }
+                ),
+                isError = state.passwordError != null,
+                supportingText = state.passwordError?.let { { Text(it) } },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Button(
+                onClick = {
+                    keyboardController?.hide()
+                    onAction(UnLockVaultScreenAction.OnUnlockClicked)
+                },
+                enabled = state.isValid && !state.isProcessing,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (state.isProcessing) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text("Unlocking...")
+                    }
+                } else {
+                    Text("Unlock Vault")
+                }
+            }
         }
     }
 } 
