@@ -6,6 +6,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import io.github.devapro.droid.core.navigation.LocalWideScreenFlag
@@ -17,7 +18,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun AppContent() {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val isWideScreen = LocalWideScreenFlag.current
+        val isWideScreen = maxWidth >= 600.dp
 
         CompositionLocalProvider(LocalWideScreenFlag provides isWideScreen) {
             Scaffold(
