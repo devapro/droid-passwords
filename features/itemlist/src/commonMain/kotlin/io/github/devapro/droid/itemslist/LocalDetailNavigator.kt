@@ -1,4 +1,4 @@
-package io.github.devapro.droid.core.navigation
+package io.github.devapro.droid.itemslist
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import cafe.adriel.voyager.navigator.Navigator
@@ -11,4 +11,4 @@ import cafe.adriel.voyager.navigator.Navigator
  * and can be accessed by any child composable to determine whether to use detail-pane
  * navigation (on large screens) or full-screen navigation (on small screens).
  */
-val LocalDetailNavigator = staticCompositionLocalOf<Navigator?> { null }
+internal val LocalDetailNavigator = staticCompositionLocalOf<Navigator?> { null }

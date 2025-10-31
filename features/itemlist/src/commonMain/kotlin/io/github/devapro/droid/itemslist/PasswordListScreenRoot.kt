@@ -10,12 +10,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.transitions.SlideTransition
-import io.github.devapro.droid.core.navigation.LocalDetailNavigator
+import io.github.devapro.droid.core.navigation.LocalWideScreenFlag
 import io.github.devapro.droid.data.vault.VaultItemTag
 import io.github.devapro.droid.edit.navigation.AddEditPasswordScreen
 import io.github.devapro.droid.export.navigation.ExportScreen
@@ -57,7 +56,7 @@ fun PasswordListScreenRoot(
         }
         is PasswordListScreenState.Success -> {
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                val isWideScreen = maxWidth >= 600.dp
+                val isWideScreen = LocalWideScreenFlag.current
 
                 if (isWideScreen) {
                     // Master-detail layout for large screens

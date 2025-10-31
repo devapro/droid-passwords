@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.github.devapro.droid.core.navigation.LocalDetailNavigator
+import io.github.devapro.droid.core.navigation.LocalWideScreenFlag
 import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.droid.data.model.ItemModel
 import io.github.devapro.droid.edit.navigation.AddEditPasswordScreen
@@ -27,10 +27,9 @@ fun PasswordDetailScreenRoot(
 
     val navigator = LocalNavigator.currentOrThrow
     val clipboard = LocalClipboardManager.current
+    val isWideScreen = LocalWideScreenFlag.current
     
     val state by viewModel.state.collectAsState()
-
-    val isWideScreen = LocalDetailNavigator.current != null
 
     LaunchedEffect(Unit) {
         viewModel.onAction(PasswordDetailScreenAction.InitScreen(item))

@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.devapro.droid.core.navigation.LocalWideScreenFlag
 import io.github.devapro.droid.core.ui.EOutlinedTextField
 import io.github.devapro.droid.unlock.model.UnLockVaultScreenAction
 import io.github.devapro.droid.unlock.model.UnLockVaultScreenState
@@ -68,9 +69,9 @@ fun UnLockVaultScreenContent(
                 .padding(paddingValues)
                 .padding(24.dp)
         ) {
-            val isWideLayout = maxWidth >= 600.dp
+            val isWideScreen = LocalWideScreenFlag.current
 
-            if (isWideLayout) {
+            if (isWideScreen) {
                 // Two-column layout for landscape/large devices
                 Row(
                     modifier = Modifier.fillMaxSize(),

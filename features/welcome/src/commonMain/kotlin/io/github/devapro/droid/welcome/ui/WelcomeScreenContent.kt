@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.devapro.droid.core.navigation.LocalWideScreenFlag
 import io.github.devapro.droid.welcome.model.WelcomeScreenAction
 import io.github.devapro.droid.welcome.model.WelcomeScreenState
 
@@ -51,9 +52,9 @@ fun WelcomeScreenContent(
                     .fillMaxWidth()
                     .padding(32.dp)
             ) {
-                val isWideLayout = maxWidth >= 600.dp
+                val isWideScreen = LocalWideScreenFlag.current
 
-                if (isWideLayout) {
+                if (isWideScreen) {
                     // Two-column layout for landscape/large devices
                     Row(
                         modifier = Modifier.fillMaxWidth(),
