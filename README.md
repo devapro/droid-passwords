@@ -3,16 +3,16 @@ App for managing your passwords.
 <table>
   <tr>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img.png?raw=true" width="200" />
     </td>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_1.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_1.png?raw=true" width="200" />
     </td>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_2.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_2.png?raw=true" width="200" />
     </td>
     <td>
-      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_3.png?raw=true" height="200px" width="200" />
+      <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_3.png?raw=true" width="200" />
     </td>
     <td>
       <img src="https://github.com/devapro/droid-passwords/blob/main/screenshots/img_8.png?raw=true" width="200" />
