@@ -187,6 +187,7 @@ compose.desktop {
             macOS {
                 iconFile.set(File("logo/macOS/appIcon.icns"))
                 dockName = "Droid Password"
+                setDockNameSameAsPackageName = false
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Droid Password"
