@@ -5,7 +5,7 @@ import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenState
 
-class AddEditPasswordScreenViewModel(
+internal class AddEditPasswordScreenViewModel(
     actionProcessor: AddEditPasswordScreenActionProcessor
 ) : MviViewModel<AddEditPasswordScreenState, AddEditPasswordScreenAction, AddEditPasswordScreenEvent>(
     actionProcessor = actionProcessor

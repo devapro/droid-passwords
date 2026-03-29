@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +16,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import io.github.devapro.droid.core.ui.EOutlinedTextField
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenState
 
@@ -45,6 +49,23 @@ fun AddEditPasswordScreenContent(
                 onAction = onAction
             )
 
+            EOutlinedTextField(
+                value = state.url,
+                onValueChange = { onAction(AddEditPasswordScreenAction.OnUrlChanged(it)) },
+                label = { Text("URL") },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri)
+            )
+
+            EOutlinedTextField(
+                value = state.description,
+                onValueChange = { onAction(AddEditPasswordScreenAction.OnDescriptionChanged(it)) },
+                label = { Text("Description") },
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 3,
+                maxLines = 5
+            )
+
             TagsSection(
                 state = state,
                 onAction = onAction
@@ -57,7 +78,6 @@ fun AddEditPasswordScreenContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Required fields note
             Text(
                 text = "* Required fields",
                 style = MaterialTheme.typography.bodySmall,
@@ -67,10 +87,9 @@ fun AddEditPasswordScreenContent(
         }
     }
 
-    // Delete confirmation dialog
     if (state.showDeleteConfirmation) {
         DeleteConfirmationDialog(
             onAction = onAction
         )
     }
-} 
+}

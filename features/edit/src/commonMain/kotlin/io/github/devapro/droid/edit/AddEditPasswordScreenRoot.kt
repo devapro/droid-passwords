@@ -48,9 +48,7 @@ fun AddEditPasswordScreenRoot(
                         message = "Password saved successfully",
                         actionButtonText = "OK",
                         duration = SnackbarDuration.Short,
-                        actionButtonCallback = {
-                            navigator.pop()
-                        }
+                        actionButtonCallback = { } // dismiss only; navigation happens via delay below
                     )
                     delay(1000L)
                     navigator.pop()
@@ -72,23 +70,18 @@ fun AddEditPasswordScreenRoot(
                         duration = SnackbarDuration.Short,
                         actionButtonCallback = { }
                     )
-                    navigator.pop()
                 }
                 is AddEditPasswordScreenEvent.GeneratedPassword -> {
                     snackBarManager.show(
                         message = "Password generated",
-                        actionButtonText = "Copy",
                         duration = SnackbarDuration.Short,
-                        actionButtonCallback = {
-                            // Handle copy to clipboard
-                        }
                     )
                 }
             }
         }
     }
 
-    when (state) {
+    when (val s = state) {
         is AddEditPasswordScreenState.Loading -> {
             // Show loading indicator if needed
         }
@@ -97,7 +90,7 @@ fun AddEditPasswordScreenRoot(
         }
         is AddEditPasswordScreenState.Success -> {
             AddEditPasswordScreenContent(
-                state = state as AddEditPasswordScreenState.Success,
+                state = s,
                 onAction = viewModel::onAction
             )
         }

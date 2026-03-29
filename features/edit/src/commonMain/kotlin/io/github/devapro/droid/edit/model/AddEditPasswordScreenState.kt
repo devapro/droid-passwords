@@ -9,7 +9,6 @@ sealed interface AddEditPasswordScreenState {
     data class Error(val message: String) : AddEditPasswordScreenState
 
     data class Success(
-        val isEditMode: Boolean,
         val itemId: String?,
         val title: String,
         val username: String,
@@ -27,5 +26,7 @@ sealed interface AddEditPasswordScreenState {
         val passwordError: String?,
         val isFormValid: Boolean,
         val showDeleteConfirmation: Boolean = false
-    ) : AddEditPasswordScreenState
-} 
+    ) : AddEditPasswordScreenState {
+        val isEditMode: Boolean get() = itemId != null
+    }
+}

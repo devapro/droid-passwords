@@ -6,7 +6,7 @@ import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenState
 
-class InitScreenReducer(
+internal class InitScreenReducer(
     private val vaultRuntimeRepository: VaultRuntimeRepository
 ) :
     Reducer<AddEditPasswordScreenAction.InitScreen, AddEditPasswordScreenState, AddEditPasswordScreenAction, AddEditPasswordScreenEvent> {
@@ -21,7 +21,6 @@ class InitScreenReducer(
         val allTags = vaultRuntimeRepository.getAllTags()
         return Reducer.Result(
             state = AddEditPasswordScreenState.Success(
-                isEditMode = item != null,
                 itemId = item?.id,
                 title = item?.title ?: "",
                 username = item?.username ?: "",
@@ -33,7 +32,7 @@ class InitScreenReducer(
                 tagInput = "",
                 allTags = allTags,
                 isPasswordVisible = false,
-                isAdditionalFieldsVisible = false,
+                isAdditionalFieldsVisible = item?.additionalFields.isNullOrEmpty().not(),
                 isSaving = false,
                 titleError = null,
                 passwordError = null,
