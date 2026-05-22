@@ -27,7 +27,19 @@ sealed interface AddEditPasswordScreenAction {
 
     data object OnToggleDescriptionSection : AddEditPasswordScreenAction
 
+    data object OnToggleTotpSection : AddEditPasswordScreenAction
+
+    data class OnTotpSecretChanged(val secret: String) : AddEditPasswordScreenAction
+
     data object OnGeneratePassword : AddEditPasswordScreenAction
+
+    data object OnDismissGeneratorDialog : AddEditPasswordScreenAction
+
+    data class OnGeneratorOptionsChanged(val options: PasswordGeneratorOptions) : AddEditPasswordScreenAction
+
+    data object OnRegenerateGeneratorPreview : AddEditPasswordScreenAction
+
+    data object OnAcceptGeneratedPassword : AddEditPasswordScreenAction
 
     data class OnAdditionalFieldNameChanged(val index: Int, val name: String) : AddEditPasswordScreenAction
 

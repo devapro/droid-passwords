@@ -1,6 +1,8 @@
 package io.github.devapro.droid.itemslist.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
+import io.github.devapro.droid.itemslist.applyFilter
+import io.github.devapro.droid.itemslist.applySort
 import io.github.devapro.droid.itemslist.model.PasswordListScreenAction
 import io.github.devapro.droid.itemslist.model.PasswordListScreenEvent
 import io.github.devapro.droid.itemslist.model.PasswordListScreenState
@@ -17,16 +19,9 @@ class OnSearchChangedReducer
         val currentState = getState()
 
         return if (currentState is PasswordListScreenState.Success) {
-            val filteredPasswords = if (action.query.isBlank()) {
-                currentState.passwords
-            } else {
-                currentState.passwords.filter { password ->
-                    password.title.contains(action.query, ignoreCase = true) ||
-                    password.description.contains(action.query, ignoreCase = true) ||
-                    password.url.contains(action.query, ignoreCase = true) ||
-                    password.username.contains(action.query, ignoreCase = true)
-                }
-            }
+            val filteredPasswords = currentState.passwords
+                .applyFilter(action.query)
+                .applySort(currentState.sortOrder)
 
             val newState = currentState.copy(
                 searchQuery = action.query,

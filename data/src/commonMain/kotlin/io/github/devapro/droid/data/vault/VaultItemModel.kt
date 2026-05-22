@@ -11,5 +11,9 @@ data class VaultItemModel(
     val tags: List<VaultItemTag> = emptyList(),
     val url: String? = null,
     val description: String? = null,
-    val additionalFields: List<VaultAdditionalFieldModel> = emptyList()
+    val additionalFields: List<VaultAdditionalFieldModel> = emptyList(),
+    val totpSecret: String? = null,
+    val createdAt: Long? = null,
+    val updatedAt: Long? = null,
+    val lastUsedAt: Long? = null
 )

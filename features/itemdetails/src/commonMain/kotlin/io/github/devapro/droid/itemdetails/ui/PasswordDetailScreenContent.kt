@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.github.devapro.droid.core.ui.TotpCodeView
 import io.github.devapro.droid.itemdetails.model.PasswordDetailScreenAction
 import io.github.devapro.droid.itemdetails.model.PasswordDetailScreenState
 
@@ -64,6 +65,16 @@ fun PasswordDetailScreenContent(
                 onToggleVisibility = { onAction(PasswordDetailScreenAction.OnTogglePasswordVisibility) },
                 onCopy = { onAction(PasswordDetailScreenAction.OnCopyField("Password", state.item.password)) }
             )
+
+            // TOTP code (rolling)
+            state.item.totpSecret?.takeIf { it.isNotBlank() }?.let { secret ->
+                TotpCodeView(
+                    secret = secret,
+                    onCopy = { code ->
+                        onAction(PasswordDetailScreenAction.OnCopyField("TOTP", code))
+                    }
+                )
+            }
 
             // URL
             if (state.item.url.isNotEmpty()) {

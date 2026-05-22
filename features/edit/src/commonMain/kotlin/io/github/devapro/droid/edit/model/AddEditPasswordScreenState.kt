@@ -19,15 +19,20 @@ sealed interface AddEditPasswordScreenState {
         val tags: List<VaultItemTag>,
         val tagInput: String,
         val allTags: List<VaultItemTag>,
+        val totpSecret: String,
         val isPasswordVisible: Boolean,
         val isUrlVisible: Boolean,
         val isDescriptionVisible: Boolean,
+        val isTotpVisible: Boolean,
         val isAdditionalFieldsVisible: Boolean,
         val isSaving: Boolean,
         val titleError: String?,
         val passwordError: String?,
         val isFormValid: Boolean,
-        val showDeleteConfirmation: Boolean = false
+        val showDeleteConfirmation: Boolean = false,
+        val showGeneratorDialog: Boolean = false,
+        val generatorOptions: PasswordGeneratorOptions = PasswordGeneratorOptions(),
+        val generatorPreview: String = ""
     ) : AddEditPasswordScreenState {
         val isEditMode: Boolean get() = itemId != null
     }

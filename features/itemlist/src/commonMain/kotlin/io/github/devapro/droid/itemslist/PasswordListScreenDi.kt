@@ -13,6 +13,7 @@ import io.github.devapro.droid.itemslist.reducer.OnExportClickedReducer
 import io.github.devapro.droid.itemslist.reducer.OnPasswordItemClickedReducer
 import io.github.devapro.droid.itemslist.reducer.OnSearchChangedReducer
 import io.github.devapro.droid.itemslist.reducer.OnSettingsClickedReducer
+import io.github.devapro.droid.itemslist.reducer.OnSortOrderChangedReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -35,7 +36,8 @@ private fun Module.reducersDi() {
     factoryOf(::OnSettingsClickedReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnClearSearchReducer)
-    
+    factoryOf(::OnSortOrderChangedReducer)
+
     factory {
         PasswordListScreenActionProcessor(
             reducers = setOf(
@@ -48,6 +50,7 @@ private fun Module.reducersDi() {
                 get(OnSettingsClickedReducer::class),
                 get(OnBackClickedReducer::class),
                 get(OnClearSearchReducer::class),
+                get(OnSortOrderChangedReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()

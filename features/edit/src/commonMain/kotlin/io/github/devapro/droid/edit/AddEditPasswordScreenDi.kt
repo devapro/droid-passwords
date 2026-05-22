@@ -3,6 +3,7 @@ package io.github.devapro.droid.edit
 import io.github.devapro.droid.edit.factory.AddEditPasswordScreenFactoryImpl
 import io.github.devapro.droid.edit.factory.AddEditPasswordScreenInitStateFactory
 import io.github.devapro.droid.edit.reducer.InitScreenReducer
+import io.github.devapro.droid.edit.reducer.OnAcceptGeneratedPasswordReducer
 import io.github.devapro.droid.edit.reducer.OnAddAdditionalFieldReducer
 import io.github.devapro.droid.edit.reducer.OnAdditionalFieldNameChangedReducer
 import io.github.devapro.droid.edit.reducer.OnAdditionalFieldValueChangedReducer
@@ -11,8 +12,11 @@ import io.github.devapro.droid.edit.reducer.OnDeleteCancelledReducer
 import io.github.devapro.droid.edit.reducer.OnDeleteClickedReducer
 import io.github.devapro.droid.edit.reducer.OnDeleteConfirmedReducer
 import io.github.devapro.droid.edit.reducer.OnDescriptionChangedReducer
+import io.github.devapro.droid.edit.reducer.OnDismissGeneratorDialogReducer
 import io.github.devapro.droid.edit.reducer.OnGeneratePasswordReducer
+import io.github.devapro.droid.edit.reducer.OnGeneratorOptionsChangedReducer
 import io.github.devapro.droid.edit.reducer.OnPasswordChangedReducer
+import io.github.devapro.droid.edit.reducer.OnRegenerateGeneratorPreviewReducer
 import io.github.devapro.droid.edit.reducer.OnRemoveAdditionalFieldReducer
 import io.github.devapro.droid.edit.reducer.OnSaveClickedReducer
 import io.github.devapro.droid.edit.reducer.OnSaveReducer
@@ -23,7 +27,9 @@ import io.github.devapro.droid.edit.reducer.OnTitleChangedReducer
 import io.github.devapro.droid.edit.reducer.OnToggleAdditionalFieldsReducer
 import io.github.devapro.droid.edit.reducer.OnToggleDescriptionSectionReducer
 import io.github.devapro.droid.edit.reducer.OnTogglePasswordVisibilityReducer
+import io.github.devapro.droid.edit.reducer.OnToggleTotpSectionReducer
 import io.github.devapro.droid.edit.reducer.OnToggleUrlSectionReducer
+import io.github.devapro.droid.edit.reducer.OnTotpSecretChangedReducer
 import io.github.devapro.droid.edit.reducer.OnUrlChangedReducer
 import io.github.devapro.droid.edit.reducer.OnUsernameChangedReducer
 import org.koin.core.module.Module
@@ -48,7 +54,13 @@ private fun Module.reducersDi() {
     factoryOf(::OnToggleAdditionalFieldsReducer)
     factoryOf(::OnToggleUrlSectionReducer)
     factoryOf(::OnToggleDescriptionSectionReducer)
+    factoryOf(::OnToggleTotpSectionReducer)
+    factoryOf(::OnTotpSecretChangedReducer)
     factoryOf(::OnGeneratePasswordReducer)
+    factoryOf(::OnDismissGeneratorDialogReducer)
+    factoryOf(::OnGeneratorOptionsChangedReducer)
+    factoryOf(::OnRegenerateGeneratorPreviewReducer)
+    factoryOf(::OnAcceptGeneratedPasswordReducer)
     factoryOf(::OnAdditionalFieldNameChangedReducer)
     factoryOf(::OnAdditionalFieldValueChangedReducer)
     factoryOf(::OnAddAdditionalFieldReducer)
@@ -76,7 +88,13 @@ private fun Module.reducersDi() {
                 get(OnToggleAdditionalFieldsReducer::class),
                 get(OnToggleUrlSectionReducer::class),
                 get(OnToggleDescriptionSectionReducer::class),
+                get(OnToggleTotpSectionReducer::class),
+                get(OnTotpSecretChangedReducer::class),
                 get(OnGeneratePasswordReducer::class),
+                get(OnDismissGeneratorDialogReducer::class),
+                get(OnGeneratorOptionsChangedReducer::class),
+                get(OnRegenerateGeneratorPreviewReducer::class),
+                get(OnAcceptGeneratedPasswordReducer::class),
                 get(OnAdditionalFieldNameChangedReducer::class),
                 get(OnAdditionalFieldValueChangedReducer::class),
                 get(OnAddAdditionalFieldReducer::class),

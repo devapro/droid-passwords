@@ -21,7 +21,11 @@ class VaultItemMapper {
                         value = additionalField.value
                     )
                 },
-                tags = vaultItem.tags
+                tags = vaultItem.tags,
+                totpSecret = vaultItem.totpSecret,
+                createdAt = vaultItem.createdAt,
+                updatedAt = vaultItem.updatedAt,
+                lastUsedAt = vaultItem.lastUsedAt
             )
         }
     }

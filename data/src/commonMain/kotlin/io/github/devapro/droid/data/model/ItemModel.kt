@@ -10,5 +10,9 @@ data class ItemModel(
     val password: String,
     val username: String,
     val additionalFields: List<AdditionalFieldsModel>,
-    val tags: List<VaultItemTag>
+    val tags: List<VaultItemTag>,
+    val totpSecret: String? = null,
+    val createdAt: Long? = null,
+    val updatedAt: Long? = null,
+    val lastUsedAt: Long? = null
 )

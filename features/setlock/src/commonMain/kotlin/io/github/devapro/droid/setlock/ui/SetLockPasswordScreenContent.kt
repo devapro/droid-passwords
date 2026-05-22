@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import io.github.devapro.droid.core.ui.EOutlinedTextField
+import io.github.devapro.droid.core.ui.PasswordStrengthMeter
 import io.github.devapro.droid.setlock.model.SetLockPasswordScreenAction
 import io.github.devapro.droid.setlock.model.SetLockPasswordScreenState
 
@@ -148,6 +149,8 @@ fun SetLockPasswordScreenContent(
                         supportingText = state.newPasswordError?.let { { Text(it) } },
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    PasswordStrengthMeter(password = state.newPassword)
 
                     EOutlinedTextField(
                         value = state.confirmPassword,

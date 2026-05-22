@@ -25,4 +25,6 @@ sealed interface PasswordListScreenAction {
     data object OnSettingsClicked : PasswordListScreenAction
 
     data object OnClearSearch : PasswordListScreenAction
+
+    data class OnSortOrderChanged(val order: SortOrder) : PasswordListScreenAction
 } 

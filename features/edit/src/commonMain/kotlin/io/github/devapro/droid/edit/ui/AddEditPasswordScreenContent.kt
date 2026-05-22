@@ -89,6 +89,17 @@ fun AddEditPasswordScreenContent(
                 )
             }
 
+            CollapsibleSection(
+                title = "Two-factor (TOTP)",
+                expanded = state.isTotpVisible,
+                onToggle = { onAction(AddEditPasswordScreenAction.OnToggleTotpSection) }
+            ) {
+                TotpSecretField(
+                    value = state.totpSecret,
+                    onValueChange = { onAction(AddEditPasswordScreenAction.OnTotpSecretChanged(it)) }
+                )
+            }
+
             TagsSection(
                 state = state,
                 onAction = onAction
@@ -112,6 +123,13 @@ fun AddEditPasswordScreenContent(
 
     if (state.showDeleteConfirmation) {
         DeleteConfirmationDialog(
+            onAction = onAction
+        )
+    }
+
+    if (state.showGeneratorDialog) {
+        PasswordGeneratorDialog(
+            state = state,
             onAction = onAction
         )
     }

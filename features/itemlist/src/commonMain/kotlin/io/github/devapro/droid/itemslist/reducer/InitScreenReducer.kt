@@ -3,10 +3,12 @@ package io.github.devapro.droid.itemslist.reducer
 import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.droid.itemlist.PasswordTagFilterType
+import io.github.devapro.droid.itemslist.applySort
 import io.github.devapro.droid.itemslist.mapper.VaultItemMapper
 import io.github.devapro.droid.itemslist.model.PasswordListScreenAction
 import io.github.devapro.droid.itemslist.model.PasswordListScreenEvent
 import io.github.devapro.droid.itemslist.model.PasswordListScreenState
+import io.github.devapro.droid.itemslist.model.SortOrder
 
 class InitScreenReducer(
     private val runtimeRepository: VaultRuntimeRepository,
@@ -26,10 +28,12 @@ class InitScreenReducer(
             PasswordTagFilterType.NORMAL -> vault.items.filter { it.tags.any { tag -> tag.id == action.tag?.id } }
         }
         val items = vaultItemMapper.map(filteredItems)
+        val initialOrder = SortOrder.NAME_ASC
+        val sortedItems = items.applySort(initialOrder)
         return Reducer.Result(
             state = PasswordListScreenState.Success(
-                passwords = items,
-                filteredPasswords = items,
+                passwords = sortedItems,
+                filteredPasswords = sortedItems,
                 searchQuery = "",
                 isLoading = false,
                 isRefreshing = false,
@@ -39,7 +43,8 @@ class InitScreenReducer(
                     PasswordTagFilterType.NO_TAG -> "No Tag Passwords"
                     PasswordTagFilterType.NORMAL -> action.tag?.title ?: "Tagged Passwords"
                 },
-                selectedTag = action.tag
+                selectedTag = action.tag,
+                sortOrder = initialOrder
             ),
             action = null,
             event = null

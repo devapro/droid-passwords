@@ -1,10 +1,10 @@
 package io.github.devapro.droid.edit.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
+import io.github.devapro.droid.edit.PasswordGenerator
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenState
-import kotlin.random.Random
 
 class OnGeneratePasswordReducer
     : Reducer<AddEditPasswordScreenAction.OnGeneratePassword, AddEditPasswordScreenState, AddEditPasswordScreenAction, AddEditPasswordScreenEvent> {
@@ -18,17 +18,14 @@ class OnGeneratePasswordReducer
         val currentState = getState()
 
         return if (currentState is AddEditPasswordScreenState.Success) {
-            val generatedPassword = generatePassword()
-            val isFormValid = currentState.title.isNotBlank() && generatedPassword.isNotBlank()
-            
+            val preview = PasswordGenerator.generate(currentState.generatorOptions)
             Reducer.Result(
                 state = currentState.copy(
-                    password = generatedPassword,
-                    passwordError = null,
-                    isFormValid = isFormValid
+                    showGeneratorDialog = true,
+                    generatorPreview = preview
                 ),
                 action = null,
-                event = AddEditPasswordScreenEvent.GeneratedPassword(generatedPassword)
+                event = null
             )
         } else {
             Reducer.Result(
@@ -38,11 +35,4 @@ class OnGeneratePasswordReducer
             )
         }
     }
-    
-    private fun generatePassword(length: Int = 16): String {
-        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*"
-        return (1..length)
-            .map { chars[Random.nextInt(chars.length)] }
-            .joinToString("")
-    }
-} 
+}

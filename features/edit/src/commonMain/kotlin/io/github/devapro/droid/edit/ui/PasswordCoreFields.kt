@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import io.github.devapro.droid.core.ui.EOutlinedTextField
+import io.github.devapro.droid.core.ui.PasswordStrengthMeter
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenState
 
@@ -71,4 +72,6 @@ fun PasswordCoreFields(
         isError = state.passwordError != null,
         supportingText = state.passwordError?.let { { Text(it) } }
     )
+
+    PasswordStrengthMeter(password = state.password)
 }

@@ -2,6 +2,8 @@ package io.github.devapro.droid.itemslist.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
@@ -21,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.devapro.droid.itemslist.model.PasswordListScreenAction
 import io.github.devapro.droid.itemslist.model.PasswordListScreenState
+import io.github.devapro.droid.itemslist.model.SortOrder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +33,7 @@ fun ScreenTopAppBar(
     onSearchButtonClick: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    var showSortMenu by remember { mutableStateOf(false) }
     TopAppBar(
         title = {
             Text(
@@ -48,6 +52,28 @@ fun ScreenTopAppBar(
         actions = {
             IconButton(onClick = { onSearchButtonClick() }) {
                 Icon(Icons.Default.Search, contentDescription = "Search")
+            }
+            IconButton(onClick = { showSortMenu = true }) {
+                Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = "Sort")
+            }
+            DropdownMenu(
+                expanded = showSortMenu,
+                onDismissRequest = { showSortMenu = false }
+            ) {
+                SortOrder.entries.forEach { order ->
+                    DropdownMenuItem(
+                        text = { Text(order.label) },
+                        onClick = {
+                            showSortMenu = false
+                            onAction(PasswordListScreenAction.OnSortOrderChanged(order))
+                        },
+                        trailingIcon = {
+                            if (state.sortOrder == order) {
+                                Icon(Icons.Default.Check, contentDescription = null)
+                            }
+                        }
+                    )
+                }
             }
             IconButton(onClick = { showMenu = true }) {
                 Icon(Icons.Default.MoreVert, contentDescription = "More options")

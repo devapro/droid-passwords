@@ -9,6 +9,7 @@ import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenEvent
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenState
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -28,6 +29,10 @@ class OnSaveReducer(
         val currentState = getState()
 
         return if (currentState is AddEditPasswordScreenState.Success && currentState.isFormValid) {
+            val now = Clock.System.now().toEpochMilliseconds()
+            val existing = currentState.itemId?.let { id ->
+                runtimeRepository.getVault().items.firstOrNull { it.id == id }
+            }
             val item = VaultItemModel(
                 id = currentState.itemId ?: Uuid.random().toHexDashString(),
                 title = currentState.title,
@@ -41,7 +46,11 @@ class OnSaveReducer(
                         value = it.value
                     )
                 },
-                tags = currentState.tags
+                tags = currentState.tags,
+                totpSecret = currentState.totpSecret.trim().ifEmpty { null },
+                createdAt = existing?.createdAt ?: now,
+                updatedAt = now,
+                lastUsedAt = existing?.lastUsedAt
             )
 
             runtimeRepository.addOrUpdateVault(item)
