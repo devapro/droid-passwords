@@ -18,17 +18,11 @@ class OnPasswordChangedReducer
         val currentState = getState()
 
         return if (currentState is ImportScreenState.Loaded) {
-            val isValid = action.password.isNotEmpty()
-            val passwordError =
-                if (action.password.isEmpty()) null else null // Clear error on input
-
-            val newState = currentState.copy(
-                password = action.password,
-                passwordError = passwordError,
-                isValid = isValid
-            )
             Reducer.Result(
-                state = newState,
+                state = currentState.copy(
+                    password = action.password,
+                    passwordError = null
+                ),
                 action = null,
                 event = null
             )
@@ -40,4 +34,4 @@ class OnPasswordChangedReducer
             )
         }
     }
-} 
+}

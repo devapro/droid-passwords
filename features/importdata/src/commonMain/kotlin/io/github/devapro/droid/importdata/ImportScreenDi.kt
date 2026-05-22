@@ -5,6 +5,8 @@ import io.github.devapro.droid.importdata.factory.ImportScreenFactoryImpl
 import io.github.devapro.droid.importdata.factory.ImportScreenInitStateFactory
 import io.github.devapro.droid.importdata.reducer.InitScreenReducer
 import io.github.devapro.droid.importdata.reducer.OnBackClickedReducer
+import io.github.devapro.droid.importdata.reducer.OnConfirmImportPasswordReducer
+import io.github.devapro.droid.importdata.reducer.OnDismissPasswordDialogReducer
 import io.github.devapro.droid.importdata.reducer.OnFormatSelectedReducer
 import io.github.devapro.droid.importdata.reducer.OnImportClickedReducer
 import io.github.devapro.droid.importdata.reducer.OnImportFileCancelledReducer
@@ -42,7 +44,9 @@ private fun Module.reducersDi() {
     factoryOf(::OnImportFileSelectedReducer)
     factoryOf(::OnPasswordChangedReducer)
     factoryOf(::OnTogglePasswordVisibilityReducer)
-    
+    factoryOf(::OnConfirmImportPasswordReducer)
+    factoryOf(::OnDismissPasswordDialogReducer)
+
     factory {
         ImportActionProcessor(
             reducers = setOf(
@@ -54,9 +58,11 @@ private fun Module.reducersDi() {
                 get(OnImportFileSelectedReducer::class),
                 get(OnPasswordChangedReducer::class),
                 get(OnTogglePasswordVisibilityReducer::class),
+                get(OnConfirmImportPasswordReducer::class),
+                get(OnDismissPasswordDialogReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()
         )
     }
-} 
+}

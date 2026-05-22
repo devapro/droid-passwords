@@ -21,12 +21,12 @@ class InitScreenReducer(
             state = ImportScreenState.Loaded(
                 password = "",
                 passwordError = null,
-                isValid = false,
                 isPasswordVisible = false,
                 selectedFormat = FileFormat.JSON,
                 isProcessing = false,
                 formats = formatsListFactory.createFormatsList(),
-                formatDescription = getFormatDescription(FileFormat.JSON)
+                formatDescription = getFormatDescription(FileFormat.JSON),
+                pendingFile = null
             ),
             action = null,
             event = null

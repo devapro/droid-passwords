@@ -15,6 +15,8 @@ import io.github.devapro.droid.tags.navigation.TagsScreen
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.dialogs.openFileSaver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -57,10 +59,12 @@ fun ImportScreenRoot() {
                 }
 
                 is ImportScreenEvent.OpenFileForImport -> {
-                    val file = FileKit.openFilePicker(
-                        type = it.type,
-                        title = "Select File",
-                    )
+                    val file = withContext(Dispatchers.IO) {
+                        FileKit.openFilePicker(
+                            type = it.type,
+                            title = "Select File",
+                        )
+                    }
                     if (file != null) {
                         viewModel.onAction(
                             ImportScreenAction.ImportFileSelected(

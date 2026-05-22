@@ -5,20 +5,26 @@ import io.github.devapro.droid.importdata.model.ImportScreenAction
 import io.github.devapro.droid.importdata.model.ImportScreenEvent
 import io.github.devapro.droid.importdata.model.ImportScreenState
 
-class OnImportFileCancelledReducer
+class OnDismissPasswordDialogReducer
     :
-    Reducer<ImportScreenAction.ImportFileCancelled, ImportScreenState, ImportScreenAction, ImportScreenEvent> {
+    Reducer<ImportScreenAction.OnDismissPasswordDialog, ImportScreenState, ImportScreenAction, ImportScreenEvent> {
 
-    override val actionClass = ImportScreenAction.ImportFileCancelled::class
+    override val actionClass = ImportScreenAction.OnDismissPasswordDialog::class
 
     override suspend fun reduce(
-        action: ImportScreenAction.ImportFileCancelled,
+        action: ImportScreenAction.OnDismissPasswordDialog,
         getState: () -> ImportScreenState
     ): Reducer.Result<ImportScreenState, ImportScreenAction, ImportScreenEvent?> {
         val currentState = getState()
         return if (currentState is ImportScreenState.Loaded) {
             Reducer.Result(
-                state = currentState.copy(isProcessing = false),
+                state = currentState.copy(
+                    pendingFile = null,
+                    password = "",
+                    passwordError = null,
+                    isPasswordVisible = false,
+                    isProcessing = false
+                ),
                 action = null,
                 event = null
             )

@@ -27,5 +27,7 @@ sealed interface ImportScreenAction {
 
     data object OnTogglePasswordVisibility : ImportScreenAction
 
-    data object OnUnlockClicked : ImportScreenAction
+    data object OnConfirmImportPassword : ImportScreenAction
+
+    data object OnDismissPasswordDialog : ImportScreenAction
 }
