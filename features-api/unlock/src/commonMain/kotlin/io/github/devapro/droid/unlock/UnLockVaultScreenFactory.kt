@@ -5,5 +5,5 @@ import androidx.compose.runtime.Composable
 interface UnLockVaultScreenFactory {
 
     @Composable
-    fun CreateUnLockVaultScreen()
+    fun CreateUnLockVaultScreen(vaultId: String?)
 }

@@ -7,6 +7,7 @@ sealed interface SetLockPasswordScreenState {
 
     data class Success(
         val isVaultExists: Boolean,
+        val vaultName: String,
         val currentPassword: String,
         val newPassword: String,
         val confirmPassword: String,
@@ -14,6 +15,7 @@ sealed interface SetLockPasswordScreenState {
         val isNewPasswordVisible: Boolean,
         val isConfirmPasswordVisible: Boolean,
         val isProcessing: Boolean,
+        val vaultNameError: String?,
         val currentPasswordError: String?,
         val newPasswordError: String?,
         val confirmPasswordError: String?,

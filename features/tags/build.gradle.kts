@@ -76,6 +76,7 @@ kotlin {
             implementation(projects.featuresApi.export)
             implementation(projects.featuresApi.itemlist)
             implementation(projects.featuresApi.edit)
+            implementation(projects.featuresApi.vaultlist)
 
         }
         commonTest.dependencies {

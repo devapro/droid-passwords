@@ -206,13 +206,12 @@ private fun WelcomeActions(
                             onAction(WelcomeScreenAction.OnLoadVault)
                         }
                     )
-                } else {
-                    CreateNewVault(
-                        onClick = {
-                            onAction(WelcomeScreenAction.OnCreateNewVault)
-                        }
-                    )
                 }
+                CreateNewVault(
+                    onClick = {
+                        onAction(WelcomeScreenAction.OnCreateNewVault)
+                    }
+                )
                 ImportExistingVault(
                     onClick = {
                         onAction(WelcomeScreenAction.OnOpenExistingVault)

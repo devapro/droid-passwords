@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -129,7 +130,11 @@ fun TagsScreenContent(
             } else {
                 // Normal top bar
                 TopAppBar(
-                    title = { Text("Tags") },
+                    title = {
+                        Text(
+                            if (state.activeVaultName.isNotBlank()) state.activeVaultName else "Tags"
+                        )
+                    },
                     actions = {
                         IconButton(onClick = { isSearchActive = true }) {
                             Icon(Icons.Default.Search, contentDescription = "Search")
@@ -141,6 +146,16 @@ fun TagsScreenContent(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
+                            DropdownMenuItem(
+                                text = { Text("Switch vault") },
+                                onClick = {
+                                    showMenu = false
+                                    onAction(TagsScreenAction.OnSwitchVaultClicked)
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.SwapHoriz, contentDescription = null)
+                                }
+                            )
                             DropdownMenuItem(
                                 text = { Text("Export") },
                                 onClick = {

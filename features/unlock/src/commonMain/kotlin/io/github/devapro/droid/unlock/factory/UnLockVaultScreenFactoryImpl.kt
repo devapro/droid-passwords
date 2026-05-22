@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import io.github.devapro.droid.unlock.UnLockVaultScreenFactory
 import io.github.devapro.droid.unlock.UnLockVaultScreenRoot
 
-class UnLockVaultScreenFactoryImpl: UnLockVaultScreenFactory {
+class UnLockVaultScreenFactoryImpl : UnLockVaultScreenFactory {
 
     @Composable
-    override fun CreateUnLockVaultScreen() {
-        UnLockVaultScreenRoot()
+    override fun CreateUnLockVaultScreen(vaultId: String?) {
+        UnLockVaultScreenRoot(vaultId = vaultId)
     }
 }

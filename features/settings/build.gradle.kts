@@ -82,6 +82,7 @@ kotlin {
             implementation(projects.featuresApi.unlock)
             implementation(projects.featuresApi.settings)
             implementation(projects.featuresApi.importdata)
+            implementation(projects.featuresApi.vaultlist)
 
         }
         commonTest.dependencies {

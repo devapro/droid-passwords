@@ -82,6 +82,18 @@ fun SetLockPasswordScreenContent(
                         style = MaterialTheme.typography.bodyLarge
                     )
 
+                    if (!state.isVaultExists) {
+                        EOutlinedTextField(
+                            value = state.vaultName,
+                            onValueChange = { onAction(SetLockPasswordScreenAction.OnVaultNameChanged(it)) },
+                            label = { Text("Vault Name") },
+                            singleLine = true,
+                            isError = state.vaultNameError != null,
+                            supportingText = state.vaultNameError?.let { { Text(it) } },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
                     if (state.isVaultExists) {
                         EOutlinedTextField(
                             value = state.currentPassword,

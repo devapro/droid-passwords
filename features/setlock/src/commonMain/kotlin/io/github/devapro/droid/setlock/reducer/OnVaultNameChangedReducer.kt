@@ -5,44 +5,34 @@ import io.github.devapro.droid.setlock.model.SetLockPasswordScreenAction
 import io.github.devapro.droid.setlock.model.SetLockPasswordScreenEvent
 import io.github.devapro.droid.setlock.model.SetLockPasswordScreenState
 
-class OnConfirmPasswordChangedReducer
-    : Reducer<SetLockPasswordScreenAction.OnConfirmPasswordChanged, SetLockPasswordScreenState, SetLockPasswordScreenAction, SetLockPasswordScreenEvent> {
+class OnVaultNameChangedReducer
+    : Reducer<SetLockPasswordScreenAction.OnVaultNameChanged, SetLockPasswordScreenState, SetLockPasswordScreenAction, SetLockPasswordScreenEvent> {
 
-    override val actionClass = SetLockPasswordScreenAction.OnConfirmPasswordChanged::class
+    override val actionClass = SetLockPasswordScreenAction.OnVaultNameChanged::class
 
     override suspend fun reduce(
-        action: SetLockPasswordScreenAction.OnConfirmPasswordChanged,
+        action: SetLockPasswordScreenAction.OnVaultNameChanged,
         getState: () -> SetLockPasswordScreenState
-    ): Reducer.Result<SetLockPasswordScreenState, SetLockPasswordScreenAction.OnConfirmPasswordChanged, SetLockPasswordScreenEvent?> {
+    ): Reducer.Result<SetLockPasswordScreenState, SetLockPasswordScreenAction.OnVaultNameChanged, SetLockPasswordScreenEvent?> {
         val currentState = getState()
 
         return if (currentState is SetLockPasswordScreenState.Success) {
-            val confirmPasswordError = if (action.password != currentState.newPassword) {
-                "Passwords do not match"
-            } else null
-
+            val trimmed = action.name
+            val nameError = if (trimmed.isBlank()) "Vault name cannot be empty" else null
             val newState = currentState.copy(
-                confirmPassword = action.password,
-                confirmPasswordError = confirmPasswordError,
+                vaultName = trimmed,
+                vaultNameError = nameError,
                 isValid = validateForm(
-                    vaultName = currentState.vaultName,
+                    vaultName = trimmed,
                     currentPassword = currentState.currentPassword,
                     newPassword = currentState.newPassword,
-                    confirmPassword = action.password,
+                    confirmPassword = currentState.confirmPassword,
                     hasExistingPassword = currentState.isVaultExists
                 )
             )
-            Reducer.Result(
-                state = newState,
-                action = null,
-                event = null
-            )
+            Reducer.Result(state = newState, action = null, event = null)
         } else {
-            Reducer.Result(
-                state = currentState,
-                action = null,
-                event = null
-            )
+            Reducer.Result(state = currentState, action = null, event = null)
         }
     }
 
@@ -59,4 +49,4 @@ class OnConfirmPasswordChangedReducer
         if (newPassword != confirmPassword) return false
         return true
     }
-} 
+}

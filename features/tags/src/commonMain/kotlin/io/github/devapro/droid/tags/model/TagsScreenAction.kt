@@ -17,5 +17,7 @@ sealed interface TagsScreenAction {
 
     data object OnSettingsClicked : TagsScreenAction
 
+    data object OnSwitchVaultClicked : TagsScreenAction
+
     data object OnAddPasswordClicked : TagsScreenAction
-} 
+}

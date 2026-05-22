@@ -5,11 +5,11 @@ import cafe.adriel.voyager.core.screen.Screen
 import io.github.devapro.droid.unlock.UnLockVaultScreenFactory
 import org.koin.compose.koinInject
 
-object UnLockVaultScreen : Screen {
+data class UnLockVaultScreen(val vaultId: String? = null) : Screen {
 
     @Composable
     override fun Content() {
         val factory: UnLockVaultScreenFactory = koinInject()
-        factory.CreateUnLockVaultScreen()
+        factory.CreateUnLockVaultScreen(vaultId)
     }
-} 
+}

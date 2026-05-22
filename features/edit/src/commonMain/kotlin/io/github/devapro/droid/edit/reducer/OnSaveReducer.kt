@@ -54,7 +54,10 @@ class OnSaveReducer(
             )
 
             runtimeRepository.addOrUpdateVault(item)
-            val result = repository.saveVault(runtimeRepository.getVault())
+            val result = repository.saveVault(
+                descriptor = runtimeRepository.getActiveDescriptor(),
+                vaultModel = runtimeRepository.getVault(),
+            )
             when (result) {
                 is AppResult.Success -> {
                     Reducer.Result(
@@ -80,4 +83,4 @@ class OnSaveReducer(
             )
         }
     }
-} 
+}

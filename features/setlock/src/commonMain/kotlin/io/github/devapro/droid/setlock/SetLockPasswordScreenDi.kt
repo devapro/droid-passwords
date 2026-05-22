@@ -12,6 +12,7 @@ import io.github.devapro.droid.setlock.reducer.OnSaveClickedReducer
 import io.github.devapro.droid.setlock.reducer.OnToggleConfirmPasswordVisibilityReducer
 import io.github.devapro.droid.setlock.reducer.OnToggleCurrentPasswordVisibilityReducer
 import io.github.devapro.droid.setlock.reducer.OnToggleNewPasswordVisibilityReducer
+import io.github.devapro.droid.setlock.reducer.OnVaultNameChangedReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -25,6 +26,7 @@ fun Module.registerSetLockPasswordScreenDi() {
 
 private fun Module.reducersDi() {
     factoryOf(::InitScreenReducer)
+    factoryOf(::OnVaultNameChangedReducer)
     factoryOf(::OnCurrentPasswordChangedReducer)
     factoryOf(::OnNewPasswordChangedReducer)
     factoryOf(::OnConfirmPasswordChangedReducer)
@@ -34,11 +36,12 @@ private fun Module.reducersDi() {
     factoryOf(::OnSaveClickedReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnRemovePasswordClickedReducer)
-    
+
     factory {
         SetLockPasswordScreenActionProcessor(
             reducers = setOf(
                 get(InitScreenReducer::class),
+                get(OnVaultNameChangedReducer::class),
                 get(OnCurrentPasswordChangedReducer::class),
                 get(OnNewPasswordChangedReducer::class),
                 get(OnConfirmPasswordChangedReducer::class),

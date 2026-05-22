@@ -30,7 +30,7 @@ fun WelcomeScreenRoot() {
             when (it) {
                 is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(SetLockPasswordScreen)
                 is WelcomeScreenEvent.OnOpenExistingVault -> navigator.push(ImportScreen)
-                is WelcomeScreenEvent.OnLoadVault -> navigator.push(UnLockVaultScreen)
+                is WelcomeScreenEvent.OnLoadVault -> navigator.push(UnLockVaultScreen())
             }
         }
     }

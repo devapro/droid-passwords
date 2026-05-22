@@ -16,6 +16,7 @@ import io.github.devapro.droid.tags.model.TagsScreenAction
 import io.github.devapro.droid.tags.model.TagsScreenEvent
 import io.github.devapro.droid.tags.model.TagsScreenState
 import io.github.devapro.droid.tags.ui.TagsScreenContent
+import io.github.devapro.droid.vaultlist.navigation.VaultListScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -59,6 +60,10 @@ fun TagsScreenRoot() {
 
                 is TagsScreenEvent.NavigateToSettings -> {
                     navigator.push(SettingsScreen)
+                }
+
+                is TagsScreenEvent.NavigateToVaultList -> {
+                    navigator.push(VaultListScreen)
                 }
             }
         }

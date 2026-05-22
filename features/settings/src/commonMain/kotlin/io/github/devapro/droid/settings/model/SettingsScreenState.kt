@@ -11,12 +11,16 @@ sealed interface SettingsScreenState {
     data class Success(
         val lockInterval: LockInterval,
         val themeMode: ThemeMode,
-        val vaultFilePath: String,
+        val activeVaultName: String,
         val isChangePasswordDialogVisible: Boolean = false,
-        val isFilePathDialogVisible: Boolean = false,
         val isChangingPassword: Boolean = false,
-        val isChangingFilePath: Boolean = false,
         val passwordChangeError: String? = null,
-        val filePathChangeError: String? = null
+        val isRenameDialogVisible: Boolean = false,
+        val renameDraft: String = "",
+        val renameError: String? = null,
+        val isRemoveDialogVisible: Boolean = false,
+        val removeAlsoDeleteFile: Boolean = false,
+        val isPerformingVaultAction: Boolean = false,
+        val vaultActionError: String? = null,
     ) : SettingsScreenState
 }

@@ -24,6 +24,7 @@ import io.github.devapro.droid.settings.model.SettingsScreenAction
 import io.github.devapro.droid.settings.model.SettingsScreenEvent
 import io.github.devapro.droid.settings.model.SettingsScreenState
 import io.github.devapro.droid.settings.ui.SettingsScreenContent
+import io.github.devapro.droid.vaultlist.navigation.VaultListScreen
 import org.koin.compose.koinInject
 
 /**
@@ -80,9 +81,9 @@ fun SettingsScreenRoot() {
                     )
                 }
 
-                is SettingsScreenEvent.ShowFilePathPicker -> {
-                    // File path picker is handled within the dialog
-                    // This event could be used for platform-specific file picker integration
+                is SettingsScreenEvent.NavigateAfterVaultRemoved -> {
+                    navigator.popUntilRoot()
+                    navigator.replaceAll(VaultListScreen)
                 }
             }
         }

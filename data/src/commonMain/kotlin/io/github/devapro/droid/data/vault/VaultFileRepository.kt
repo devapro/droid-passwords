@@ -4,136 +4,171 @@ import io.github.devapro.droid.core.mvi.AppResult
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.cacheDir
+import io.github.vinceglb.filekit.delete
 import io.github.vinceglb.filekit.exists
+import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.readBytes
 import io.github.vinceglb.filekit.write
 import kotlinx.serialization.json.Json
 
-private const val DEFAULT_FILE_NAME = "droid-d4.data"
+private const val LEGACY_FILE_NAME = "droid-d4.data"
 
 class VaultFileRepository(
     private val json: Json,
-    private val cryptoMapper: CryptoMapper
+    private val cryptoMapper: CryptoMapper,
 ) {
 
-    fun isVaultExists(): Boolean {
-        val file = getVaultFile()
-        return file.exists()
-    }
+    fun exists(descriptor: VaultDescriptor): Boolean = resolveFile(descriptor).exists()
 
-    suspend fun createVault(password: String): AppResult<Unit> {
-        try {
-            val file = getVaultFile()
-            val vaultModel = VaultModel(
-                items = emptyList(),
-                password = password
-            )
-            val vaultRawContent = json.encodeToString(vaultModel)
+    fun resolveFile(descriptor: VaultDescriptor): PlatformFile =
+        PlatformFile(FileKit.filesDir, descriptor.fileName)
 
-            val vaultEncodedContent = cryptoMapper.encode(password, vaultRawContent)
-
-            file.write(vaultEncodedContent)
-        } catch (e: Exception) {
-            return AppResult.Failure(e)
-        }
-
-        return AppResult.Success(Unit)
-    }
-
-    suspend fun changePassword(oldPassword: String, newPassword: String): AppResult<Unit> {
-        // Logic to change the vault password from oldPassword to newPassword
+    suspend fun createVault(
+        descriptor: VaultDescriptor,
+        password: String,
+    ): AppResult<VaultModel> {
         return try {
-            val file = getVaultFile()
+            val now = descriptor.createdAt
+            val vaultModel = VaultModel(
+                password = password,
+                items = emptyList(),
+                name = descriptor.name,
+                createdAt = now,
+                updatedAt = now,
+            )
+            val raw = json.encodeToString(vaultModel)
+            val encoded = cryptoMapper.encode(password, raw)
+            resolveFile(descriptor).write(encoded)
+            AppResult.Success(vaultModel)
+        } catch (e: Exception) {
+            AppResult.Failure(e)
+        }
+    }
+
+    suspend fun changePassword(
+        descriptor: VaultDescriptor,
+        oldPassword: String,
+        newPassword: String,
+    ): AppResult<VaultModel> {
+        return try {
+            val file = resolveFile(descriptor)
             if (!file.exists()) {
                 return AppResult.Failure(Exception("Vault does not exist"))
             }
-
-            val vaultEncodedContent = file.readBytes()
-            val vaultRawContent = cryptoMapper.decode(oldPassword, vaultEncodedContent)
-            val vaultModel = json.decodeFromString<VaultModel>(vaultRawContent)
-
-            // Re-encode with the new password
-            val newVaultRawContent = json.encodeToString(vaultModel)
-            val newVaultEncodedContent = cryptoMapper.encode(newPassword, newVaultRawContent)
-
-            file.write(newVaultEncodedContent)
-            return AppResult.Success(Unit)
+            val encoded = file.readBytes()
+            val raw = cryptoMapper.decode(oldPassword, encoded)
+            val existing = json.decodeFromString<VaultModel>(raw)
+            val updated = existing.copy(
+                password = newPassword,
+                updatedAt = currentTimeMillis(),
+            )
+            val newRaw = json.encodeToString(updated)
+            val newEncoded = cryptoMapper.encode(newPassword, newRaw)
+            file.write(newEncoded)
+            AppResult.Success(updated)
         } catch (e: Exception) {
-            return AppResult.Failure(e)
+            AppResult.Failure(e)
         }
     }
 
     suspend fun getVault(
-        password: String
+        descriptor: VaultDescriptor,
+        password: String,
     ): AppResult<VaultModel> {
-        try {
-            val file = getVaultFile()
+        return try {
+            val file = resolveFile(descriptor)
             if (!file.exists()) {
                 return AppResult.Failure(Exception("Vault does not exist"))
             }
-            val vaultEncodedContent = file.readBytes()
-            val vaultRawContent = cryptoMapper.decode(password, vaultEncodedContent)
-            return AppResult.Success(json.decodeFromString(vaultRawContent))
+            val encoded = file.readBytes()
+            val raw = cryptoMapper.decode(password, encoded)
+            AppResult.Success(json.decodeFromString(raw))
         } catch (_: Exception) {
-            return AppResult.Failure(Exception("Failed to load vault. Please check your password or file."))
+            AppResult.Failure(Exception("Failed to load vault. Please check your password or file."))
         }
     }
 
-    suspend fun getVaultFromSpecificFile(
+    suspend fun getVaultFromExternalFile(
+        file: PlatformFile,
         password: String,
-        fileForImport: PlatformFile? = null
     ): AppResult<VaultModel> {
-        try {
-            val file = fileForImport ?: getVaultFile()
+        return try {
             if (!file.exists()) {
-                return AppResult.Failure(Exception("Vault does not exist"))
+                return AppResult.Failure(Exception("File does not exist"))
             }
-            val vaultEncodedContent = file.readBytes()
-            val vaultRawContent = cryptoMapper.decode(password, vaultEncodedContent)
-            return AppResult.Success(json.decodeFromString(vaultRawContent))
+            val encoded = file.readBytes()
+            val raw = cryptoMapper.decode(password, encoded)
+            AppResult.Success(json.decodeFromString(raw))
         } catch (_: Exception) {
-            return AppResult.Failure(Exception("Failed to load vault. Please check your password or file."))
+            AppResult.Failure(Exception("Failed to load vault. Please check your password or file."))
         }
     }
 
     suspend fun saveVault(
-        vaultModel: VaultModel
-    ): AppResult<Unit> {
-        return try {
-            val file = getVaultFile()
-            val vaultRawContent = json.encodeToString(vaultModel)
-
-            val vaultEncodedContent = cryptoMapper.encode(
-                vaultModel.password, vaultRawContent
-            )
-
-            file.write(vaultEncodedContent)
-            AppResult.Success(Unit)
-        } catch (e: Exception) {
-            AppResult.Failure(e)
-        }
-    }
-
-    suspend fun saveVaultToSpecificFile(
+        descriptor: VaultDescriptor,
         vaultModel: VaultModel,
-        fileForExport: PlatformFile
     ): AppResult<Unit> {
         return try {
-            val vaultRawContent = json.encodeToString(vaultModel)
-
-            val vaultEncodedContent = cryptoMapper.encode(
-                vaultModel.password, vaultRawContent
-            )
-
-            fileForExport.write(vaultEncodedContent)
+            val raw = json.encodeToString(vaultModel)
+            val encoded = cryptoMapper.encode(vaultModel.password, raw)
+            resolveFile(descriptor).write(encoded)
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Failure(e)
         }
     }
 
-    private fun getVaultFile(): PlatformFile {
-        return PlatformFile(FileKit.cacheDir, DEFAULT_FILE_NAME)
+    suspend fun saveVaultToExternalFile(
+        vaultModel: VaultModel,
+        file: PlatformFile,
+    ): AppResult<Unit> {
+        return try {
+            val raw = json.encodeToString(vaultModel)
+            val encoded = cryptoMapper.encode(vaultModel.password, raw)
+            file.write(encoded)
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Failure(e)
+        }
+    }
+
+    suspend fun deleteVaultFile(descriptor: VaultDescriptor): AppResult<Unit> {
+        return try {
+            val file = resolveFile(descriptor)
+            if (file.exists()) file.delete()
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Failure(e)
+        }
+    }
+
+    fun legacyVaultExists(): Boolean = legacyVaultFile().exists()
+
+    /**
+     * Moves the legacy `droid-d4.data` from cacheDir into the durable filesDir under the
+     * descriptor's file name. Encrypted bytes are preserved as-is — the file is never decrypted,
+     * so the user's existing master password keeps working.
+     */
+    suspend fun migrateLegacyVault(descriptor: VaultDescriptor): AppResult<Unit> {
+        return try {
+            val legacy = legacyVaultFile()
+            if (!legacy.exists()) {
+                return AppResult.Failure(Exception("Legacy vault does not exist"))
+            }
+            val bytes = legacy.readBytes()
+            resolveFile(descriptor).write(bytes)
+            legacy.delete()
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Failure(e)
+        }
+    }
+
+    private fun legacyVaultFile(): PlatformFile =
+        PlatformFile(FileKit.cacheDir, LEGACY_FILE_NAME)
+
+    private fun currentTimeMillis(): Long {
+        @OptIn(kotlin.time.ExperimentalTime::class)
+        return kotlin.time.Clock.System.now().toEpochMilliseconds()
     }
 }
-

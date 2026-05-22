@@ -11,4 +11,6 @@ sealed interface TagsScreenEvent {
     data object NavigateToExport : TagsScreenEvent
 
     data object NavigateToSettings : TagsScreenEvent
-} 
+
+    data object NavigateToVaultList : TagsScreenEvent
+}

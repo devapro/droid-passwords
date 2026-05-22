@@ -11,12 +11,13 @@ import io.github.devapro.droid.setlock.registerSetLockPasswordScreenDi
 import io.github.devapro.droid.settings.registerSettingsScreenDi
 import io.github.devapro.droid.tags.registerTagsScreenDi
 import io.github.devapro.droid.unlock.registerUnLockVaultScreenDi
+import io.github.devapro.droid.vaultlist.registerVaultListScreenDi
 import io.github.devapro.droid.welcome.registerWelcomeScreenDi
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-fun initKoin(){
+fun initKoin() {
     startKoin {
         modules(appModule)
     }
@@ -36,4 +37,5 @@ val appModule: Module = module {
     registerAddEditPasswordScreenDi()
     registerSettingsScreenDi()
     registerTagsScreenDi()
+    registerVaultListScreenDi()
 }

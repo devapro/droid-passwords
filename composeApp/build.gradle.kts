@@ -101,6 +101,7 @@ kotlin {
             implementation(projects.features.settings)
             implementation(projects.features.tags)
             implementation(projects.features.unlock)
+            implementation(projects.features.vaultlist)
             implementation(projects.features.welcome)
 
 
@@ -113,6 +114,7 @@ kotlin {
             implementation(projects.featuresApi.settings)
             implementation(projects.featuresApi.tags)
             implementation(projects.featuresApi.unlock)
+            implementation(projects.featuresApi.vaultlist)
             implementation(projects.featuresApi.welcome)
 
         }

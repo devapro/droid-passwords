@@ -54,7 +54,11 @@ fun UnLockVaultScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Unlock Vault") },
+                title = {
+                    Text(
+                        if (state.vaultName.isNotBlank()) "Unlock ${state.vaultName}" else "Unlock Vault"
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { onAction(UnLockVaultScreenAction.OnBackClicked) }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")

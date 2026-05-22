@@ -27,7 +27,10 @@ class OnPasswordItemClickedReducer(
         val vault = runtimeRepository.getVault()
         vault.items.firstOrNull { it.id == action.item.id }?.let { existing ->
             runtimeRepository.addOrUpdateVault(existing.copy(lastUsedAt = now))
-            fileRepository.saveVault(runtimeRepository.getVault())
+            fileRepository.saveVault(
+                descriptor = runtimeRepository.getActiveDescriptor(),
+                vaultModel = runtimeRepository.getVault(),
+            )
         }
 
         return Reducer.Result(

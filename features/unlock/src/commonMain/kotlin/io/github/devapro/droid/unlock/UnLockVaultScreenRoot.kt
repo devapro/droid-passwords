@@ -16,16 +16,16 @@ import io.github.devapro.droid.unlock.ui.UnLockVaultScreenContent
 import org.koin.compose.koinInject
 
 @Composable
-fun UnLockVaultScreenRoot() {
+fun UnLockVaultScreenRoot(vaultId: String? = null) {
     val viewModel: UnLockVaultScreenViewModel = koinInject()
     val snackBarManager: SnackbarHostStateManager = koinInject()
     val navigator = LocalNavigator.currentOrThrow
-    
+
     val state by viewModel.state.collectAsState()
     val event by viewModel.event.collectAsState(initial = null)
 
-    LaunchedEffect(Unit) {
-        viewModel.onAction(UnLockVaultScreenAction.InitScreen)
+    LaunchedEffect(vaultId) {
+        viewModel.onAction(UnLockVaultScreenAction.InitScreen(vaultId))
     }
 
     LaunchedEffect(event) {
@@ -62,4 +62,4 @@ fun UnLockVaultScreenRoot() {
             )
         }
     }
-} 
+}

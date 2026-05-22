@@ -6,16 +6,22 @@ import io.github.devapro.droid.importdata.factory.ImportScreenInitStateFactory
 import io.github.devapro.droid.importdata.reducer.InitScreenReducer
 import io.github.devapro.droid.importdata.reducer.OnBackClickedReducer
 import io.github.devapro.droid.importdata.reducer.OnConfirmImportPasswordReducer
+import io.github.devapro.droid.importdata.reducer.OnConfirmImportReducer
+import io.github.devapro.droid.importdata.reducer.OnDismissConfirmDialogReducer
 import io.github.devapro.droid.importdata.reducer.OnDismissPasswordDialogReducer
 import io.github.devapro.droid.importdata.reducer.OnFormatSelectedReducer
 import io.github.devapro.droid.importdata.reducer.OnImportClickedReducer
 import io.github.devapro.droid.importdata.reducer.OnImportFileCancelledReducer
 import io.github.devapro.droid.importdata.reducer.OnImportFileSelectedReducer
+import io.github.devapro.droid.importdata.reducer.OnNewVaultNameChangedReducer
 import io.github.devapro.droid.importdata.reducer.OnPasswordChangedReducer
+import io.github.devapro.droid.importdata.reducer.OnStrategySelectedReducer
+import io.github.devapro.droid.importdata.reducer.OnTargetSelectedReducer
 import io.github.devapro.droid.importdata.reducer.OnTogglePasswordVisibilityReducer
-import io.github.devapro.droid.importdata.usecase.ImportFromCSVUseCase
-import io.github.devapro.droid.importdata.usecase.ImportFromDataUseCase
-import io.github.devapro.droid.importdata.usecase.ImportFromJsonUseCase
+import io.github.devapro.droid.importdata.usecase.ApplyImportToActiveVaultUseCase
+import io.github.devapro.droid.importdata.usecase.ComputeImportConflictsUseCase
+import io.github.devapro.droid.importdata.usecase.CreateVaultFromImportUseCase
+import io.github.devapro.droid.importdata.usecase.ParseImportFileUseCase
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -30,14 +36,18 @@ fun Module.registerImportScreenDi() {
 }
 
 private fun Module.useCaseDi() {
-    factoryOf(::ImportFromCSVUseCase)
-    factoryOf(::ImportFromDataUseCase)
-    factoryOf(::ImportFromJsonUseCase)
+    factoryOf(::ParseImportFileUseCase)
+    factoryOf(::ComputeImportConflictsUseCase)
+    factoryOf(::ApplyImportToActiveVaultUseCase)
+    factoryOf(::CreateVaultFromImportUseCase)
 }
 
 private fun Module.reducersDi() {
     factoryOf(::InitScreenReducer)
     factoryOf(::OnFormatSelectedReducer)
+    factoryOf(::OnTargetSelectedReducer)
+    factoryOf(::OnStrategySelectedReducer)
+    factoryOf(::OnNewVaultNameChangedReducer)
     factoryOf(::OnImportClickedReducer)
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnImportFileCancelledReducer)
@@ -46,12 +56,17 @@ private fun Module.reducersDi() {
     factoryOf(::OnTogglePasswordVisibilityReducer)
     factoryOf(::OnConfirmImportPasswordReducer)
     factoryOf(::OnDismissPasswordDialogReducer)
+    factoryOf(::OnConfirmImportReducer)
+    factoryOf(::OnDismissConfirmDialogReducer)
 
     factory {
         ImportActionProcessor(
             reducers = setOf(
                 get(InitScreenReducer::class),
                 get(OnFormatSelectedReducer::class),
+                get(OnTargetSelectedReducer::class),
+                get(OnStrategySelectedReducer::class),
+                get(OnNewVaultNameChangedReducer::class),
                 get(OnImportClickedReducer::class),
                 get(OnBackClickedReducer::class),
                 get(OnImportFileCancelledReducer::class),
@@ -60,6 +75,8 @@ private fun Module.reducersDi() {
                 get(OnTogglePasswordVisibilityReducer::class),
                 get(OnConfirmImportPasswordReducer::class),
                 get(OnDismissPasswordDialogReducer::class),
+                get(OnConfirmImportReducer::class),
+                get(OnDismissConfirmDialogReducer::class),
             ),
             initStateFactory = get(),
             coroutineContextProvider = get()
