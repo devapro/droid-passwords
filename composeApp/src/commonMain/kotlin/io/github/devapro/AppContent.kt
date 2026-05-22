@@ -6,18 +6,39 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import io.github.devapro.droid.core.navigation.LocalWideScreenFlag
 import io.github.devapro.droid.core.ui.AppSnackbarHost
+import io.github.devapro.droid.data.LockManager
 import io.github.devapro.droid.welcome.navigation.WelcomeScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 @Composable
 @Preview
 fun AppContent() {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                val throttle = 1.seconds
+                var lastReset = TimeSource.Monotonic.markNow() - throttle
+                awaitPointerEventScope {
+                    while (true) {
+                        awaitPointerEvent(PointerEventPass.Initial)
+                        if (lastReset.elapsedNow() >= throttle) {
+                            lastReset = TimeSource.Monotonic.markNow()
+                            LockManager.resetLockTimer()
+                        }
+                    }
+                }
+            }
+    ) {
         val isWideScreen = maxWidth >= 600.dp
 
         CompositionLocalProvider(LocalWideScreenFlag provides isWideScreen) {
