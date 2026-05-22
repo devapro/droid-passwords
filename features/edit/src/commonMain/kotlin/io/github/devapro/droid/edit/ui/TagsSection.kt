@@ -13,8 +13,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import io.github.devapro.droid.core.ui.EOutlinedTextField
 import io.github.devapro.droid.data.vault.VaultItemTag
 import io.github.devapro.droid.edit.model.AddEditPasswordScreenAction
@@ -30,6 +41,12 @@ fun TagsSection(
         it.title.contains(state.tagInput, ignoreCase = true) && !state.tags.contains(it)
     }
 
+    var dismissedByUser by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.tagInput) {
+        dismissedByUser = false
+    }
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -38,12 +55,22 @@ fun TagsSection(
             onValueChange = { onAction(AddEditPasswordScreenAction.OnTagInputChanged(it)) },
             label = { Text("Tags") },
             forceUpdate = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .onPreviewKeyEvent { event ->
+                    if (event.key == Key.Escape && event.type == KeyEventType.KeyDown) {
+                        dismissedByUser = true
+                        true
+                    } else {
+                        false
+                    }
+                }
         )
 
         DropdownMenu(
-            expanded = suggestedTags.isNotEmpty() && state.tagInput.isNotBlank(),
-            onDismissRequest = { },
+            expanded = !dismissedByUser && suggestedTags.isNotEmpty() && state.tagInput.isNotBlank(),
+            onDismissRequest = { dismissedByUser = true },
+            properties = PopupProperties(focusable = false),
             modifier = Modifier.fillMaxWidth()
         ) {
             suggestedTags.forEach { tag ->
