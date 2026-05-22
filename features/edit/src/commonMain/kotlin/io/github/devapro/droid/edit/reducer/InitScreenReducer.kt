@@ -32,6 +32,8 @@ internal class InitScreenReducer(
                 tagInput = "",
                 allTags = allTags,
                 isPasswordVisible = false,
+                isUrlVisible = item?.url.isNullOrBlank().not(),
+                isDescriptionVisible = item?.description.isNullOrBlank().not(),
                 isAdditionalFieldsVisible = item?.additionalFields.isNullOrEmpty().not(),
                 isSaving = false,
                 titleError = null,

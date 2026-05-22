@@ -20,6 +20,8 @@ sealed interface AddEditPasswordScreenState {
         val tagInput: String,
         val allTags: List<VaultItemTag>,
         val isPasswordVisible: Boolean,
+        val isUrlVisible: Boolean,
+        val isDescriptionVisible: Boolean,
         val isAdditionalFieldsVisible: Boolean,
         val isSaving: Boolean,
         val titleError: String?,

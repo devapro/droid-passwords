@@ -23,6 +23,10 @@ sealed interface AddEditPasswordScreenAction {
 
     data object OnToggleAdditionalFields : AddEditPasswordScreenAction
 
+    data object OnToggleUrlSection : AddEditPasswordScreenAction
+
+    data object OnToggleDescriptionSection : AddEditPasswordScreenAction
+
     data object OnGeneratePassword : AddEditPasswordScreenAction
 
     data class OnAdditionalFieldNameChanged(val index: Int, val name: String) : AddEditPasswordScreenAction

@@ -21,7 +21,9 @@ import io.github.devapro.droid.edit.reducer.OnTagRemovedReducer
 import io.github.devapro.droid.edit.reducer.OnTagSelectedReducer
 import io.github.devapro.droid.edit.reducer.OnTitleChangedReducer
 import io.github.devapro.droid.edit.reducer.OnToggleAdditionalFieldsReducer
+import io.github.devapro.droid.edit.reducer.OnToggleDescriptionSectionReducer
 import io.github.devapro.droid.edit.reducer.OnTogglePasswordVisibilityReducer
+import io.github.devapro.droid.edit.reducer.OnToggleUrlSectionReducer
 import io.github.devapro.droid.edit.reducer.OnUrlChangedReducer
 import io.github.devapro.droid.edit.reducer.OnUsernameChangedReducer
 import org.koin.core.module.Module
@@ -44,6 +46,8 @@ private fun Module.reducersDi() {
     factoryOf(::OnDescriptionChangedReducer)
     factoryOf(::OnTogglePasswordVisibilityReducer)
     factoryOf(::OnToggleAdditionalFieldsReducer)
+    factoryOf(::OnToggleUrlSectionReducer)
+    factoryOf(::OnToggleDescriptionSectionReducer)
     factoryOf(::OnGeneratePasswordReducer)
     factoryOf(::OnAdditionalFieldNameChangedReducer)
     factoryOf(::OnAdditionalFieldValueChangedReducer)
@@ -70,6 +74,8 @@ private fun Module.reducersDi() {
                 get(OnDescriptionChangedReducer::class),
                 get(OnTogglePasswordVisibilityReducer::class),
                 get(OnToggleAdditionalFieldsReducer::class),
+                get(OnToggleUrlSectionReducer::class),
+                get(OnToggleDescriptionSectionReducer::class),
                 get(OnGeneratePasswordReducer::class),
                 get(OnAdditionalFieldNameChangedReducer::class),
                 get(OnAdditionalFieldValueChangedReducer::class),
