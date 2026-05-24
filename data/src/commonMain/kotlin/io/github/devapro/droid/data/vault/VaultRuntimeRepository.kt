@@ -1,5 +1,9 @@
 package io.github.devapro.droid.data.vault
 
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+
 class VaultRuntimeRepository {
 
     private data class Entry(val descriptor: VaultDescriptor, var vault: VaultModel)
@@ -7,14 +11,19 @@ class VaultRuntimeRepository {
     private val loaded = mutableMapOf<String, Entry>()
     private var activeVaultId: String? = null
 
+    private val _activeVaultChanges = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val activeVaultChanges: SharedFlow<Unit> = _activeVaultChanges.asSharedFlow()
+
     fun loadVault(descriptor: VaultDescriptor, vault: VaultModel) {
         loaded[descriptor.id] = Entry(descriptor, vault)
         if (activeVaultId == null) activeVaultId = descriptor.id
+        _activeVaultChanges.tryEmit(Unit)
     }
 
     fun setActiveVault(id: String): Boolean {
         if (!loaded.containsKey(id)) return false
         activeVaultId = id
+        _activeVaultChanges.tryEmit(Unit)
         return true
     }
 
@@ -26,12 +35,14 @@ class VaultRuntimeRepository {
         loaded.remove(id)
         if (activeVaultId == id) {
             activeVaultId = loaded.keys.firstOrNull()
+            _activeVaultChanges.tryEmit(Unit)
         }
     }
 
     fun unloadAll() {
         loaded.clear()
         activeVaultId = null
+        _activeVaultChanges.tryEmit(Unit)
     }
 
     fun getVault(): VaultModel = getActiveVault()
@@ -49,6 +60,7 @@ class VaultRuntimeRepository {
     fun replaceActiveVault(vault: VaultModel) {
         val entry = requireActiveEntry()
         entry.vault = vault
+        _activeVaultChanges.tryEmit(Unit)
     }
 
     fun replaceActiveDescriptor(descriptor: VaultDescriptor) {

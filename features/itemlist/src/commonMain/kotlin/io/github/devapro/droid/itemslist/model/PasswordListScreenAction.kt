@@ -10,6 +10,8 @@ sealed interface PasswordListScreenAction {
         val tag: VaultItemTag?
     ) : PasswordListScreenAction
 
+    data object RefreshList : PasswordListScreenAction
+
     data object OnBackClicked : PasswordListScreenAction
 
     data class OnSearchChanged(val query: String) : PasswordListScreenAction

@@ -14,6 +14,7 @@ import io.github.devapro.droid.itemslist.reducer.OnPasswordItemClickedReducer
 import io.github.devapro.droid.itemslist.reducer.OnSearchChangedReducer
 import io.github.devapro.droid.itemslist.reducer.OnSettingsClickedReducer
 import io.github.devapro.droid.itemslist.reducer.OnSortOrderChangedReducer
+import io.github.devapro.droid.itemslist.reducer.RefreshListReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -28,6 +29,7 @@ fun Module.registerPasswordListScreenDi() {
 
 private fun Module.reducersDi() {
     factoryOf(::InitScreenReducer)
+    factoryOf(::RefreshListReducer)
     factoryOf(::OnSearchChangedReducer)
     factoryOf(::OnAddPasswordClickedReducer)
     factoryOf(::OnPasswordItemClickedReducer)
@@ -42,6 +44,7 @@ private fun Module.reducersDi() {
         PasswordListScreenActionProcessor(
             reducers = setOf(
                 get(InitScreenReducer::class),
+                get(RefreshListReducer::class),
                 get(OnSearchChangedReducer::class),
                 get(OnAddPasswordClickedReducer::class),
                 get(OnPasswordItemClickedReducer::class),

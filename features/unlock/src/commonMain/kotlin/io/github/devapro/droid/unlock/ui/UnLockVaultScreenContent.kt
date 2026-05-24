@@ -98,7 +98,11 @@ fun UnLockVaultScreenContent(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "Enter your vault password",
+                            text = if (state.vaultName.isNotBlank()) {
+                                "Unlock ${state.vaultName}"
+                            } else {
+                                "Enter your vault password"
+                            },
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
@@ -140,7 +144,11 @@ fun UnLockVaultScreenContent(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = "Enter your vault password",
+                        text = if (state.vaultName.isNotBlank()) {
+                            "Unlock ${state.vaultName}"
+                        } else {
+                            "Enter your vault password"
+                        },
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center

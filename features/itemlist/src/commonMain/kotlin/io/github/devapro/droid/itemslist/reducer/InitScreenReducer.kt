@@ -43,6 +43,7 @@ class InitScreenReducer(
                     PasswordTagFilterType.NO_TAG -> "No Tag Passwords"
                     PasswordTagFilterType.NORMAL -> action.tag?.title ?: "Tagged Passwords"
                 },
+                tagFilterType = action.tagFilterType,
                 selectedTag = action.tag,
                 sortOrder = initialOrder
             ),
