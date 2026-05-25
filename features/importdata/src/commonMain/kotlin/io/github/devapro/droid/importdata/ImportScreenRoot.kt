@@ -13,6 +13,8 @@ import io.github.devapro.droid.importdata.model.ImportScreenEvent
 import io.github.devapro.droid.importdata.ui.ImportScreenContent
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.openFilePicker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -55,10 +57,15 @@ fun ImportScreenRoot() {
                 }
 
                 is ImportScreenEvent.OpenFileForImport -> {
-                    val file = FileKit.openFilePicker(
-                        type = it.type,
-                        title = "Select File",
-                    )
+                    // FileKit's macOS picker calls into AppKit, which may re-enter the AWT EDT
+                    // via accessibility callbacks. Running the suspend call on Dispatchers.IO
+                    // keeps the EDT free so that AppKit ↔ EDT round-trip can complete.
+                    val file = withContext(Dispatchers.IO) {
+                        FileKit.openFilePicker(
+                            type = it.type,
+                            title = "Select File",
+                        )
+                    }
                     if (file != null) {
                         viewModel.onAction(ImportScreenAction.ImportFileSelected(file = file))
                     } else {

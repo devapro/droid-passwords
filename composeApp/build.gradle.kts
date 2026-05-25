@@ -169,8 +169,20 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+// JetBrains Runtime (bundled with Android Studio/IntelliJ) is detected as a JDK 21
+// toolchain but lacks `jpackage`, breaking Compose Desktop's release packaging.
+// Force a full JDK distribution (Eclipse Temurin) for jpackage/jlink/checkRuntime.
+val jpackageJdkHome: String = run {
+    val toolchains = extensions.getByType(JavaToolchainService::class.java)
+    toolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(21))
+        vendor.set(JvmVendorSpec.ADOPTIUM)
+    }.get().metadata.installationPath.asFile.absolutePath
+}
+
 compose.desktop {
     application {
+        javaHome = jpackageJdkHome
         mainClass = "io.github.devapro.MainKt"
 
         buildTypes.release.proguard {
@@ -179,6 +191,9 @@ compose.desktop {
         }
 
         nativeDistributions {
+            // jdk.unsupported provides sun.misc.Unsafe, required by the protobuf
+            // runtime bundled with androidx.datastore.preferences.
+            modules("jdk.unsupported")
             linux {
                 modules("jdk.security.auth")
                 iconFile.set(File("logo/Linux/appIcon.png"))
