@@ -57,6 +57,12 @@ sealed interface SettingsScreenAction {
 
     data object OnLogoutClicked : SettingsScreenAction
 
+    data class OnLinkMasterPasswordSubmitted(val masterPassword: String) : SettingsScreenAction
+
+    data class OnLinkMasterPasswordExecute(val masterPassword: String) : SettingsScreenAction
+
+    data object OnDismissLinkMasterPasswordDialog : SettingsScreenAction
+
     data object OnSyncNowClicked : SettingsScreenAction
 
     data object OnSyncNowExecute : SettingsScreenAction

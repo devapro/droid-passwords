@@ -28,6 +28,17 @@ data class SyncSummary(
 }
 
 /**
+ * Outcome of linking a local device to a sync account. [pendingVaultCount] is the
+ * number of server vaults that exist but could not be decrypted with the master
+ * password tried so far — the caller should prompt for another master password and
+ * call [SyncManager.restoreServerVaults] to bring them down.
+ */
+data class LinkResult(
+    val summary: SyncSummary,
+    val pendingVaultCount: Int = 0
+)
+
+/**
  * Orchestrates end-to-end-encrypted, incremental synchronization between the
  * local vault and the sync server.
  *
@@ -194,33 +205,12 @@ class SyncManager(
 
             for ((index, remote) in remoteVaults.withIndex()) {
                 val name = if (remoteVaults.size == 1) "My Vault" else "Vault ${index + 1}"
-                val descriptor = newDescriptor(id = remote.vaultId, name = name)
-                // In-memory only — nothing is persisted until the pull succeeds.
-                runtimeRepository.loadVault(
-                    descriptor = descriptor,
-                    vault = VaultModel(password = masterPassword, items = emptyList(), name = name)
-                )
-                runtimeRepository.setActiveVault(descriptor.id)
-
-                when (val pull = doPull(url, token)) {
-                    is AppResult.Failure -> {
-                        runtimeRepository.unloadVault(descriptor.id)
-                        return@withCredentials AppResult.Failure(pull.error)
-                    }
-                    is AppResult.Success -> {
-                        val result = pull.value
-                        if (result.encryptedSeen > 0 && result.decrypted == 0) {
-                            // Wrong master password for this vault — skip it.
-                            runtimeRepository.unloadVault(descriptor.id)
-                        } else {
-                            registryRepository.addVault(descriptor)
-                            vaultFileRepository.saveVault(
-                                descriptor = descriptor,
-                                vaultModel = runtimeRepository.getVault()
-                            )
-                            total = total.merge(result.summary)
-                            if (firstRestoredId == null) firstRestoredId = descriptor.id
-                        }
+                when (val outcome = restoreRemoteVault(url, token, remote.vaultId, name, masterPassword)) {
+                    is RestoreOutcome.Failed -> return@withCredentials AppResult.Failure(outcome.error)
+                    RestoreOutcome.WrongPassword -> { /* skip — different master password */ }
+                    is RestoreOutcome.Restored -> {
+                        total = total.merge(outcome.summary)
+                        if (firstRestoredId == null) firstRestoredId = outcome.descriptorId
                     }
                 }
             }
@@ -238,7 +228,177 @@ class SyncManager(
             AppResult.Success(total)
         }
 
+    /**
+     * Links the already-unlocked local vault(s) to a freshly-authenticated account
+     * (Settings sign-in), as opposed to [restoreVaultFromServer]'s fresh-device path.
+     * It reconciles in both directions:
+     *
+     *  1. Every existing local vault is pushed to the server — all its items are marked
+     *     dirty first so the *whole* file is uploaded, not just edits made since a sync
+     *     that never happened — and its server namespace is pulled back to reconcile.
+     *  2. Any vault present on the account but not on this device is discovered via
+     *     [SyncApi.listVaults] and restored locally, decrypting with the active vault's
+     *     master password (an account's vaults share one master password).
+     *
+     * The originally active vault is restored afterwards. Unlike [restoreVaultFromServer]
+     * this never creates an empty placeholder vault — a local vault already exists.
+     */
+    suspend fun linkAccount(): AppResult<LinkResult> = withCredentials { url, token ->
+        val loaded = runtimeRepository.listLoaded()
+        if (loaded.isEmpty() || !isUnlocked()) {
+            return@withCredentials AppResult.Failure(Exception("Vault is locked"))
+        }
+
+        val originalActiveId = runtimeRepository.getActiveVaultId()
+        val masterPassword = runtimeRepository.getActiveVault().password
+        var total = SyncSummary()
+        var lastError: Exception? = null
+
+        // 1. Push every existing local vault up, then reconcile its own namespace.
+        //    A never-synced vault is uploaded in full by doPush (see lastSyncSeq == 0).
+        for (descriptor in loaded) {
+            if (!runtimeRepository.setActiveVault(descriptor.id)) continue
+            when (val result = syncActiveVault(url, token)) {
+                is AppResult.Success -> total = total.merge(result.value)
+                is AppResult.Failure -> lastError = result.error
+            }
+        }
+
+        // 2. Discover and restore any server vault missing on this device that the
+        //    local master password can decrypt. Vaults encrypted with a different
+        //    master password are reported via [LinkResult.pendingVaultCount] so the
+        //    caller can prompt for that password and call [restoreServerVaults].
+        val sweep = restoreMissingVaults(url, token, masterPassword)
+        total = total.merge(sweep.summary)
+        sweep.error?.let { lastError = it }
+
+        restoreActiveVault(originalActiveId)
+
+        finishLink(total = total, pendingVaultCount = sweep.pending, error = lastError)
+    }
+
+    /**
+     * Restores server vaults that are not yet on this device and that decrypt with
+     * [masterPassword]. Used after [linkAccount] reports `pendingVaultCount > 0`: the
+     * UI prompts for the master password of the other device's vault and calls this.
+     * Returns the count of vaults still pending so the caller can prompt again.
+     */
+    suspend fun restoreServerVaults(masterPassword: String): AppResult<LinkResult> =
+        withCredentials { url, token ->
+            if (masterPassword.isBlank()) {
+                return@withCredentials AppResult.Failure(Exception("Master password cannot be empty"))
+            }
+            if (!isUnlocked()) {
+                return@withCredentials AppResult.Failure(Exception("Vault is locked"))
+            }
+            val originalActiveId = runtimeRepository.getActiveVaultId()
+            val sweep = restoreMissingVaults(url, token, masterPassword)
+            restoreActiveVault(originalActiveId)
+            finishLink(total = sweep.summary, pendingVaultCount = sweep.pending, error = sweep.error)
+        }
+
     // --- Internals ---------------------------------------------------------
+
+    /**
+     * Discovers every server vault not present locally and restores each one that
+     * [masterPassword] can decrypt. Vaults that could not be restored — wrong master
+     * password, or a transient pull error — are counted in [RestoreSweep.pending] so
+     * the caller keeps the prompt open and the user can retry, rather than the vault
+     * being lost silently.
+     */
+    private suspend fun restoreMissingVaults(
+        url: String,
+        token: String,
+        masterPassword: String
+    ): RestoreSweep {
+        val localIds = runtimeRepository.listLoaded().map { it.id }.toSet()
+        var summary = SyncSummary()
+        var pending = 0
+        var error: Exception? = null
+
+        when (val r = syncApi.listVaults(url, token)) {
+            is AppResult.Failure -> error = r.error
+            is AppResult.Success -> {
+                val missing = r.value.vaults.filter { it.vaultId !in localIds }
+                for ((index, remote) in missing.withIndex()) {
+                    val name = "Vault ${localIds.size + index + 1}"
+                    when (val outcome =
+                        restoreRemoteVault(url, token, remote.vaultId, name, masterPassword)) {
+                        is RestoreOutcome.Failed -> {
+                            error = outcome.error
+                            pending++
+                        }
+                        RestoreOutcome.WrongPassword -> pending++
+                        is RestoreOutcome.Restored -> summary = summary.merge(outcome.summary)
+                    }
+                }
+            }
+        }
+        return RestoreSweep(summary = summary, pending = pending, error = error)
+    }
+
+    /** Re-selects [id] as the active vault in both runtime and the persisted registry. */
+    private suspend fun restoreActiveVault(id: String?) {
+        id ?: return
+        if (runtimeRepository.isLoaded(id)) runtimeRepository.setActiveVault(id)
+        registryRepository.setActiveVaultId(id)
+    }
+
+    private suspend fun finishLink(
+        total: SyncSummary,
+        pendingVaultCount: Int,
+        error: Exception?
+    ): AppResult<LinkResult> {
+        return if (error != null && total.isEmpty && pendingVaultCount == 0) {
+            AppResult.Failure(error)
+        } else {
+            recordSync(total)
+            AppResult.Success(LinkResult(summary = total, pendingVaultCount = pendingVaultCount))
+        }
+    }
+
+    /**
+     * Restores a single server vault into a brand-new local vault, decrypting with
+     * [masterPassword]. Nothing is persisted unless the pull both succeeds and decrypts,
+     * so a wrong password leaves no empty vault behind to block a retry.
+     */
+    private suspend fun restoreRemoteVault(
+        url: String,
+        token: String,
+        vaultId: String,
+        name: String,
+        masterPassword: String
+    ): RestoreOutcome {
+        val descriptor = newDescriptor(id = vaultId, name = name)
+        // In-memory only — nothing is persisted until the pull succeeds.
+        runtimeRepository.loadVault(
+            descriptor = descriptor,
+            vault = VaultModel(password = masterPassword, items = emptyList(), name = name)
+        )
+        runtimeRepository.setActiveVault(descriptor.id)
+
+        return when (val pull = doPull(url, token)) {
+            is AppResult.Failure -> {
+                runtimeRepository.unloadVault(descriptor.id)
+                RestoreOutcome.Failed(pull.error)
+            }
+            is AppResult.Success -> {
+                val result = pull.value
+                if (result.encryptedSeen > 0 && result.decrypted == 0) {
+                    // Wrong master password for this vault — skip it.
+                    runtimeRepository.unloadVault(descriptor.id)
+                    RestoreOutcome.WrongPassword
+                } else {
+                    registryRepository.addVault(descriptor)
+                    vaultFileRepository.saveVault(
+                        descriptor = descriptor,
+                        vaultModel = runtimeRepository.getVault()
+                    )
+                    RestoreOutcome.Restored(summary = result.summary, descriptorId = descriptor.id)
+                }
+            }
+        }
+    }
 
     private suspend fun authenticate(
         url: String,
@@ -320,7 +480,11 @@ class SyncManager(
     private suspend fun doPush(url: String, token: String): AppResult<PushOutcome> {
         val vaultId = runtimeRepository.getActiveDescriptor().id
         val vault = runtimeRepository.getVault()
-        val dirtyIds = (vault.dirtyItemIds + vault.tombstones.map { it.id }).distinct()
+        // A vault the server has never seen (lastSyncSeq == 0) is uploaded in full, so a
+        // first-time sync — from sign-in, "Sync now", or the scheduler — doesn't depend on
+        // per-item dirty tracking, which may be empty for a vault created before sync existed.
+        val changedIds = if (vault.lastSyncSeq == 0L) vault.items.map { it.id } else vault.dirtyItemIds
+        val dirtyIds = (changedIds + vault.tombstones.map { it.id }).distinct()
         if (dirtyIds.isEmpty()) {
             return AppResult.Success(PushOutcome(summary = SyncSummary(), attempted = false))
         }
@@ -436,9 +600,9 @@ class SyncManager(
         syncStateStore.setLastSync(now, status)
     }
 
-    private suspend fun withCredentials(
-        block: suspend (url: String, token: String) -> AppResult<SyncSummary>
-    ): AppResult<SyncSummary> {
+    private suspend fun <T> withCredentials(
+        block: suspend (url: String, token: String) -> AppResult<T>
+    ): AppResult<T> {
         val url = syncStateStore.getServerUrl()
         val token = syncStateStore.getToken()
         if (url.isEmpty() || token.isEmpty()) {
@@ -465,5 +629,18 @@ class SyncManager(
         val summary: SyncSummary,
         /** True when items were actually sent to the server (and a re-pull is warranted). */
         val attempted: Boolean
+    )
+
+    private sealed interface RestoreOutcome {
+        data class Restored(val summary: SyncSummary, val descriptorId: String) : RestoreOutcome
+        data object WrongPassword : RestoreOutcome
+        data class Failed(val error: Exception) : RestoreOutcome
+    }
+
+    private data class RestoreSweep(
+        val summary: SyncSummary,
+        /** Server vaults that still need to be restored (wrong password or a pull error). */
+        val pending: Int,
+        val error: Exception?
     )
 }

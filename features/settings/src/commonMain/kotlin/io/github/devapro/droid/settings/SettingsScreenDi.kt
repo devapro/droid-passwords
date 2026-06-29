@@ -13,6 +13,9 @@ import io.github.devapro.droid.settings.reducer.OnDismissRemoveDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissRenameDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissServerUrlDialogReducer
 import io.github.devapro.droid.settings.reducer.OnLockIntervalChangedReducer
+import io.github.devapro.droid.settings.reducer.OnDismissLinkMasterPasswordDialogReducer
+import io.github.devapro.droid.settings.reducer.OnLinkMasterPasswordExecuteReducer
+import io.github.devapro.droid.settings.reducer.OnLinkMasterPasswordSubmittedReducer
 import io.github.devapro.droid.settings.reducer.OnLoginClickedReducer
 import io.github.devapro.droid.settings.reducer.OnLoginSubmittedReducer
 import io.github.devapro.droid.settings.reducer.OnLogoutClickedReducer
@@ -64,6 +67,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnServerUrlSubmittedReducer)
     factoryOf(::OnRegisterSubmittedReducer)
     factoryOf(::OnLoginSubmittedReducer)
+    factoryOf(::OnLinkMasterPasswordExecuteReducer)
     factoryOf(::OnLogoutClickedReducer)
     factoryOf(::OnSyncNowExecuteReducer)
     factoryOf(::OnSyncToServerExecuteReducer)
@@ -87,6 +91,8 @@ private fun Module.reducersDi() {
     factoryOf(::OnDismissServerUrlDialogReducer)
     factoryOf(::OnLoginClickedReducer)
     factoryOf(::OnDismissAuthDialogReducer)
+    factoryOf(::OnLinkMasterPasswordSubmittedReducer)
+    factoryOf(::OnDismissLinkMasterPasswordDialogReducer)
     factoryOf(::OnSyncNowClickedReducer)
     factoryOf(::OnSyncToServerClickedReducer)
     factoryOf(::OnSyncFromServerClickedReducer)
@@ -116,6 +122,9 @@ private fun Module.reducersDi() {
                 get(OnDismissAuthDialogReducer::class),
                 get(OnRegisterSubmittedReducer::class),
                 get(OnLoginSubmittedReducer::class),
+                get(OnLinkMasterPasswordSubmittedReducer::class),
+                get(OnLinkMasterPasswordExecuteReducer::class),
+                get(OnDismissLinkMasterPasswordDialogReducer::class),
                 get(OnLogoutClickedReducer::class),
                 get(OnSyncNowClickedReducer::class),
                 get(OnSyncNowExecuteReducer::class),

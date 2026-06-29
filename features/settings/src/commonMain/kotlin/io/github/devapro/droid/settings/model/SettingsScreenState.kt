@@ -35,6 +35,10 @@ sealed interface SettingsScreenState {
         val isServerUrlDialogVisible: Boolean = false,
         val isAuthDialogVisible: Boolean = false,
         val isAuthInProgress: Boolean = false,
-        val authError: String? = null
+        val authError: String? = null,
+        // Master-password prompt for server vaults encrypted with a different password
+        val isLinkMasterPasswordDialogVisible: Boolean = false,
+        val isLinkInProgress: Boolean = false,
+        val linkMasterPasswordError: String? = null
     ) : SettingsScreenState
 }

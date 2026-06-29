@@ -203,3 +203,85 @@ fun SyncAuthDialog(
         }
     )
 }
+
+@Composable
+fun SyncMasterPasswordDialog(
+    isVisible: Boolean,
+    isLoading: Boolean,
+    errorMessage: String?,
+    onDismiss: () -> Unit,
+    onSubmit: (masterPassword: String) -> Unit
+) {
+    if (!isVisible) return
+
+    var masterPassword by remember(isVisible) { mutableStateOf("") }
+    var passwordVisible by remember(isVisible) { mutableStateOf(false) }
+
+    LaunchedEffect(isVisible) {
+        if (isVisible) {
+            masterPassword = ""
+            passwordVisible = false
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = { if (!isLoading) onDismiss() },
+        title = { Text("Add Server Vault", style = MaterialTheme.typography.headlineSmall) },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "This account has a vault encrypted with a different master " +
+                        "password. Enter that master password to download and decrypt it.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                EOutlinedTextField(
+                    value = masterPassword,
+                    onValueChange = { masterPassword = it },
+                    label = { Text("Master Password") },
+                    singleLine = true,
+                    enabled = !isLoading,
+                    visualTransformation = if (passwordVisible) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                imageVector = if (passwordVisible) {
+                                    Icons.Filled.VisibilityOff
+                                } else {
+                                    Icons.Filled.Visibility
+                                },
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                errorMessage?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onSubmit(masterPassword) },
+                enabled = masterPassword.isNotBlank() && !isLoading
+            ) { Text(if (isLoading) "Adding…" else "Add Vault") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss, enabled = !isLoading) { Text("Not now") }
+        }
+    )
+}

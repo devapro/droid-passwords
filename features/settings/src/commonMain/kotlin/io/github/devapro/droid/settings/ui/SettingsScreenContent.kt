@@ -123,5 +123,15 @@ fun SettingsScreenContent(
                 onAction(SettingsScreenAction.OnLoginSubmitted(url, username, password))
             }
         )
+
+        SyncMasterPasswordDialog(
+            isVisible = state.isLinkMasterPasswordDialogVisible,
+            isLoading = state.isLinkInProgress,
+            errorMessage = state.linkMasterPasswordError,
+            onDismiss = { onAction(SettingsScreenAction.OnDismissLinkMasterPasswordDialog) },
+            onSubmit = { masterPassword ->
+                onAction(SettingsScreenAction.OnLinkMasterPasswordSubmitted(masterPassword))
+            }
+        )
     }
 }
