@@ -21,11 +21,12 @@ class OnRestoreFromSyncClickedReducer(
             return Reducer.Result(currentState)
         }
         return if (syncStateStore.isLoggedIn()) {
+            // Already signed in: open the vault list so the user can pick one of the
+            // account's vaults (no master password prompt here — each vault is unlocked
+            // when it is opened). The vault list is populated by the background sync.
             Reducer.Result(
-                state = currentState.copy(
-                    isMasterPasswordDialogVisible = true,
-                    restoreError = null
-                )
+                state = currentState,
+                event = WelcomeScreenEvent.OnLoadVault
             )
         } else {
             Reducer.Result(

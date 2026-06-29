@@ -5,6 +5,7 @@ import io.github.devapro.droid.data.vault.VaultDescriptor
 sealed interface VaultListScreenAction {
     data object InitScreen : VaultListScreenAction
     data object OnRefresh : VaultListScreenAction
+    data object OnSyncVaults : VaultListScreenAction
     data object OnBackClicked : VaultListScreenAction
     data object OnAddVaultClicked : VaultListScreenAction
     data object OnDismissAddMenu : VaultListScreenAction

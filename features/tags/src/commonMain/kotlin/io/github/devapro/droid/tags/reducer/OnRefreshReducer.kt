@@ -21,8 +21,8 @@ class OnRefreshReducer(
         val currentState = getState()
 
         return if (currentState is TagsScreenState.Success) {
-            val vault = runtimeRepository.getVault()
-            val tags = tagsMapper.map(vault.items)
+            val vault = runtimeRepository.getActiveVaultOrNull()
+            val tags = tagsMapper.map(vault?.items.orEmpty())
 
             Reducer.Result(
                 state = currentState.copy(

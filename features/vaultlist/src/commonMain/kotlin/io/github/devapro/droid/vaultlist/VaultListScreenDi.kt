@@ -10,6 +10,7 @@ import io.github.devapro.droid.vaultlist.reducer.OnDismissAddMenuReducer
 import io.github.devapro.droid.vaultlist.reducer.OnImportVaultSelectedReducer
 import io.github.devapro.droid.vaultlist.reducer.OnLogoutClickedReducer
 import io.github.devapro.droid.vaultlist.reducer.OnRefreshReducer
+import io.github.devapro.droid.vaultlist.reducer.OnSyncVaultsReducer
 import io.github.devapro.droid.vaultlist.reducer.OnVaultClickedReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -25,6 +26,7 @@ fun Module.registerVaultListScreenDi() {
 private fun Module.reducersDi() {
     factoryOf(::InitScreenReducer)
     factoryOf(::OnRefreshReducer)
+    factoryOf(::OnSyncVaultsReducer)
     factoryOf(::OnVaultClickedReducer)
     factoryOf(::OnAddVaultClickedReducer)
     factoryOf(::OnDismissAddMenuReducer)
@@ -38,6 +40,7 @@ private fun Module.reducersDi() {
             reducers = setOf(
                 get(InitScreenReducer::class),
                 get(OnRefreshReducer::class),
+                get(OnSyncVaultsReducer::class),
                 get(OnVaultClickedReducer::class),
                 get(OnAddVaultClickedReducer::class),
                 get(OnDismissAddMenuReducer::class),

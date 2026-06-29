@@ -25,6 +25,20 @@ class SyncScheduler(
     private val scope = coroutineContextProvider.createScope(coroutineContextProvider.default)
     private var job: Job? = null
 
+    /**
+     * Fire-and-forget refresh of the account's vault list at app start: discovers vaults
+     * created on other devices and registers them locally as selectable (locked) entries.
+     * Runs on the scheduler's background scope so it never blocks the UI, and is a no-op
+     * when not signed in. Failures (offline / unreachable server) are swallowed.
+     */
+    fun syncVaultListOnStart() {
+        scope.launch {
+            if (syncStateStore.isLoggedIn()) {
+                runCatching { syncManager.discoverVaults() }
+            }
+        }
+    }
+
     /** Starts periodic sync if it has been enabled in settings. Safe to call repeatedly. */
     fun startIfEnabled() {
         scope.launch {

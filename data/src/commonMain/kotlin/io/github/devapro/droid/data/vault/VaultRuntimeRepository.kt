@@ -70,6 +70,11 @@ class VaultRuntimeRepository {
 
     fun getActiveVault(): VaultModel = synchronized(lock) { requireActiveEntry().vault }
 
+    fun getActiveVaultOrNull(): VaultModel? = synchronized(lock) {
+        val id = activeVaultId ?: return@synchronized null
+        loaded[id]?.vault
+    }
+
     fun getActiveDescriptor(): VaultDescriptor = synchronized(lock) { requireActiveEntry().descriptor }
 
     fun getVault(id: String): VaultModel? = synchronized(lock) { loaded[id]?.vault }
@@ -143,7 +148,7 @@ class VaultRuntimeRepository {
     }
 
     fun getAllTags(): List<VaultItemTag> = synchronized(lock) {
-        getActiveVault().items.flatMap { it.tags }.distinct()
+        getActiveVaultOrNull()?.items.orEmpty().flatMap { it.tags }.distinct()
     }
 
     // --- Notification batching --------------------------------------------

@@ -2,6 +2,7 @@ package io.github.devapro.droid.welcome.reducer
 
 import io.github.devapro.droid.core.mvi.AppResult
 import io.github.devapro.droid.core.mvi.Reducer
+import io.github.devapro.droid.data.sync.SyncScheduler
 import io.github.devapro.droid.data.vault.VaultDescriptor
 import io.github.devapro.droid.data.sync.SyncStateStore
 import io.github.devapro.droid.data.vault.VaultFileRepository
@@ -14,6 +15,7 @@ class InitScreenReducer(
     private val vaultFileRepository: VaultFileRepository,
     private val syncStateStore: SyncStateStore,
     private val vaultRegistryRepository: VaultRegistryRepository,
+    private val syncScheduler: SyncScheduler,
 ) : Reducer<WelcomeScreenAction.InitScreen, WelcomeScreenState, WelcomeScreenAction, WelcomeScreenEvent> {
 
     override val actionClass = WelcomeScreenAction.InitScreen::class
@@ -44,6 +46,11 @@ class InitScreenReducer(
                 vaultRegistryRepository.setActiveVaultId(descriptor.id)
             }
         }
+
+        // Signed in: refresh the account's vault list on every launch so any vault created
+        // on another device shows up as a selectable (locked) entry. Runs in the background
+        // (never blocks startup); the vault list reflects the result when it is opened.
+        syncScheduler.syncVaultListOnStart()
 
         val finalRegistry = vaultRegistryRepository.getRegistry()
         return Reducer.Result(

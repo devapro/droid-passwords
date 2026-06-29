@@ -221,6 +221,28 @@ class SyncManager(
     }
 
     /**
+     * Lists every vault on the signed-in account and registers any not yet present on
+     * this device as a locked placeholder ([VaultDescriptor.pendingRestore]) — no master
+     * password required. Used to populate the vault list with the account's vaults so the
+     * user can pick and unlock one individually (each is downloaded on first open via
+     * [downloadPendingVault]). Requires being signed in; does NOT require a vault to be
+     * unlocked, so it is safe to call at app start or from the welcome screen.
+     */
+    suspend fun discoverVaults(): AppResult<SyncSummary> = withCredentials { url, token ->
+        when (syncApi.checkHealth(url)) {
+            is AppResult.Failure -> return@withCredentials AppResult.Failure(
+                Exception("Sync server is unreachable. Check the URL and that the server is running.")
+            )
+            is AppResult.Success -> { /* reachable — continue */ }
+        }
+        val sweep = discoverMissingVaults(url, token)
+        when (val error = sweep.error) {
+            null -> AppResult.Success(sweep.summary)
+            else -> AppResult.Failure(error)
+        }
+    }
+
+    /**
      * First-time setup on a new device: discovers every vault on the account and
      * restores each one that [masterPassword] can decrypt as an independent local
      * vault. A vault file is only written once the pull has proven the password can

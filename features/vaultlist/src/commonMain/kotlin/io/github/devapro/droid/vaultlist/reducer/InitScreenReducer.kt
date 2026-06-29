@@ -20,11 +20,18 @@ class InitScreenReducer(
     override suspend fun reduce(
         action: VaultListScreenAction.InitScreen,
         getState: () -> VaultListScreenState
-    ): Reducer.Result<VaultListScreenState, VaultListScreenAction.InitScreen, VaultListScreenEvent?> {
-        return Reducer.Result(state = buildState(), action = null, event = null)
+    ): Reducer.Result<VaultListScreenState, VaultListScreenAction, VaultListScreenEvent?> {
+        val loggedIn = syncStateStore.isLoggedIn()
+        // Show the local list immediately, then refresh it from the server (the chained
+        // OnSyncVaults action) while a spinner is shown. Skip the server hit when signed out.
+        return Reducer.Result(
+            state = buildState(isLoggedIn = loggedIn, isSyncing = loggedIn),
+            action = if (loggedIn) VaultListScreenAction.OnSyncVaults else null,
+            event = null,
+        )
     }
 
-    private suspend fun buildState(): VaultListScreenState.Loaded {
+    private suspend fun buildState(isLoggedIn: Boolean, isSyncing: Boolean): VaultListScreenState.Loaded {
         val registry = registryRepository.getRegistry()
         val activeId = runtimeRepository.getActiveVaultId()
             ?: registryRepository.getActiveVaultId()
@@ -36,7 +43,8 @@ class InitScreenReducer(
                 )
             },
             activeVaultId = activeId,
-            isLoggedIn = syncStateStore.isLoggedIn(),
+            isLoggedIn = isLoggedIn,
+            isSyncing = isSyncing,
         )
     }
 }

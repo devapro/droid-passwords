@@ -1,6 +1,8 @@
 package io.github.devapro.droid.vaultlist.reducer
 
+import io.github.devapro.droid.core.mvi.AppResult
 import io.github.devapro.droid.core.mvi.Reducer
+import io.github.devapro.droid.data.sync.SyncManager
 import io.github.devapro.droid.data.sync.SyncStateStore
 import io.github.devapro.droid.data.vault.VaultRegistryRepository
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
@@ -9,19 +11,24 @@ import io.github.devapro.droid.vaultlist.model.VaultListScreenAction
 import io.github.devapro.droid.vaultlist.model.VaultListScreenEvent
 import io.github.devapro.droid.vaultlist.model.VaultListScreenState
 
-class OnRefreshReducer(
+class OnSyncVaultsReducer(
+    private val syncManager: SyncManager,
     private val registryRepository: VaultRegistryRepository,
     private val runtimeRepository: VaultRuntimeRepository,
     private val syncStateStore: SyncStateStore,
-) : Reducer<VaultListScreenAction.OnRefresh, VaultListScreenState, VaultListScreenAction, VaultListScreenEvent> {
+) : Reducer<VaultListScreenAction.OnSyncVaults, VaultListScreenState, VaultListScreenAction, VaultListScreenEvent> {
 
-    override val actionClass = VaultListScreenAction.OnRefresh::class
+    override val actionClass = VaultListScreenAction.OnSyncVaults::class
 
     override suspend fun reduce(
-        action: VaultListScreenAction.OnRefresh,
+        action: VaultListScreenAction.OnSyncVaults,
         getState: () -> VaultListScreenState
     ): Reducer.Result<VaultListScreenState, VaultListScreenAction, VaultListScreenEvent?> {
-        val loggedIn = syncStateStore.isLoggedIn()
+        // Discover any vaults created on other devices and register them locally as
+        // selectable (locked) entries. Suspends on the network — the spinner set by the
+        // caller stays visible until this returns.
+        val discovery = syncManager.discoverVaults()
+
         val registry = registryRepository.getRegistry()
         val activeId = runtimeRepository.getActiveVaultId()
             ?: registryRepository.getActiveVaultId()
@@ -33,14 +40,13 @@ class OnRefreshReducer(
                 )
             },
             activeVaultId = activeId,
-            isLoggedIn = loggedIn,
-            isSyncing = loggedIn,
+            isLoggedIn = syncStateStore.isLoggedIn(),
+            isSyncing = false,
         )
-        // Pull the latest vault list from the server (chained) while showing the spinner.
-        return Reducer.Result(
-            state = state,
-            action = if (loggedIn) VaultListScreenAction.OnSyncVaults else null,
-            event = null,
-        )
+
+        val event = (discovery as? AppResult.Failure)
+            ?.let { VaultListScreenEvent.ShowError(it.error.message ?: "Couldn't reach the sync server") }
+
+        return Reducer.Result(state = state, action = null, event = event)
     }
 }

@@ -21,11 +21,11 @@ class InitScreenReducer(
         action: PasswordListScreenAction.InitScreen,
         getState: () -> PasswordListScreenState
     ): Reducer.Result<PasswordListScreenState, PasswordListScreenAction.InitScreen, PasswordListScreenEvent?> {
-        val vault = runtimeRepository.getVault()
+        val vaultItems = runtimeRepository.getActiveVaultOrNull()?.items.orEmpty()
         val filteredItems = when (action.tagFilterType) {
-            PasswordTagFilterType.ALL -> vault.items
-            PasswordTagFilterType.NO_TAG -> vault.items.filter { it.tags.isEmpty() }
-            PasswordTagFilterType.NORMAL -> vault.items.filter { it.tags.any { tag -> tag.id == action.tag?.id } }
+            PasswordTagFilterType.ALL -> vaultItems
+            PasswordTagFilterType.NO_TAG -> vaultItems.filter { it.tags.isEmpty() }
+            PasswordTagFilterType.NORMAL -> vaultItems.filter { it.tags.any { tag -> tag.id == action.tag?.id } }
         }
         val items = vaultItemMapper.map(filteredItems)
         val initialOrder = SortOrder.NAME_ASC
