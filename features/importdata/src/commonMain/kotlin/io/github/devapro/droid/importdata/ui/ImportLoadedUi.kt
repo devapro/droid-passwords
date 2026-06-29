@@ -77,8 +77,6 @@ fun ImportLoadedUi(
                 }
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
             Button(
                 onClick = { onAction(ImportScreenAction.OnImportClicked) },
                 modifier = Modifier.fillMaxWidth(),

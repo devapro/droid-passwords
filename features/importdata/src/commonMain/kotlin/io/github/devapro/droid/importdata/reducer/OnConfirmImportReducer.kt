@@ -61,22 +61,17 @@ class OnConfirmImportReducer(
 
             ImportTarget.NEW_VAULT -> {
                 val name = current.newVaultName.trim()
-                if (current.password.isBlank() && current.selectedFormat.name != "DATA") {
-                    // The new vault needs a master password. We re-use the password field;
-                    // for CSV/JSON we hadn't yet collected one, so block here.
+                // The new vault always needs a master password. For DATA it is the source-file
+                // password carried over from the decryption step; for CSV/JSON it is entered in
+                // the confirm dialog. Either way an empty password would create an unencrypted vault.
+                if (current.password.isBlank()) {
                     return Reducer.Result(
                         state = current.copy(passwordError = "A master password is required for the new vault."),
                         action = null,
                         event = null,
                     )
                 }
-                val password = if (current.password.isBlank()) {
-                    // For DATA imports, prefer the source-file password if no override.
-                    current.password
-                } else {
-                    current.password
-                }
-                when (val result = createVaultFromImport.execute(items, name, password)) {
+                when (val result = createVaultFromImport.execute(items, name, current.password)) {
                     is AppResult.Success -> Reducer.Result(
                         state = resetState(current),
                         action = null,

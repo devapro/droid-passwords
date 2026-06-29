@@ -46,7 +46,8 @@ class OnConfirmImportPasswordReducer(
                         parsedItems = parsed.value.items,
                         conflictReport = report,
                         newVaultName = parsed.value.embeddedVaultName ?: current.newVaultName,
-                        password = "",
+                        // Keep the password: a DATA + NEW_VAULT import encrypts the new vault with it.
+                        // It is cleared in OnConfirmImportReducer.resetState once the flow completes.
                         passwordError = null,
                         isPasswordVisible = false,
                         isConfirmDialogVisible = true,

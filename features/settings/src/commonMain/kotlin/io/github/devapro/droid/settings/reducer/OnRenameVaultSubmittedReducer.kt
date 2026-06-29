@@ -46,13 +46,12 @@ class OnRenameVaultSubmittedReducer(
         }
 
         val newDescriptor = descriptor.copy(name = name, updatedAt = nowMillis())
-        registryRepository.renameVault(descriptor.id, name)
 
         val activeVault = runCatching { runtimeRepository.getActiveVault() }.getOrNull()
         if (activeVault != null) {
             val updated = activeVault.copy(name = name, updatedAt = nowMillis())
-            runtimeRepository.replaceActiveDescriptor(newDescriptor)
-            runtimeRepository.replaceActiveVault(updated)
+            // Persist the encrypted file first; only mutate the registry and runtime once the save
+            // succeeds, so a failed write can't leave the vault list out of sync with the on-disk file.
             when (val save = fileRepository.saveVault(newDescriptor, updated)) {
                 is AppResult.Failure -> {
                     return Reducer.Result(
@@ -63,6 +62,12 @@ class OnRenameVaultSubmittedReducer(
                 }
                 is AppResult.Success -> Unit
             }
+            registryRepository.renameVault(descriptor.id, name)
+            runtimeRepository.replaceActiveDescriptor(newDescriptor)
+            runtimeRepository.replaceActiveVault(updated)
+        } else {
+            // No decrypted vault in memory to re-encrypt; only the registry metadata changes.
+            registryRepository.renameVault(descriptor.id, name)
         }
 
         return Reducer.Result(
