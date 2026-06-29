@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
  * @param subtitle Optional subtitle or description text
  * @param leadingIcon Optional leading icon
  * @param showTrailingArrow Whether to show trailing arrow icon (default: true)
+ * @param contentColor Optional color for the leading icon and title (e.g. error color for destructive actions)
  * @param onClick Callback when the item is clicked
  * @param modifier Modifier for customizing the layout
  */
@@ -35,6 +37,7 @@ fun SettingClickableItem(
     subtitle: String? = null,
     leadingIcon: ImageVector? = null,
     showTrailingArrow: Boolean = true,
+    contentColor: Color? = null,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -50,7 +53,7 @@ fun SettingClickableItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = contentColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .size(24.dp)
                     .padding(end = 16.dp)
@@ -65,6 +68,7 @@ fun SettingClickableItem(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
+                color = contentColor ?: Color.Unspecified,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

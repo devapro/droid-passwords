@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ fun SettingsScreenContent(
             title = "Remove this vault",
             subtitle = "Remove from the vault list; optionally delete the file",
             leadingIcon = Icons.Default.DeleteForever,
+            contentColor = MaterialTheme.colorScheme.error,
             onClick = { onAction(SettingsScreenAction.OnRemoveVaultClicked) }
         )
 
