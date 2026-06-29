@@ -1,13 +1,16 @@
 package io.github.devapro.droid.welcome
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.droid.importdata.navigation.ImportScreen
 import io.github.devapro.droid.setlock.navigation.SetLockPasswordScreen
+import io.github.devapro.droid.tags.navigation.TagsScreen
 import io.github.devapro.droid.unlock.navigation.UnLockVaultScreen
 import io.github.devapro.droid.welcome.model.WelcomeScreenAction
 import io.github.devapro.droid.welcome.model.WelcomeScreenEvent
@@ -17,6 +20,7 @@ import org.koin.compose.koinInject
 @Composable
 fun WelcomeScreenRoot() {
     val viewModel: WelcomeScreenViewModel = koinInject()
+    val snackBarManager: SnackbarHostStateManager = koinInject()
     val state by viewModel.state.collectAsState()
     WelcomeScreenContent(
         state = state,
@@ -31,7 +35,14 @@ fun WelcomeScreenRoot() {
                 is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(SetLockPasswordScreen)
                 is WelcomeScreenEvent.OnOpenExistingVault -> navigator.push(ImportScreen)
                 is WelcomeScreenEvent.OnLoadVault -> navigator.push(UnLockVaultScreen)
+                is WelcomeScreenEvent.OnRestoreSuccess -> {
+                    snackBarManager.show(
+                        message = it.message,
+                        duration = SnackbarDuration.Long
+                    )
+                    navigator.replace(TagsScreen)
+                }
             }
         }
     }
-} 
+}

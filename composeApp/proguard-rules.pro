@@ -1,23 +1,38 @@
+# --- Cryptography ---
+-keep class dev.whyoleg.cryptography.** { *; }
 
-# Please add these rules to your existing keep rules in order to suppress warnings.
-# This is generated automatically by the Android Gradle plugin.
--dontwarn io.github.devapro.droid.core.CoreDiKt
--dontwarn io.github.devapro.droid.data.AndroidThemeDetector
--dontwarn io.github.devapro.droid.data.DataDiKt
--dontwarn io.github.devapro.droid.data.ThemeManager
--dontwarn io.github.devapro.droid.data.model.ThemeMode
--dontwarn io.github.devapro.droid.edit.AddEditPasswordScreenDiKt
--dontwarn io.github.devapro.droid.export.ExportScreenDiKt
--dontwarn io.github.devapro.droid.importdata.ImportScreenDiKt
--dontwarn io.github.devapro.droid.itemdetails.PasswordDetailScreenDiKt
--dontwarn io.github.devapro.droid.itemslist.PasswordListScreenDiKt
--dontwarn io.github.devapro.droid.setlock.SetLockPasswordScreenDiKt
--dontwarn io.github.devapro.droid.settings.SettingsScreenDiKt
--dontwarn io.github.devapro.droid.tags.TagsScreenDiKt
--dontwarn io.github.devapro.droid.unlock.UnLockVaultScreenDiKt
--dontwarn io.github.devapro.droid.welcome.WelcomeScreenDiKt
--dontwarn io.github.devapro.droid.welcome.navigation.WelcomeScreen
+# --- Kotlin serialization ---
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class * {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keep,includedescriptorclasses class io.github.devapro.droid.**$$serializer { *; }
+-keepclassmembers class io.github.devapro.droid.** {
+    *** Companion;
+}
+-keep @kotlinx.serialization.Serializable class io.github.devapro.droid.** { *; }
 
+# --- Koin ---
+-keep class org.koin.** { *; }
+-keep class io.github.devapro.droid.**.*Di* { *; }
+-keep class io.github.devapro.droid.**.*DiKt { *; }
 
--keep class dev.whyoleg.cryptography.*
--keep class dev.whyoleg.cryptography.providers.jdk.*
+# --- Voyager navigation ---
+-keep class cafe.adriel.voyager.** { *; }
+
+# --- Ktor client ---
+-keep class io.ktor.** { *; }
+-keep class kotlinx.coroutines.** { *; }
+# Ktor debug detector references JDK-only management APIs unavailable on Android.
+-dontwarn java.lang.management.**
+
+# --- Compose runtime (reflection used by some navigation/state) ---
+-keep class androidx.compose.runtime.** { *; }
+
+# --- App entry points ---
+-keep class io.github.devapro.** { *; }
+-keep class io.github.devapro.droid.** { *; }

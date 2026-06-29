@@ -86,6 +86,14 @@ fun SettingsScreenContent(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        SettingDivider()
+
+        // Sync Section
+        SyncSettingsSection(
+            state = state,
+            onAction = onAction
+        )
+
         // Dialogs
         ChangePasswordDialog(
             isVisible = state.isChangePasswordDialogVisible,
@@ -111,6 +119,27 @@ fun SettingsScreenContent(
             onDismiss = { onAction(SettingsScreenAction.OnDismissFilePathDialog) },
             onPathSelected = { path ->
                 onAction(SettingsScreenAction.OnFilePathSelected(path))
+            }
+        )
+
+        ServerUrlDialog(
+            isVisible = state.isServerUrlDialogVisible,
+            currentUrl = state.syncServerUrl,
+            onDismiss = { onAction(SettingsScreenAction.OnDismissServerUrlDialog) },
+            onSubmit = { url -> onAction(SettingsScreenAction.OnServerUrlSubmitted(url)) }
+        )
+
+        SyncAuthDialog(
+            isVisible = state.isAuthDialogVisible,
+            defaultUrl = state.syncServerUrl,
+            isLoading = state.isAuthInProgress,
+            errorMessage = state.authError,
+            onDismiss = { onAction(SettingsScreenAction.OnDismissAuthDialog) },
+            onRegister = { url, username, password ->
+                onAction(SettingsScreenAction.OnRegisterSubmitted(url, username, password))
+            },
+            onLogin = { url, username, password ->
+                onAction(SettingsScreenAction.OnLoginSubmitted(url, username, password))
             }
         )
     }

@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.kstore.file)
             implementation(libs.cryptography.provider.jdk)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.uuid)
@@ -65,6 +66,12 @@ kotlin {
             implementation(libs.cryptography.core)
             implementation(libs.cryptography.provider.optimal)
 
+            // Ktor client for sync
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
+
             implementation(projects.core)
 
         }
@@ -75,9 +82,11 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.cryptography.provider.jdk)
+            implementation(libs.ktor.client.okhttp)
         }
         iosMain.dependencies {
             implementation(libs.cryptography.provider.apple)
+            implementation(libs.ktor.client.darwin)
         }
     }
 }
@@ -93,11 +102,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
         }
     }
     lint {

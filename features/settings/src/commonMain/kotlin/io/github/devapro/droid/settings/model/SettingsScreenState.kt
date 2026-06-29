@@ -17,6 +17,19 @@ sealed interface SettingsScreenState {
         val isChangingPassword: Boolean = false,
         val isChangingFilePath: Boolean = false,
         val passwordChangeError: String? = null,
-        val filePathChangeError: String? = null
+        val filePathChangeError: String? = null,
+        // Sync
+        val syncServerUrl: String = "",
+        val syncUsername: String = "",
+        val isLoggedIn: Boolean = false,
+        val periodicSyncEnabled: Boolean = false,
+        val periodicSyncIntervalMinutes: Int = 15,
+        val lastSyncStatus: String = "",
+        val lastSyncAt: Long = 0,
+        val isSyncing: Boolean = false,
+        val isServerUrlDialogVisible: Boolean = false,
+        val isAuthDialogVisible: Boolean = false,
+        val isAuthInProgress: Boolean = false,
+        val authError: String? = null
     ) : SettingsScreenState
 }

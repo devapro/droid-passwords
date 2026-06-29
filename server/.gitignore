@@ -1,0 +1,8 @@
+.gradle/
+build/
+data/
+certs/
+*.jks
+*.p12
+*.pem
+.idea/

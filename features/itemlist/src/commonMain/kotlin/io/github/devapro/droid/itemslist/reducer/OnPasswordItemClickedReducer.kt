@@ -26,7 +26,9 @@ class OnPasswordItemClickedReducer(
 
         val vault = runtimeRepository.getVault()
         vault.items.firstOrNull { it.id == action.item.id }?.let { existing ->
-            runtimeRepository.addOrUpdateVault(existing.copy(lastUsedAt = now))
+            // Bump lastUsedAt without marking the item dirty — a mere view must not
+            // trigger a sync upload on every tap.
+            runtimeRepository.updateItemMetadata(existing.copy(lastUsedAt = now))
             fileRepository.saveVault(runtimeRepository.getVault())
         }
 

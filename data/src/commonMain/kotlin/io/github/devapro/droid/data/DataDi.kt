@@ -1,5 +1,10 @@
 package io.github.devapro.droid.data
 
+import io.github.devapro.droid.data.sync.SyncApi
+import io.github.devapro.droid.data.sync.SyncManager
+import io.github.devapro.droid.data.sync.SyncScheduler
+import io.github.devapro.droid.data.sync.SyncStateStore
+import io.github.devapro.droid.data.sync.createSyncHttpClient
 import io.github.devapro.droid.data.vault.CryptoMapper
 import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
@@ -9,7 +14,7 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 
 fun Module.registerDataDi() {
-    factoryOf(::LocalStorage)
+    singleOf(::LocalStorage)
     single { LockManager }
     factoryOf(::VaultFileRepository)
     singleOf(::VaultRuntimeRepository)
@@ -18,4 +23,10 @@ fun Module.registerDataDi() {
     single {
         Json { ignoreUnknownKeys = true }
     }
+
+    // Sync
+    single { SyncApi(clientProvider = { createSyncHttpClient() }) }
+    single { SyncStateStore(get()) }
+    single { SyncManager(get(), get(), get(), get(), get(), get()) }
+    single { SyncScheduler(get(), get(), get()) }
 }

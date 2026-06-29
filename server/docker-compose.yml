@@ -1,0 +1,22 @@
+services:
+  sync-server:
+    build: .
+    container_name: droid-passwords-sync
+    ports:
+      - "8080:8080"   # HTTP (handy behind a reverse proxy / for local testing)
+      - "8443:8443"   # HTTPS with the self-signed certificate
+    environment:
+      PORT: "8080"
+      SSL_PORT: "8443"
+      DB_PATH: "/app/data/sync.db"
+      KEYSTORE_PATH: "/app/certs/keystore.jks"
+      KEY_ALIAS: "droidpasswords"
+      KEYSTORE_PASSWORD: "changeit"
+      KEY_PASSWORD: "changeit"
+      # Comma-separated SANs baked into the auto-generated self-signed cert.
+      # Add your machine LAN IP / hostname so devices can reach the server.
+      CERT_DOMAINS: "localhost,127.0.0.1"
+    volumes:
+      - ./data:/app/data
+      - ./certs:/app/certs
+    restart: unless-stopped
