@@ -40,6 +40,7 @@ class Storage(dbPath: String) {
         // table has no `vault_id` column, so the index below would fail until the table
         // has been rebuilt by the migration.
         migrateLegacySchema()
+        migrateVaultMetadataColumns()
         createIndexes()
     }
 
@@ -95,10 +96,32 @@ class Storage(dbPath: String) {
                     user_id INTEGER NOT NULL,
                     vault_id TEXT NOT NULL,
                     updated_at INTEGER NOT NULL,
+                    name TEXT,
+                    name_updated_at INTEGER NOT NULL DEFAULT 0,
+                    deleted INTEGER NOT NULL DEFAULT 0,
                     PRIMARY KEY (user_id, vault_id)
                 )
                 """.trimIndent()
             )
+        }
+    }
+
+    /**
+     * Adds the vault-metadata columns (name, name_updated_at, deleted) to an existing
+     * `vaults` table from before they existed. ALTER TABLE ADD COLUMN is non-destructive
+     * and each is guarded so this is a no-op once applied.
+     */
+    private fun migrateVaultMetadataColumns(): Unit = synchronized(lock) {
+        connection.createStatement().use { st ->
+            if (!hasColumn("vaults", "name")) {
+                st.executeUpdate("ALTER TABLE vaults ADD COLUMN name TEXT")
+            }
+            if (!hasColumn("vaults", "name_updated_at")) {
+                st.executeUpdate("ALTER TABLE vaults ADD COLUMN name_updated_at INTEGER NOT NULL DEFAULT 0")
+            }
+            if (!hasColumn("vaults", "deleted")) {
+                st.executeUpdate("ALTER TABLE vaults ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0")
+            }
         }
     }
 
@@ -215,6 +238,7 @@ class Storage(dbPath: String) {
     fun listVaults(userId: Long): List<VaultSummary> = synchronized(lock) {
         connection.prepareStatement(
             "SELECT v.vault_id AS vault_id, v.updated_at AS updated_at, " +
+                "v.name AS name, v.name_updated_at AS name_updated_at, v.deleted AS deleted, " +
                 "COALESCE(c.value, 0) AS latest_seq " +
                 "FROM vaults v LEFT JOIN seq_counters c " +
                 "ON v.user_id = c.user_id AND v.vault_id = c.vault_id " +
@@ -228,12 +252,48 @@ class Storage(dbPath: String) {
                         VaultSummary(
                             vaultId = rs.getString("vault_id"),
                             latestSeq = rs.getLong("latest_seq"),
-                            updatedAt = rs.getLong("updated_at")
+                            updatedAt = rs.getLong("updated_at"),
+                            name = rs.getString("name"),
+                            nameUpdatedAt = rs.getLong("name_updated_at"),
+                            deleted = rs.getInt("deleted") == 1
                         )
                     )
                 }
                 result
             }
+        }
+    }
+
+    /**
+     * Upserts per-vault metadata. The encrypted [name] blob is kept last-write-wins by
+     * [nameUpdatedAt]; [deleted] tombstones the whole vault. Creates the vault row if it
+     * does not exist yet so an empty/named/deleted vault is still discoverable by peers.
+     */
+    fun setVaultMeta(
+        userId: Long,
+        vaultId: String,
+        name: String?,
+        nameUpdatedAt: Long,
+        deleted: Boolean,
+        updatedAt: Long
+    ): Unit = synchronized(lock) {
+        connection.prepareStatement(
+            "INSERT INTO vaults(user_id, vault_id, updated_at, name, name_updated_at, deleted) " +
+                "VALUES(?, ?, ?, ?, ?, ?) " +
+                "ON CONFLICT(user_id, vault_id) DO UPDATE SET " +
+                "updated_at = MAX(vaults.updated_at, excluded.updated_at), " +
+                // Keep the newer name by its own timestamp.
+                "name = CASE WHEN excluded.name_updated_at >= vaults.name_updated_at THEN excluded.name ELSE vaults.name END, " +
+                "name_updated_at = MAX(vaults.name_updated_at, excluded.name_updated_at), " +
+                "deleted = MAX(vaults.deleted, excluded.deleted)"
+        ).use { ps ->
+            ps.setLong(1, userId)
+            ps.setString(2, vaultId)
+            ps.setLong(3, updatedAt)
+            ps.setString(4, name)
+            ps.setLong(5, nameUpdatedAt)
+            ps.setInt(6, if (deleted) 1 else 0)
+            ps.executeUpdate()
         }
     }
 

@@ -34,6 +34,7 @@ class CreateVaultFromImportUseCase(
                 password = password,
                 items = items,
                 name = resolvedName,
+                vaultId = id,
                 createdAt = now,
                 updatedAt = now,
             )

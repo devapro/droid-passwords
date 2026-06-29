@@ -43,6 +43,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.uuid)
+            implementation(libs.kotlinx.atomicfu)
 
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))

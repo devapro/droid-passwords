@@ -106,6 +106,8 @@ fun SettingsScreenContent(
         ServerUrlDialog(
             isVisible = state.isServerUrlDialogVisible,
             currentUrl = state.syncServerUrl,
+            isChecking = state.isServerUrlChecking,
+            errorMessage = state.serverUrlError,
             onDismiss = { onAction(SettingsScreenAction.OnDismissServerUrlDialog) },
             onSubmit = { url -> onAction(SettingsScreenAction.OnServerUrlSubmitted(url)) }
         )

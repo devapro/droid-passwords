@@ -7,6 +7,15 @@ data class VaultModel(
     val password: String,
     val items: List<VaultItemModel>,
     val name: String = "",
+    /**
+     * Stable unique identity of this vault file, generated once when the vault is
+     * first created and carried inside the encrypted file thereafter. Equals the
+     * vault's [VaultDescriptor.id] (and the server namespace id). Empty only for
+     * legacy files created before this field existed — those are stamped on first
+     * unlock. Lets a file identify itself even if the local registry is lost, and
+     * distinguishes a genuinely new file from an update to an existing one.
+     */
+    val vaultId: String = "",
     val createdAt: Long = 0L,
     val updatedAt: Long = 0L,
     /**

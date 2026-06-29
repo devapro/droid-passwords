@@ -11,7 +11,7 @@ import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.droid.importdata.navigation.ImportScreen
 import io.github.devapro.droid.setlock.navigation.SetLockPasswordScreen
 import io.github.devapro.droid.tags.navigation.TagsScreen
-import io.github.devapro.droid.unlock.navigation.UnLockVaultScreen
+import io.github.devapro.droid.vaultlist.navigation.VaultListScreen
 import io.github.devapro.droid.welcome.model.WelcomeScreenAction
 import io.github.devapro.droid.welcome.model.WelcomeScreenEvent
 import io.github.devapro.droid.welcome.ui.WelcomeScreenContent
@@ -34,7 +34,7 @@ fun WelcomeScreenRoot() {
             when (it) {
                 is WelcomeScreenEvent.OnCreateNewVault -> navigator.push(SetLockPasswordScreen)
                 is WelcomeScreenEvent.OnOpenExistingVault -> navigator.push(ImportScreen)
-                is WelcomeScreenEvent.OnLoadVault -> navigator.push(UnLockVaultScreen())
+                is WelcomeScreenEvent.OnLoadVault -> navigator.push(VaultListScreen)
                 is WelcomeScreenEvent.OnRestoreSuccess -> {
                     snackBarManager.show(
                         message = it.message,

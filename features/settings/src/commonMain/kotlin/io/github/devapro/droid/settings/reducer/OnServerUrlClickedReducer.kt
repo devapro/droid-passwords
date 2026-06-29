@@ -16,7 +16,13 @@ class OnServerUrlClickedReducer :
     ): Reducer.Result<SettingsScreenState, SettingsScreenAction, SettingsScreenEvent?> {
         val currentState = getState()
         return if (currentState is SettingsScreenState.Success) {
-            Reducer.Result(currentState.copy(isServerUrlDialogVisible = true))
+            Reducer.Result(
+                state = currentState.copy(
+                    isServerUrlDialogVisible = true,
+                    isServerUrlChecking = false,
+                    serverUrlError = null
+                )
+            )
         } else {
             Reducer.Result(currentState)
         }

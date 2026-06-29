@@ -74,10 +74,24 @@ data class ChangesResponse(
 data class VaultSummary(
     val vaultId: String,
     val latestSeq: Long,
-    val updatedAt: Long
+    val updatedAt: Long,
+    /** Opaque, end-to-end encrypted (base64) blob of the vault's display name, or null. */
+    val name: String? = null,
+    val nameUpdatedAt: Long = 0,
+    /** Whole-vault tombstone: other devices remove the vault locally. */
+    val deleted: Boolean = false
 )
 
 @Serializable
 data class VaultListResponse(
     val vaults: List<VaultSummary>
+)
+
+/** Sets per-vault metadata: encrypted [name] (LWW by [nameUpdatedAt]) and [deleted]. */
+@Serializable
+data class VaultMetaRequest(
+    val name: String? = null,
+    val nameUpdatedAt: Long = 0,
+    val deleted: Boolean = false,
+    val updatedAt: Long = 0
 )

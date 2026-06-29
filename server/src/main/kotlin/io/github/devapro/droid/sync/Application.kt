@@ -132,6 +132,21 @@ fun Application.module() {
             val results = request.items.map { storage.applyPush(userId, vaultId, it) }
             call.respond(PushResponse(results = results, latestSeq = storage.latestSeq(userId, vaultId)))
         }
+
+        post("/sync/{vaultId}/meta") {
+            val userId = call.authenticate() ?: return@post
+            val vaultId = call.vaultId() ?: return@post
+            val request = call.receive<VaultMetaRequest>()
+            storage.setVaultMeta(
+                userId = userId,
+                vaultId = vaultId,
+                name = request.name,
+                nameUpdatedAt = request.nameUpdatedAt,
+                deleted = request.deleted,
+                updatedAt = request.updatedAt
+            )
+            call.respond(HttpStatusCode.OK, mapOf("status" to "ok"))
+        }
     }
 }
 

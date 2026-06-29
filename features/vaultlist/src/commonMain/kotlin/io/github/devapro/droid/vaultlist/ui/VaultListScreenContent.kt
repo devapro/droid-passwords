@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Lock
@@ -55,6 +56,13 @@ fun VaultListScreenContent(
                 navigationIcon = {
                     IconButton(onClick = { onAction(VaultListScreenAction.OnBackClicked) }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    if (state is VaultListScreenState.Loaded && state.isLoggedIn) {
+                        IconButton(onClick = { onAction(VaultListScreenAction.OnLogoutClicked) }) {
+                            Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Sign out")
+                        }
                     }
                 },
             )

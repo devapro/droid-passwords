@@ -3,12 +3,15 @@ package io.github.devapro.droid.data.vault
 import io.github.devapro.droid.core.mvi.AppResult
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.atomicMove
 import io.github.vinceglb.filekit.cacheDir
 import io.github.vinceglb.filekit.delete
 import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.readBytes
 import io.github.vinceglb.filekit.write
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 
 private const val LEGACY_FILE_NAME = "droid-d4.data"
@@ -18,10 +21,32 @@ class VaultFileRepository(
     private val cryptoMapper: CryptoMapper,
 ) {
 
+    /**
+     * Serializes all writes to managed vault files so a sync-triggered save and an
+     * edit-triggered save can't interleave and corrupt a file (or collide on the
+     * shared temp file used for the atomic replace).
+     */
+    private val writeMutex = Mutex()
+
     fun exists(descriptor: VaultDescriptor): Boolean = resolveFile(descriptor).exists()
 
     fun resolveFile(descriptor: VaultDescriptor): PlatformFile =
         PlatformFile(FileKit.filesDir, descriptor.fileName)
+
+    /**
+     * Writes [bytes] to the descriptor's file atomically: the data is written to a
+     * sibling temp file first, then atomically moved over the real file (rename), so a
+     * crash or interruption mid-write can never leave a half-written, undecryptable
+     * vault. Serialized by [writeMutex] against all other managed-file writes.
+     */
+    private suspend fun writeFileAtomically(descriptor: VaultDescriptor, bytes: ByteArray) {
+        writeMutex.withLock {
+            val target = resolveFile(descriptor)
+            val temp = PlatformFile(FileKit.filesDir, "${descriptor.fileName}.tmp")
+            temp.write(bytes)
+            temp.atomicMove(target)
+        }
+    }
 
     suspend fun createVault(
         descriptor: VaultDescriptor,
@@ -33,12 +58,13 @@ class VaultFileRepository(
                 password = password,
                 items = emptyList(),
                 name = descriptor.name,
+                vaultId = descriptor.id,
                 createdAt = now,
                 updatedAt = now,
             )
             val raw = json.encodeToString(vaultModel)
             val encoded = cryptoMapper.encode(password, raw)
-            resolveFile(descriptor).write(encoded)
+            writeFileAtomically(descriptor, encoded)
             AppResult.Success(vaultModel)
         } catch (e: Exception) {
             AppResult.Failure(e)
@@ -64,7 +90,7 @@ class VaultFileRepository(
             )
             val newRaw = json.encodeToString(updated)
             val newEncoded = cryptoMapper.encode(newPassword, newRaw)
-            file.write(newEncoded)
+            writeFileAtomically(descriptor, newEncoded)
             AppResult.Success(updated)
         } catch (e: Exception) {
             AppResult.Failure(e)
@@ -82,7 +108,19 @@ class VaultFileRepository(
             }
             val encoded = file.readBytes()
             val raw = cryptoMapper.decode(password, encoded)
-            AppResult.Success(json.decodeFromString(raw))
+            val model = json.decodeFromString<VaultModel>(raw)
+            // Stamp legacy files (created before vaultId existed) with their identity
+            // once. Best-effort: if the re-save fails the vault still opens with the
+            // stamp applied in memory, and the next unlock retries the persist.
+            if (model.vaultId.isEmpty()) {
+                val stamped = model.copy(vaultId = descriptor.id)
+                runCatching {
+                    writeFileAtomically(descriptor, cryptoMapper.encode(password, json.encodeToString(stamped)))
+                }
+                AppResult.Success(stamped)
+            } else {
+                AppResult.Success(model)
+            }
         } catch (_: Exception) {
             AppResult.Failure(Exception("Failed to load vault. Please check your password or file."))
         }
@@ -111,7 +149,7 @@ class VaultFileRepository(
         return try {
             val raw = json.encodeToString(vaultModel)
             val encoded = cryptoMapper.encode(vaultModel.password, raw)
-            resolveFile(descriptor).write(encoded)
+            writeFileAtomically(descriptor, encoded)
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Failure(e)
@@ -156,7 +194,7 @@ class VaultFileRepository(
                 return AppResult.Failure(Exception("Legacy vault does not exist"))
             }
             val bytes = legacy.readBytes()
-            resolveFile(descriptor).write(bytes)
+            writeFileAtomically(descriptor, bytes)
             legacy.delete()
             AppResult.Success(Unit)
         } catch (e: Exception) {

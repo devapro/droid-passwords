@@ -10,5 +10,6 @@ sealed interface VaultListScreenAction {
     data object OnDismissAddMenu : VaultListScreenAction
     data object OnCreateNewVaultSelected : VaultListScreenAction
     data object OnImportVaultSelected : VaultListScreenAction
+    data object OnLogoutClicked : VaultListScreenAction
     data class OnVaultClicked(val descriptor: VaultDescriptor) : VaultListScreenAction
 }

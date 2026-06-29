@@ -3,6 +3,7 @@ package io.github.devapro.droid.unlock.reducer
 import io.github.devapro.droid.core.mvi.AppResult
 import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.droid.data.LockManager
+import io.github.devapro.droid.data.sync.SyncManager
 import io.github.devapro.droid.data.sync.SyncScheduler
 import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.droid.data.vault.VaultRegistryRepository
@@ -15,6 +16,7 @@ class UnlockVaultReducer(
     private val vaultFileRepository: VaultFileRepository,
     private val vaultRegistryRepository: VaultRegistryRepository,
     private val runtimeRepository: VaultRuntimeRepository,
+    private val syncManager: SyncManager,
     private val syncScheduler: SyncScheduler
 ) : Reducer<UnLockVaultScreenAction.UnlockVault, UnLockVaultScreenState, UnLockVaultScreenAction, UnLockVaultScreenEvent> {
 
@@ -40,6 +42,28 @@ class UnlockVaultReducer(
                 action = null,
                 event = UnLockVaultScreenEvent.ShowError("No vault available.")
             )
+        }
+
+        // A placeholder discovered during sync has no local file yet: open it by
+        // downloading and decrypting its contents from the server with this password.
+        if (descriptor.pendingRestore) {
+            return when (val result = syncManager.downloadPendingVault(descriptor.id, action.password)) {
+                is AppResult.Success -> {
+                    LockManager.onVaultUnlocked()
+                    syncScheduler.startIfEnabled()
+                    Reducer.Result(
+                        state = currentState.copy(isProcessing = false),
+                        action = null,
+                        event = UnLockVaultScreenEvent.UnlockSuccess
+                    )
+                }
+
+                is AppResult.Failure -> Reducer.Result(
+                    state = currentState.copy(isProcessing = false),
+                    action = null,
+                    event = UnLockVaultScreenEvent.ShowError(result.error.message ?: "Couldn't open vault.")
+                )
+            }
         }
 
         val readResult = vaultFileRepository.getVault(descriptor, action.password)

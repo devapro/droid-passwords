@@ -8,6 +8,7 @@ import io.github.devapro.droid.vaultlist.reducer.OnBackClickedReducer
 import io.github.devapro.droid.vaultlist.reducer.OnCreateNewVaultSelectedReducer
 import io.github.devapro.droid.vaultlist.reducer.OnDismissAddMenuReducer
 import io.github.devapro.droid.vaultlist.reducer.OnImportVaultSelectedReducer
+import io.github.devapro.droid.vaultlist.reducer.OnLogoutClickedReducer
 import io.github.devapro.droid.vaultlist.reducer.OnRefreshReducer
 import io.github.devapro.droid.vaultlist.reducer.OnVaultClickedReducer
 import org.koin.core.module.Module
@@ -29,6 +30,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnDismissAddMenuReducer)
     factoryOf(::OnCreateNewVaultSelectedReducer)
     factoryOf(::OnImportVaultSelectedReducer)
+    factoryOf(::OnLogoutClickedReducer)
     factoryOf(::OnBackClickedReducer)
 
     factory {
@@ -41,6 +43,7 @@ private fun Module.reducersDi() {
                 get(OnDismissAddMenuReducer::class),
                 get(OnCreateNewVaultSelectedReducer::class),
                 get(OnImportVaultSelectedReducer::class),
+                get(OnLogoutClickedReducer::class),
                 get(OnBackClickedReducer::class),
             ),
             initStateFactory = get(),

@@ -16,7 +16,13 @@ class OnDismissServerUrlDialogReducer :
     ): Reducer.Result<SettingsScreenState, SettingsScreenAction, SettingsScreenEvent?> {
         val currentState = getState()
         return if (currentState is SettingsScreenState.Success) {
-            Reducer.Result(currentState.copy(isServerUrlDialogVisible = false))
+            Reducer.Result(
+                state = currentState.copy(
+                    isServerUrlDialogVisible = false,
+                    isServerUrlChecking = false,
+                    serverUrlError = null
+                )
+            )
         } else {
             Reducer.Result(currentState)
         }

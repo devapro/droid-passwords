@@ -1,6 +1,7 @@
 package io.github.devapro.droid.vaultlist.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
+import io.github.devapro.droid.data.sync.SyncStateStore
 import io.github.devapro.droid.data.vault.VaultRegistryRepository
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.droid.vaultlist.model.VaultListItem
@@ -11,6 +12,7 @@ import io.github.devapro.droid.vaultlist.model.VaultListScreenState
 class InitScreenReducer(
     private val registryRepository: VaultRegistryRepository,
     private val runtimeRepository: VaultRuntimeRepository,
+    private val syncStateStore: SyncStateStore,
 ) : Reducer<VaultListScreenAction.InitScreen, VaultListScreenState, VaultListScreenAction, VaultListScreenEvent> {
 
     override val actionClass = VaultListScreenAction.InitScreen::class
@@ -34,6 +36,7 @@ class InitScreenReducer(
                 )
             },
             activeVaultId = activeId,
+            isLoggedIn = syncStateStore.isLoggedIn(),
         )
     }
 }

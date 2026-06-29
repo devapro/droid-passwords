@@ -9,6 +9,7 @@ import io.github.devapro.droid.data.sync.model.PushRequest
 import io.github.devapro.droid.data.sync.model.PushResponse
 import io.github.devapro.droid.data.sync.model.RegisterRequest
 import io.github.devapro.droid.data.sync.model.VaultListResponse
+import io.github.devapro.droid.data.sync.model.VaultMetaRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
@@ -30,6 +31,19 @@ class SyncApi(
 ) {
 
     private val client: HttpClient by lazy { clientProvider() }
+
+    /**
+     * Probes the server's `GET /health` endpoint. Succeeds only on a 2xx response,
+     * so it doubles as a reachability + TLS-handshake check before a sync or when the
+     * user saves a server URL.
+     */
+    suspend fun checkHealth(baseUrl: String): AppResult<Unit> = runCatchingResult {
+        val response = client.get("${normalize(baseUrl)}/health")
+        if (!response.status.isSuccess()) {
+            error("Server returned ${response.status.value}")
+        }
+        Unit
+    }
 
     suspend fun register(baseUrl: String, username: String, password: String): AppResult<AuthResponse> =
         runCatchingResult {
@@ -101,6 +115,23 @@ class SyncApi(
             error(describe(response.status, "Failed to push changes"))
         }
         response.body<PushResponse>()
+    }
+
+    suspend fun setVaultMeta(
+        baseUrl: String,
+        token: String,
+        vaultId: String,
+        request: VaultMetaRequest
+    ): AppResult<Unit> = runCatchingResult {
+        val response = client.post("${normalize(baseUrl)}/sync/$vaultId/meta") {
+            bearerAuth(token)
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        if (!response.status.isSuccess()) {
+            error(describe(response.status, "Failed to update vault metadata"))
+        }
+        Unit
     }
 
     private fun describe(status: HttpStatusCode, fallback: String): String = when (status) {

@@ -33,6 +33,8 @@ sealed interface SettingsScreenState {
         val lastSyncAt: Long = 0,
         val isSyncing: Boolean = false,
         val isServerUrlDialogVisible: Boolean = false,
+        val isServerUrlChecking: Boolean = false,
+        val serverUrlError: String? = null,
         val isAuthDialogVisible: Boolean = false,
         val isAuthInProgress: Boolean = false,
         val authError: String? = null,

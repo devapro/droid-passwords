@@ -9,6 +9,7 @@ sealed interface VaultListScreenState {
         val vaults: List<VaultListItem>,
         val activeVaultId: String?,
         val showAddMenu: Boolean = false,
+        val isLoggedIn: Boolean = false,
     ) : VaultListScreenState
 }
 

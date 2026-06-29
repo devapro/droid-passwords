@@ -7,4 +7,5 @@ sealed interface VaultListScreenEvent {
     data object NavigateToImport : VaultListScreenEvent
     data object NavigateBack : VaultListScreenEvent
     data class ShowError(val message: String) : VaultListScreenEvent
+    data class ShowMessage(val message: String) : VaultListScreenEvent
 }

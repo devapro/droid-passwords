@@ -72,6 +72,7 @@ kotlin {
             implementation(projects.data)
 
             implementation(projects.featuresApi.welcome)
+            implementation(projects.featuresApi.vaultlist)
             implementation(projects.featuresApi.unlock)
             implementation(projects.featuresApi.setlock)
             implementation(projects.featuresApi.importdata)

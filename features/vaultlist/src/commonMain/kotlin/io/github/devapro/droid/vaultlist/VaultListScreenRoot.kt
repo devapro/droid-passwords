@@ -47,6 +47,14 @@ fun VaultListScreenRoot() {
                         actionButtonCallback = { },
                     )
                 }
+                is VaultListScreenEvent.ShowMessage -> {
+                    snackBarManager.show(
+                        message = event.message,
+                        actionButtonText = "OK",
+                        duration = SnackbarDuration.Short,
+                        actionButtonCallback = { },
+                    )
+                }
             }
         }
     }

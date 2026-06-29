@@ -37,6 +37,8 @@ sealed interface SettingsScreenAction {
 
     data class OnServerUrlSubmitted(val url: String) : SettingsScreenAction
 
+    data class OnServerUrlValidate(val url: String) : SettingsScreenAction
+
     data object OnDismissServerUrlDialog : SettingsScreenAction
 
     data object OnLoginClicked : SettingsScreenAction

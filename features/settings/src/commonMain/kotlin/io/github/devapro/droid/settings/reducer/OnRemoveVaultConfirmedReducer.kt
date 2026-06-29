@@ -2,6 +2,7 @@ package io.github.devapro.droid.settings.reducer
 
 import io.github.devapro.droid.core.mvi.AppResult
 import io.github.devapro.droid.core.mvi.Reducer
+import io.github.devapro.droid.data.sync.SyncManager
 import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.droid.data.vault.VaultRegistryRepository
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
@@ -13,6 +14,7 @@ class OnRemoveVaultConfirmedReducer(
     private val registryRepository: VaultRegistryRepository,
     private val runtimeRepository: VaultRuntimeRepository,
     private val fileRepository: VaultFileRepository,
+    private val syncManager: SyncManager,
 ) : Reducer<SettingsScreenAction.OnRemoveVaultConfirmed, SettingsScreenState, SettingsScreenAction, SettingsScreenEvent> {
 
     override val actionClass = SettingsScreenAction.OnRemoveVaultConfirmed::class
@@ -38,6 +40,10 @@ class OnRemoveVaultConfirmedReducer(
 
         runtimeRepository.unloadVault(descriptor.id)
         registryRepository.removeVault(descriptor.id)
+        // Tombstone on the server so the deletion propagates to other devices and the
+        // vault isn't re-discovered/resurrected here on the next sync. Best-effort and
+        // a no-op when not signed in; the next sync retries if it fails.
+        syncManager.deleteVaultOnServer(descriptor.id)
 
         if (current.removeAlsoDeleteFile) {
             when (val result = fileRepository.deleteVaultFile(descriptor)) {

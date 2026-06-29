@@ -45,13 +45,13 @@ fun LoadVault(
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Load Vault",
+                    text = "Open Vaults",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = "Open previous saved vault to manage your passwords.",
+                    text = "Choose a vault to unlock, add another, or sign out.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                 )

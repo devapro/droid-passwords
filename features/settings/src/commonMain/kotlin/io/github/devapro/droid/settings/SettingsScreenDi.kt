@@ -30,6 +30,7 @@ import io.github.devapro.droid.settings.reducer.OnPeriodicSyncToggledReducer
 import io.github.devapro.droid.settings.reducer.OnRegisterSubmittedReducer
 import io.github.devapro.droid.settings.reducer.OnServerUrlClickedReducer
 import io.github.devapro.droid.settings.reducer.OnServerUrlSubmittedReducer
+import io.github.devapro.droid.settings.reducer.OnServerUrlValidateReducer
 import io.github.devapro.droid.settings.reducer.OnSyncFromServerClickedReducer
 import io.github.devapro.droid.settings.reducer.OnSyncFromServerExecuteReducer
 import io.github.devapro.droid.settings.reducer.OnSyncNowClickedReducer
@@ -64,7 +65,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnPasswordChangeSubmittedReducer)
 
     // Sync reducers with dependencies
-    factoryOf(::OnServerUrlSubmittedReducer)
+    factoryOf(::OnServerUrlValidateReducer)
     factoryOf(::OnRegisterSubmittedReducer)
     factoryOf(::OnLoginSubmittedReducer)
     factoryOf(::OnLinkMasterPasswordExecuteReducer)
@@ -88,6 +89,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnDismissRemoveDialogReducer)
     factoryOf(::OnRemoveVaultConfirmedReducer)
     factoryOf(::OnServerUrlClickedReducer)
+    factoryOf(::OnServerUrlSubmittedReducer)
     factoryOf(::OnDismissServerUrlDialogReducer)
     factoryOf(::OnLoginClickedReducer)
     factoryOf(::OnDismissAuthDialogReducer)
@@ -117,6 +119,7 @@ private fun Module.reducersDi() {
                 get(OnRemoveVaultConfirmedReducer::class),
                 get(OnServerUrlClickedReducer::class),
                 get(OnServerUrlSubmittedReducer::class),
+                get(OnServerUrlValidateReducer::class),
                 get(OnDismissServerUrlDialogReducer::class),
                 get(OnLoginClickedReducer::class),
                 get(OnDismissAuthDialogReducer::class),

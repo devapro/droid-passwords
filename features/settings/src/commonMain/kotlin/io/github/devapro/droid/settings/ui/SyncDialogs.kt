@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -37,6 +38,8 @@ import io.github.devapro.droid.core.ui.EOutlinedTextField
 fun ServerUrlDialog(
     isVisible: Boolean,
     currentUrl: String,
+    isChecking: Boolean,
+    errorMessage: String?,
     onDismiss: () -> Unit,
     onSubmit: (String) -> Unit
 ) {
@@ -45,7 +48,7 @@ fun ServerUrlDialog(
     var url by remember(isVisible) { mutableStateOf(currentUrl) }
 
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { if (!isChecking) onDismiss() },
         title = { Text("Sync Server", style = MaterialTheme.typography.headlineSmall) },
         text = {
             Column(
@@ -54,7 +57,8 @@ fun ServerUrlDialog(
             ) {
                 Text(
                     text = "Enter the base URL of your sync server. Use https:// for the " +
-                        "self-signed TLS port (default 8443).",
+                        "self-signed TLS port (default 8443). It is checked for reachability " +
+                        "before being saved.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -64,19 +68,34 @@ fun ServerUrlDialog(
                     label = { Text("Server URL") },
                     placeholder = { Text("https://192.168.1.50:8443") },
                     singleLine = true,
+                    enabled = !isChecking,
+                    isError = errorMessage != null,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                     modifier = Modifier.fillMaxWidth()
                 )
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
         },
         confirmButton = {
             TextButton(
                 onClick = { onSubmit(url) },
-                enabled = url.isNotBlank()
-            ) { Text("Save") }
+                enabled = url.isNotBlank() && !isChecking
+            ) {
+                if (isChecking) {
+                    CircularProgressIndicator(modifier = Modifier.size(18.dp))
+                } else {
+                    Text("Save")
+                }
+            }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss, enabled = !isChecking) { Text("Cancel") }
         }
     )
 }

@@ -3,6 +3,8 @@ package io.github.devapro.droid.data.vault
 import io.github.devapro.droid.data.LocalStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 
 class VaultRegistryRepository(
@@ -10,9 +12,14 @@ class VaultRegistryRepository(
     private val json: Json,
 ) {
 
+    // Guards the read-modify-write of the deleted-id set, which is mutated from both the
+    // delete reducer (no syncMutex) and the background sync flush concurrently.
+    private val deletedIdsMutex = Mutex()
+
     companion object {
         private const val KEY_VAULT_REGISTRY = "vault_registry"
         private const val KEY_ACTIVE_VAULT_ID = "active_vault_id"
+        private const val KEY_DELETED_VAULT_IDS = "deleted_vault_ids"
     }
 
     fun observeRegistry(): Flow<List<VaultDescriptor>> =
@@ -57,6 +64,35 @@ class VaultRegistryRepository(
     suspend fun requireActiveDescriptor(): VaultDescriptor {
         val id = getActiveVaultId() ?: error("No active vault set in registry")
         return getDescriptor(id) ?: error("Active vault id '$id' not present in registry")
+    }
+
+    // --- Deleted-vault tombstones -----------------------------------------
+    // Ids of vaults removed locally whose deletion still needs to be (or has been)
+    // propagated to the server. Persisted so a deletion made offline survives and is
+    // retried, and so discovery never resurrects a vault the user has deleted.
+
+    suspend fun getDeletedVaultIds(): Set<String> =
+        decodeIds(localStorage.getStringOnce(KEY_DELETED_VAULT_IDS))
+
+    suspend fun addDeletedVaultId(id: String) = deletedIdsMutex.withLock {
+        writeDeletedVaultIds(getDeletedVaultIds() + id)
+    }
+
+    suspend fun removeDeletedVaultId(id: String) = deletedIdsMutex.withLock {
+        writeDeletedVaultIds(getDeletedVaultIds() - id)
+    }
+
+    private suspend fun writeDeletedVaultIds(ids: Set<String>) {
+        localStorage.saveString(KEY_DELETED_VAULT_IDS, json.encodeToString(ids.toList()))
+    }
+
+    private fun decodeIds(raw: String): Set<String> {
+        if (raw.isEmpty()) return emptySet()
+        return try {
+            json.decodeFromString<List<String>>(raw).toSet()
+        } catch (_: Exception) {
+            emptySet()
+        }
     }
 
     private suspend fun readRegistry(): List<VaultDescriptor> =
