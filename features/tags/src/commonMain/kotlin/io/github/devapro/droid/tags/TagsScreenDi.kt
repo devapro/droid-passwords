@@ -11,6 +11,7 @@ import io.github.devapro.droid.tags.reducer.OnImportExportClickedReducer
 import io.github.devapro.droid.tags.reducer.OnRefreshReducer
 import io.github.devapro.droid.tags.reducer.OnSearchChangedReducer
 import io.github.devapro.droid.tags.reducer.OnSettingsClickedReducer
+import io.github.devapro.droid.tags.reducer.OnSwitchVaultClickedReducer
 import io.github.devapro.droid.tags.reducer.OnTagClickedReducer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -33,6 +34,7 @@ private fun Module.reducersDi() {
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnAddPasswordClickedReducer)
     factoryOf(::OnSettingsClickedReducer)
+    factoryOf(::OnSwitchVaultClickedReducer)
     factoryOf(::OnImportExportClickedReducer)
 
     factory {
@@ -46,6 +48,7 @@ private fun Module.reducersDi() {
                 get(OnBackClickedReducer::class),
                 get(OnAddPasswordClickedReducer::class),
                 get(OnSettingsClickedReducer::class),
+                get(OnSwitchVaultClickedReducer::class),
                 get(OnImportExportClickedReducer::class),
             ),
             initStateFactory = get(),

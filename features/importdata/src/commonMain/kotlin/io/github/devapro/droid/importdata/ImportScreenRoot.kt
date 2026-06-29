@@ -11,11 +11,10 @@ import io.github.devapro.droid.core.ui.SnackbarHostStateManager
 import io.github.devapro.droid.importdata.model.ImportScreenAction
 import io.github.devapro.droid.importdata.model.ImportScreenEvent
 import io.github.devapro.droid.importdata.ui.ImportScreenContent
-import io.github.devapro.droid.tags.navigation.TagsScreen
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.openFilePicker
-import io.github.vinceglb.filekit.dialogs.openFileSaver
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
@@ -50,15 +49,18 @@ fun ImportScreenRoot() {
 
                 is ImportScreenEvent.ShowSuccess -> {
                     snackBarManager.show(
-                        message = "Operation completed successfully",
+                        message = it.message,
                         actionButtonText = "OK",
                         duration = SnackbarDuration.Short,
                         actionButtonCallback = { }
                     )
-                    navigator.replace(TagsScreen)
+                    navigator.pop()
                 }
 
                 is ImportScreenEvent.OpenFileForImport -> {
+                    // FileKit's macOS picker calls into AppKit, which may re-enter the AWT EDT
+                    // via accessibility callbacks. Running the suspend call on Dispatchers.IO
+                    // keeps the EDT free so that AppKit ↔ EDT round-trip can complete.
                     val file = withContext(Dispatchers.IO) {
                         FileKit.openFilePicker(
                             type = it.type,
@@ -66,29 +68,12 @@ fun ImportScreenRoot() {
                         )
                     }
                     if (file != null) {
-                        viewModel.onAction(
-                            ImportScreenAction.ImportFileSelected(
-                                file = file
-                            )
-                        )
+                        viewModel.onAction(ImportScreenAction.ImportFileSelected(file = file))
                     } else {
                         viewModel.onAction(ImportScreenAction.ImportFileCancelled)
-                    }
-                }
-
-                is ImportScreenEvent.OpenFileFor -> {
-                    val file = FileKit.openFileSaver(
-                        suggestedName = it.fileName,
-                        extension = it.fileExtension
-                    )
-                    if (file != null) {
-                        viewModel.onAction(ImportScreenAction.ExportFileSelected(file))
-                    } else {
-                        viewModel.onAction(ImportScreenAction.ExportFileCancelled)
                     }
                 }
             }
         }
     }
-
-} 
+}

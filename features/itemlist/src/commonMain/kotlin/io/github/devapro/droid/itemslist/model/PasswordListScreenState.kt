@@ -2,6 +2,7 @@ package io.github.devapro.droid.itemslist.model
 
 import io.github.devapro.droid.data.model.ItemModel
 import io.github.devapro.droid.data.vault.VaultItemTag
+import io.github.devapro.droid.itemlist.PasswordTagFilterType
 
 sealed interface PasswordListScreenState {
     data object Loading : PasswordListScreenState
@@ -10,6 +11,7 @@ sealed interface PasswordListScreenState {
 
     data class Success(
         val title: String,
+        val tagFilterType: PasswordTagFilterType,
         val selectedTag: VaultItemTag?,
         val passwords: List<ItemModel>,
         val filteredPasswords: List<ItemModel>,

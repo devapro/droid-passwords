@@ -65,3 +65,19 @@ data class ChangesResponse(
     val items: List<ChangeItem>,
     val latestSeq: Long
 )
+
+/**
+ * A single vault namespace known to the server for the authenticated account.
+ * Used by a fresh device to discover which vaults are available to restore.
+ */
+@Serializable
+data class VaultSummary(
+    val vaultId: String,
+    val latestSeq: Long,
+    val updatedAt: Long
+)
+
+@Serializable
+data class VaultListResponse(
+    val vaults: List<VaultSummary>
+)

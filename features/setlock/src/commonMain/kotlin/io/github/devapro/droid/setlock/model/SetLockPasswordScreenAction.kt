@@ -3,6 +3,8 @@ package io.github.devapro.droid.setlock.model
 sealed interface SetLockPasswordScreenAction {
     data object InitScreen : SetLockPasswordScreenAction
 
+    data class OnVaultNameChanged(val name: String) : SetLockPasswordScreenAction
+
     data class OnCurrentPasswordChanged(val password: String) : SetLockPasswordScreenAction
     
     data class OnNewPasswordChanged(val password: String) : SetLockPasswordScreenAction

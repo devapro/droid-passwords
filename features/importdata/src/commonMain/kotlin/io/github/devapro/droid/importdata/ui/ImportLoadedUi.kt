@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.devapro.droid.importdata.model.ImportScreenAction
 import io.github.devapro.droid.importdata.model.ImportScreenState
+import io.github.devapro.droid.importdata.model.ImportTarget
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +42,7 @@ fun ImportLoadedUi(
                 title = { Text("Import Passwords") },
                 navigationIcon = {
                     IconButton(onClick = { onAction(ImportScreenAction.OnBackClicked) }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -49,10 +52,24 @@ fun ImportLoadedUi(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // File Format Selection
+            if (state.canMergeIntoActive) {
+                ImportTargetCard(
+                    selected = state.target,
+                    activeVaultName = state.activeVaultName,
+                    onSelected = { onAction(ImportScreenAction.OnTargetSelected(it)) },
+                )
+            } else {
+                Text(
+                    text = "No active vault is unlocked — imports will create a new vault.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
             FormatSelectionCard(
                 state = state,
                 onFormatSelected = { format ->
@@ -60,13 +77,8 @@ fun ImportLoadedUi(
                 }
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Action Button
             Button(
-                onClick = {
-                    onAction(ImportScreenAction.OnImportClicked)
-                },
+                onClick = { onAction(ImportScreenAction.OnImportClicked) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !state.isProcessing,
                 contentPadding = PaddingValues(16.dp)
@@ -77,32 +89,35 @@ fun ImportLoadedUi(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Icon(
-                        imageVector = Icons.Default.Upload,
-                        contentDescription = null
-                    )
+                    Icon(imageVector = Icons.Default.Upload, contentDescription = null)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Import from ${state.selectedFormat.name}",
+                    text = "Choose ${state.selectedFormat.name} file",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
-            // Warning/Info Text
             Text(
-                text = "⚠️ Import will add new passwords to your existing collection. Duplicates may be created.",
+                text = when (state.target) {
+                    ImportTarget.MERGE_INTO_ACTIVE ->
+                        "You'll review counts and pick a merge strategy before anything is written."
+                    ImportTarget.NEW_VAULT ->
+                        "You'll be asked to name and password-protect the new vault before it's saved."
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
 
-        if (state.pendingFile != null) {
-            ImportPasswordDialog(
-                state = state,
-                onAction = onAction
-            )
+        // Password dialog for DATA files (decryption step)
+        if (state.pendingFile != null && !state.isConfirmDialogVisible) {
+            ImportPasswordDialog(state = state, onAction = onAction)
+        }
+
+        if (state.isConfirmDialogVisible) {
+            ImportConfirmDialog(state = state, onAction = onAction)
         }
     }
 }

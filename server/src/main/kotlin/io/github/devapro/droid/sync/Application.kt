@@ -110,20 +110,27 @@ fun Application.module() {
             call.respond(AuthResponse(token = token, username = user.username))
         }
 
-        get("/sync/changes") {
+        get("/sync/vaults") {
             val userId = call.authenticate() ?: return@get
+            call.respond(VaultListResponse(vaults = storage.listVaults(userId)))
+        }
+
+        get("/sync/{vaultId}/changes") {
+            val userId = call.authenticate() ?: return@get
+            val vaultId = call.vaultId() ?: return@get
             val since = call.request.queryParameters["since"]?.toLongOrNull() ?: 0L
             val limit = (call.request.queryParameters["limit"]?.toIntOrNull() ?: 500).coerceIn(1, 1000)
-            val items = storage.changesSince(userId, since, limit)
-            val latest = storage.latestSeq(userId)
+            val items = storage.changesSince(userId, vaultId, since, limit)
+            val latest = storage.latestSeq(userId, vaultId)
             call.respond(ChangesResponse(items = items, latestSeq = latest))
         }
 
-        post("/sync/push") {
+        post("/sync/{vaultId}/push") {
             val userId = call.authenticate() ?: return@post
+            val vaultId = call.vaultId() ?: return@post
             val request = call.receive<PushRequest>()
-            val results = request.items.map { storage.applyPush(userId, it) }
-            call.respond(PushResponse(results = results, latestSeq = storage.latestSeq(userId)))
+            val results = request.items.map { storage.applyPush(userId, vaultId, it) }
+            call.respond(PushResponse(results = results, latestSeq = storage.latestSeq(userId, vaultId)))
         }
     }
 }
@@ -144,4 +151,16 @@ private suspend fun io.ktor.server.application.ApplicationCall.authenticate(): L
         return null
     }
     return userId
+}
+
+/**
+ * Extracts the `{vaultId}` path segment, or responds 400 and returns null.
+ */
+private suspend fun io.ktor.server.application.ApplicationCall.vaultId(): String? {
+    val vaultId = parameters["vaultId"]?.trim()
+    if (vaultId.isNullOrEmpty()) {
+        respond(HttpStatusCode.BadRequest, ErrorResponse("Missing vault id"))
+        return null
+    }
+    return vaultId
 }

@@ -27,6 +27,7 @@ class OnNewPasswordChangedReducer
                 newPasswordError = newPasswordError,
                 confirmPasswordError = confirmPasswordError,
                 isValid = validateForm(
+                    vaultName = currentState.vaultName,
                     currentPassword = currentState.currentPassword,
                     newPassword = action.password,
                     confirmPassword = currentState.confirmPassword,
@@ -48,11 +49,13 @@ class OnNewPasswordChangedReducer
     }
 
     private fun validateForm(
+        vaultName: String,
         currentPassword: String,
         newPassword: String,
         confirmPassword: String,
         hasExistingPassword: Boolean
     ): Boolean {
+        if (vaultName.isBlank()) return false
         if (hasExistingPassword && currentPassword.isEmpty()) return false
         if (newPassword.isEmpty()) return false
         if (newPassword != confirmPassword) return false

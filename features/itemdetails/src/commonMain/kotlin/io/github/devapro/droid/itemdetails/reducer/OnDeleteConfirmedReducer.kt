@@ -22,7 +22,10 @@ class OnDeleteConfirmedReducer(
         val currentState = getState()
 
         runtimeRepository.deleteVaultById(currentState.item.id)
-        val result = repository.saveVault(runtimeRepository.getVault())
+        val result = repository.saveVault(
+            descriptor = runtimeRepository.getActiveDescriptor(),
+            vaultModel = runtimeRepository.getVault(),
+        )
         return when(result) {
             is AppResult.Success -> {
                 Reducer.Result(

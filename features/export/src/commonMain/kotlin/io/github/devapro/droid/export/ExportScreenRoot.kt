@@ -13,6 +13,9 @@ import io.github.devapro.droid.export.model.ExportScreenEvent
 import io.github.devapro.droid.export.ui.ExportScreenContent
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.openFileSaver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -54,10 +57,14 @@ fun ExportScreenRoot() {
                 }
 
                 is ExportScreenEvent.OpenFileForExport -> {
-                    val file = FileKit.openFileSaver(
-                        suggestedName = it.fileName,
-                        extension = it.fileExtension
-                    )
+                    // Avoid running the native save dialog on the AWT EDT — see
+                    // ImportScreenRoot for the deadlock this prevents on macOS.
+                    val file = withContext(Dispatchers.IO) {
+                        FileKit.openFileSaver(
+                            suggestedName = it.fileName,
+                            extension = it.fileExtension
+                        )
+                    }
                     if (file != null) {
                         viewModel.onAction(ExportScreenAction.ExportFileSelected(file))
                     } else {

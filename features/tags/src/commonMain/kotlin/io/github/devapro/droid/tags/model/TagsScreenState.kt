@@ -9,6 +9,7 @@ sealed interface TagsScreenState {
         val searchQuery: String,
         val isLoading: Boolean,
         val isRefreshing: Boolean,
-        val hasSearchQuery: Boolean
+        val hasSearchQuery: Boolean,
+        val activeVaultName: String = "",
     ) : TagsScreenState
-} 
+}

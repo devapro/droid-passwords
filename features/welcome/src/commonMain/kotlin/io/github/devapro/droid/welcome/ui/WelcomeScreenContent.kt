@@ -237,18 +237,18 @@ private fun WelcomeActions(
                             onAction(WelcomeScreenAction.OnCreateNewVault)
                         }
                     )
+                    ImportExistingVault(
+                        onClick = {
+                            onAction(WelcomeScreenAction.OnOpenExistingVault)
+                        }
+                    )
                     RestoreFromSync(
                         onClick = {
                             onAction(WelcomeScreenAction.OnRestoreFromSyncClicked)
                         }
                     )
                 }
-                ImportExistingVault(
-                    onClick = {
-                        onAction(WelcomeScreenAction.OnOpenExistingVault)
-                    }
-                )
             }
         }
     }
-} 
+}

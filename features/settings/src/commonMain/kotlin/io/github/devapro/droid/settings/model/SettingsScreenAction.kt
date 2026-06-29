@@ -10,8 +10,6 @@ sealed interface SettingsScreenAction {
 
     data object OnChangePasswordClicked : SettingsScreenAction
 
-    data object OnFilePathClicked : SettingsScreenAction
-
     data class OnLockIntervalChanged(val interval: LockInterval) : SettingsScreenAction
 
     data class OnThemeModeChanged(val mode: ThemeMode) : SettingsScreenAction
@@ -19,14 +17,20 @@ sealed interface SettingsScreenAction {
     data class OnPasswordChangeSubmitted(
         val currentPassword: String,
         val newPassword: String,
-        val confirmPassword: String
+        val confirmPassword: String,
     ) : SettingsScreenAction
-
-    data class OnFilePathSelected(val path: String) : SettingsScreenAction
 
     data object OnDismissChangePasswordDialog : SettingsScreenAction
 
-    data object OnDismissFilePathDialog : SettingsScreenAction
+    data object OnRenameVaultClicked : SettingsScreenAction
+    data class OnRenameDraftChanged(val name: String) : SettingsScreenAction
+    data object OnRenameVaultSubmitted : SettingsScreenAction
+    data object OnDismissRenameDialog : SettingsScreenAction
+
+    data object OnRemoveVaultClicked : SettingsScreenAction
+    data object OnToggleAlsoDeleteFile : SettingsScreenAction
+    data object OnRemoveVaultConfirmed : SettingsScreenAction
+    data object OnDismissRemoveDialog : SettingsScreenAction
 
     // --- Sync ---
     data object OnServerUrlClicked : SettingsScreenAction

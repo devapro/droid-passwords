@@ -54,7 +54,11 @@ fun UnLockVaultScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Unlock Vault") },
+                title = {
+                    Text(
+                        if (state.vaultName.isNotBlank()) "Unlock ${state.vaultName}" else "Unlock Vault"
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { onAction(UnLockVaultScreenAction.OnBackClicked) }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -94,7 +98,11 @@ fun UnLockVaultScreenContent(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "Enter your vault password",
+                            text = if (state.vaultName.isNotBlank()) {
+                                "Unlock ${state.vaultName}"
+                            } else {
+                                "Enter your vault password"
+                            },
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
@@ -136,7 +144,11 @@ fun UnLockVaultScreenContent(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = "Enter your vault password",
+                        text = if (state.vaultName.isNotBlank()) {
+                            "Unlock ${state.vaultName}"
+                        } else {
+                            "Enter your vault password"
+                        },
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center

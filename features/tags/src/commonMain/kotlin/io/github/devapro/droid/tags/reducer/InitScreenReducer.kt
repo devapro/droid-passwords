@@ -20,6 +20,7 @@ class InitScreenReducer(
     ): Reducer.Result<TagsScreenState, TagsScreenAction.InitScreen, TagsScreenEvent?> {
         val vault = runtimeRepository.getVault()
         val tags = tagsMapper.map(vault.items)
+        val activeName = runCatching { runtimeRepository.getActiveDescriptor().name }.getOrNull().orEmpty()
         return Reducer.Result(
             state = TagsScreenState.Success(
                 tags = tags,
@@ -27,7 +28,8 @@ class InitScreenReducer(
                 searchQuery = "",
                 isLoading = false,
                 isRefreshing = false,
-                hasSearchQuery = false
+                hasSearchQuery = false,
+                activeVaultName = activeName,
             ),
             action = null,
             event = null

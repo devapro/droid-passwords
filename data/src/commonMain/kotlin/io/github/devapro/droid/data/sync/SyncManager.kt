@@ -5,9 +5,11 @@ import io.github.devapro.droid.data.sync.model.AuthResponse
 import io.github.devapro.droid.data.sync.model.ChangesResponse
 import io.github.devapro.droid.data.sync.model.PushItem
 import io.github.devapro.droid.data.vault.CryptoMapper
+import io.github.devapro.droid.data.vault.VaultDescriptor
 import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.droid.data.vault.VaultItemModel
 import io.github.devapro.droid.data.vault.VaultModel
+import io.github.devapro.droid.data.vault.VaultRegistryRepository
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
@@ -39,6 +41,7 @@ data class SyncSummary(
 class SyncManager(
     private val syncApi: SyncApi,
     private val runtimeRepository: VaultRuntimeRepository,
+    private val registryRepository: VaultRegistryRepository,
     private val vaultFileRepository: VaultFileRepository,
     private val cryptoMapper: CryptoMapper,
     private val syncStateStore: SyncStateStore,
@@ -55,18 +58,51 @@ class SyncManager(
         syncStateStore.clearAccount()
     }
 
-    /** Two-way sync: pull remote changes, push local changes, then pull again to reconcile. */
+    /**
+     * Two-way sync of every unlocked vault: each is pulled, pushed, then re-pulled to
+     * reconcile against its own server namespace. The originally active vault is restored
+     * afterwards. Fails only if no vault could be synced; a per-vault error is kept so a
+     * partial success is still reported.
+     */
     suspend fun syncNow(): AppResult<SyncSummary> = withCredentials { url, token ->
-        if (!isUnlocked()) return@withCredentials AppResult.Failure(Exception("Vault is locked"))
+        val loaded = runtimeRepository.listLoaded()
+        if (loaded.isEmpty()) return@withCredentials AppResult.Failure(Exception("Vault is locked"))
 
+        val originalActiveId = runtimeRepository.getActiveVaultId()
+        var total = SyncSummary()
+        var lastError: Exception? = null
+
+        for (descriptor in loaded) {
+            // The vault may have been unloaded since `loaded` was captured; skip it
+            // rather than risk syncing/persisting the previously active vault.
+            if (!runtimeRepository.setActiveVault(descriptor.id)) continue
+            when (val result = syncActiveVault(url, token)) {
+                is AppResult.Success -> total = total.merge(result.value)
+                is AppResult.Failure -> lastError = result.error
+            }
+        }
+
+        originalActiveId?.let { if (runtimeRepository.isLoaded(it)) runtimeRepository.setActiveVault(it) }
+
+        val error = lastError
+        if (error != null && total.isEmpty) {
+            AppResult.Failure(error)
+        } else {
+            recordSync(total)
+            AppResult.Success(total)
+        }
+    }
+
+    /** Two-way sync of the currently active vault against its server namespace. */
+    private suspend fun syncActiveVault(url: String, token: String): AppResult<SyncSummary> {
         var summary = SyncSummary()
 
         when (val pull = doPull(url, token)) {
             is AppResult.Success -> summary = summary.merge(pull.value.summary)
             is AppResult.Failure -> {
                 // An earlier page may have already been applied in-memory; persist it.
-                vaultFileRepository.saveVault(runtimeRepository.getVault())
-                return@withCredentials AppResult.Failure(pull.error)
+                persistActive()
+                return AppResult.Failure(pull.error)
             }
         }
         when (val push = doPush(url, token)) {
@@ -78,8 +114,8 @@ class SyncManager(
                     when (val pull2 = doPull(url, token)) {
                         is AppResult.Success -> summary = summary.merge(pull2.value.summary)
                         is AppResult.Failure -> {
-                            vaultFileRepository.saveVault(runtimeRepository.getVault())
-                            return@withCredentials AppResult.Failure(pull2.error)
+                            persistActive()
+                            return AppResult.Failure(pull2.error)
                         }
                     }
                 }
@@ -87,13 +123,13 @@ class SyncManager(
             is AppResult.Failure -> {
                 // Remote changes from the first pull were already applied in memory;
                 // persist them so they survive even though the push failed.
-                vaultFileRepository.saveVault(runtimeRepository.getVault())
-                return@withCredentials AppResult.Failure(push.error)
+                persistActive()
+                return AppResult.Failure(push.error)
             }
         }
 
-        persistAndRecord(summary)
-        AppResult.Success(summary)
+        persistActive()
+        return AppResult.Success(summary)
     }
 
     /** Uploads local changes only. */
@@ -121,44 +157,85 @@ class SyncManager(
     }
 
     /**
-     * First-time setup on a new device: loads an in-memory vault with [masterPassword]
-     * and pulls all items from the sync server. The local vault file is only written
-     * once the password has been proven able to decrypt the server payload, so a wrong
-     * master password never leaves an empty vault behind that would block a retry.
+     * First-time setup on a new device: discovers every vault on the account and
+     * restores each one that [masterPassword] can decrypt as an independent local
+     * vault. A vault file is only written once the pull has proven the password can
+     * decrypt that vault's payload, so a wrong master password never leaves an empty
+     * vault behind that would block a retry. The first restored vault becomes active.
      */
     suspend fun restoreVaultFromServer(masterPassword: String): AppResult<SyncSummary> =
         withCredentials { url, token ->
             if (masterPassword.isBlank()) {
                 return@withCredentials AppResult.Failure(Exception("Master password cannot be empty"))
             }
-            if (vaultFileRepository.isVaultExists()) {
-                return@withCredentials AppResult.Failure(Exception("A local vault already exists"))
+
+            val remoteVaults = when (val r = syncApi.listVaults(url, token)) {
+                is AppResult.Success -> r.value.vaults
+                is AppResult.Failure -> return@withCredentials AppResult.Failure(r.error)
             }
 
-            // In-memory only — nothing is persisted to disk until the pull succeeds.
-            runtimeRepository.loadVault(VaultModel(password = masterPassword, items = emptyList()))
+            // Nothing on the server yet: create a single fresh local vault so the
+            // account is usable and future pushes have a home.
+            if (remoteVaults.isEmpty()) {
+                val descriptor = newDescriptor(name = "My Vault")
+                runtimeRepository.loadVault(
+                    descriptor = descriptor,
+                    vault = VaultModel(password = masterPassword, items = emptyList(), name = descriptor.name)
+                )
+                runtimeRepository.setActiveVault(descriptor.id)
+                registryRepository.addVault(descriptor)
+                registryRepository.setActiveVaultId(descriptor.id)
+                persistAndRecord(SyncSummary())
+                return@withCredentials AppResult.Success(SyncSummary())
+            }
 
-            when (val pull = doPull(url, token)) {
-                is AppResult.Failure -> {
-                    resetRuntimeVault()
-                    return@withCredentials AppResult.Failure(pull.error)
-                }
-                is AppResult.Success -> {
-                    val result = pull.value
-                    // The server held encrypted items but none could be decrypted: the
-                    // master password is wrong. Abort without creating a local vault.
-                    if (result.encryptedSeen > 0 && result.decrypted == 0) {
-                        resetRuntimeVault()
-                        return@withCredentials AppResult.Failure(
-                            Exception(
-                                "Incorrect master password. Use the master password from your other device."
-                            )
-                        )
+            var total = SyncSummary()
+            var firstRestoredId: String? = null
+
+            for ((index, remote) in remoteVaults.withIndex()) {
+                val name = if (remoteVaults.size == 1) "My Vault" else "Vault ${index + 1}"
+                val descriptor = newDescriptor(id = remote.vaultId, name = name)
+                // In-memory only — nothing is persisted until the pull succeeds.
+                runtimeRepository.loadVault(
+                    descriptor = descriptor,
+                    vault = VaultModel(password = masterPassword, items = emptyList(), name = name)
+                )
+                runtimeRepository.setActiveVault(descriptor.id)
+
+                when (val pull = doPull(url, token)) {
+                    is AppResult.Failure -> {
+                        runtimeRepository.unloadVault(descriptor.id)
+                        return@withCredentials AppResult.Failure(pull.error)
                     }
-                    persistAndRecord(result.summary)
-                    AppResult.Success(result.summary)
+                    is AppResult.Success -> {
+                        val result = pull.value
+                        if (result.encryptedSeen > 0 && result.decrypted == 0) {
+                            // Wrong master password for this vault — skip it.
+                            runtimeRepository.unloadVault(descriptor.id)
+                        } else {
+                            registryRepository.addVault(descriptor)
+                            vaultFileRepository.saveVault(
+                                descriptor = descriptor,
+                                vaultModel = runtimeRepository.getVault()
+                            )
+                            total = total.merge(result.summary)
+                            if (firstRestoredId == null) firstRestoredId = descriptor.id
+                        }
+                    }
                 }
             }
+
+            val activeId = firstRestoredId
+            if (activeId == null) {
+                // Every vault held encrypted items none of which decrypted.
+                return@withCredentials AppResult.Failure(
+                    Exception("Incorrect master password. Use the master password from your other device.")
+                )
+            }
+            runtimeRepository.setActiveVault(activeId)
+            registryRepository.setActiveVaultId(activeId)
+            persistAndRecord(total)
+            AppResult.Success(total)
         }
 
     // --- Internals ---------------------------------------------------------
@@ -178,6 +255,7 @@ class SyncManager(
     }
 
     private suspend fun doPull(url: String, token: String): AppResult<PullResult> {
+        val vaultId = runtimeRepository.getActiveDescriptor().id
         var pulled = 0
         var deleted = 0
         var encryptedSeen = 0
@@ -186,7 +264,7 @@ class SyncManager(
 
         while (true) {
             val response: ChangesResponse =
-                when (val r = syncApi.getChanges(url, token, since, PULL_PAGE_SIZE)) {
+                when (val r = syncApi.getChanges(url, token, vaultId, since, PULL_PAGE_SIZE)) {
                     is AppResult.Success -> r.value
                     is AppResult.Failure -> return AppResult.Failure(r.error)
                 }
@@ -240,6 +318,7 @@ class SyncManager(
     }
 
     private suspend fun doPush(url: String, token: String): AppResult<PushOutcome> {
+        val vaultId = runtimeRepository.getActiveDescriptor().id
         val vault = runtimeRepository.getVault()
         val dirtyIds = (vault.dirtyItemIds + vault.tombstones.map { it.id }).distinct()
         if (dirtyIds.isEmpty()) {
@@ -271,7 +350,7 @@ class SyncManager(
             return AppResult.Success(PushOutcome(summary = SyncSummary(), attempted = false))
         }
 
-        return when (val r = syncApi.push(url, token, pushItems)) {
+        return when (val r = syncApi.push(url, token, vaultId, pushItems)) {
             is AppResult.Success -> {
                 // Every id in the response is now authoritative on the server (either it
                 // accepted ours, or it kept a newer version we will fetch on the re-pull),
@@ -318,15 +397,36 @@ class SyncManager(
     private fun effectiveUpdatedAt(item: VaultItemModel): Long =
         item.updatedAt ?: item.createdAt ?: 0L
 
-    private fun isUnlocked(): Boolean = runtimeRepository.getVault().password.isNotEmpty()
+    private fun isUnlocked(): Boolean =
+        runtimeRepository.getActiveVaultId() != null && runtimeRepository.getVault().password.isNotEmpty()
 
-    private fun resetRuntimeVault() {
-        runtimeRepository.loadVault(VaultModel(password = "", items = emptyList()))
+    @OptIn(ExperimentalTime::class)
+    private fun newDescriptor(id: String = VaultDescriptor.newId(), name: String): VaultDescriptor {
+        val now = Clock.System.now().toEpochMilliseconds()
+        return VaultDescriptor(
+            id = id,
+            name = name,
+            fileName = VaultDescriptor.newFileName(id),
+            createdAt = now,
+            updatedAt = now
+        )
+    }
+
+    private suspend fun persistAndRecord(summary: SyncSummary) {
+        persistActive()
+        recordSync(summary)
+    }
+
+    /** Persists the active vault's current in-memory state to its encrypted file. */
+    private suspend fun persistActive() {
+        vaultFileRepository.saveVault(
+            descriptor = runtimeRepository.getActiveDescriptor(),
+            vaultModel = runtimeRepository.getVault()
+        )
     }
 
     @OptIn(ExperimentalTime::class)
-    private suspend fun persistAndRecord(summary: SyncSummary) {
-        vaultFileRepository.saveVault(runtimeRepository.getVault())
+    private suspend fun recordSync(summary: SyncSummary) {
         val now = Clock.System.now().toEpochMilliseconds()
         val status = if (summary.isEmpty) {
             "Up to date"

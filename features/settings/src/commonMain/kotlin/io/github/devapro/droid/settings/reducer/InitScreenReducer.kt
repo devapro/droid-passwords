@@ -3,16 +3,16 @@ package io.github.devapro.droid.settings.reducer
 import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.droid.data.SettingsRepository
 import io.github.devapro.droid.data.sync.SyncStateStore
+import io.github.devapro.droid.data.vault.VaultRegistryRepository
+import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.droid.settings.model.SettingsScreenAction
 import io.github.devapro.droid.settings.model.SettingsScreenEvent
 import io.github.devapro.droid.settings.model.SettingsScreenState
 
-/**
- * Reducer for initializing the settings screen by loading current settings values.
- * Loads lock interval, theme mode, vault file path and sync configuration.
- */
 class InitScreenReducer(
     private val settingsRepository: SettingsRepository,
+    private val vaultRegistryRepository: VaultRegistryRepository,
+    private val vaultRuntimeRepository: VaultRuntimeRepository,
     private val syncStateStore: SyncStateStore
 ) : Reducer<SettingsScreenAction.InitScreen, SettingsScreenState, SettingsScreenAction, SettingsScreenEvent> {
 
@@ -25,13 +25,15 @@ class InitScreenReducer(
         return try {
             val lockInterval = settingsRepository.getLockInterval()
             val themeMode = settingsRepository.getThemeMode()
-            val vaultFilePath = settingsRepository.getVaultFilePath()
+            val activeName = runCatching { vaultRuntimeRepository.getActiveDescriptor().name }.getOrNull()
+                ?: runCatching { vaultRegistryRepository.requireActiveDescriptor().name }.getOrNull()
+                ?: ""
 
             Reducer.Result(
                 state = SettingsScreenState.Success(
                     lockInterval = lockInterval,
                     themeMode = themeMode,
-                    vaultFilePath = vaultFilePath,
+                    activeVaultName = activeName,
                     syncServerUrl = syncStateStore.getServerUrl(),
                     syncUsername = syncStateStore.getUsername(),
                     isLoggedIn = syncStateStore.isLoggedIn(),
@@ -41,13 +43,13 @@ class InitScreenReducer(
                     lastSyncAt = syncStateStore.getLastSyncAt()
                 ),
                 action = null,
-                event = null
+                event = null,
             )
         } catch (e: Exception) {
             Reducer.Result(
                 state = SettingsScreenState.Error("Failed to load settings: ${e.message}"),
                 action = null,
-                event = null
+                event = null,
             )
         }
     }
