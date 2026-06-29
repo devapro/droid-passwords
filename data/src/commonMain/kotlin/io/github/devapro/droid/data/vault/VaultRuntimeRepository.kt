@@ -1,8 +1,5 @@
 package io.github.devapro.droid.data.vault
 
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
-
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -48,10 +45,6 @@ class VaultRuntimeRepository {
         _activeVaultChanges.tryEmit(Unit)
     }
 
-    fun addOrUpdateVault(vaultItemModel: VaultItemModel) {
-        val existingItemModel = vaultModel.items.firstOrNull { it.id == vaultItemModel.id }
-        val updatedItems = if (existingItemModel == null) {
-            vaultModel.items + vaultItemModel
     fun getVault(): VaultModel = getActiveVault()
 
     fun getActiveVault(): VaultModel = requireActiveEntry().vault
@@ -85,15 +78,16 @@ class VaultRuntimeRepository {
         val newItems = if (current.items.any { it.id == item.id }) {
             current.items.map { if (it.id == item.id) item else it }
         } else {
-            vaultModel.items.map {
-                if (it.id == vaultItemModel.id) vaultItemModel else it
-            }
+            current.items + item
         }
-        vaultModel = vaultModel.copy(
-            items = updatedItems,
-            // Mark as locally changed and resurrect any pending tombstone.
-            dirtyItemIds = (vaultModel.dirtyItemIds + vaultItemModel.id).distinct(),
-            tombstones = vaultModel.tombstones.filterNot { it.id == vaultItemModel.id }
+        replaceActiveVault(
+            current.copy(
+                items = newItems,
+                updatedAt = nowMillis(),
+                // Mark as locally changed and resurrect any pending tombstone.
+                dirtyItemIds = (current.dirtyItemIds + item.id).distinct(),
+                tombstones = current.tombstones.filterNot { it.id == item.id }
+            )
         )
     }
 
@@ -102,30 +96,28 @@ class VaultRuntimeRepository {
      * metadata changes (e.g. bumping `lastUsedAt` when an item is merely viewed)
      * that should not trigger a sync upload.
      */
-    fun updateItemMetadata(vaultItemModel: VaultItemModel) {
-        if (vaultModel.items.none { it.id == vaultItemModel.id }) return
-        vaultModel = vaultModel.copy(
-            items = vaultModel.items.map {
-                if (it.id == vaultItemModel.id) vaultItemModel else it
-            }
+    fun updateItemMetadata(item: VaultItemModel) {
+        val current = getActiveVault()
+        if (current.items.none { it.id == item.id }) return
+        replaceActiveVault(
+            current.copy(
+                items = current.items.map { if (it.id == item.id) item else it }
+            )
         )
-            current.items + item
-        }
-        replaceActiveVault(current.copy(items = newItems, updatedAt = nowMillis()))
     }
 
-    @OptIn(ExperimentalTime::class)
     fun deleteVaultById(itemId: String) {
         val current = getActiveVault()
         val newItems = current.items.filter { it.id != itemId }
-        replaceActiveVault(current.copy(items = newItems, updatedAt = nowMillis()))
-        val now = Clock.System.now().toEpochMilliseconds()
-        vaultModel = vaultModel.copy(
-            items = vaultModel.items.filter { it.id != itemId },
-            // Record a tombstone and mark it dirty so the deletion is synced.
-            tombstones = (vaultModel.tombstones.filterNot { it.id == itemId } +
-                VaultTombstone(id = itemId, deletedAt = now)),
-            dirtyItemIds = (vaultModel.dirtyItemIds + itemId).distinct()
+        replaceActiveVault(
+            current.copy(
+                items = newItems,
+                updatedAt = nowMillis(),
+                // Record a tombstone and mark it dirty so the deletion is synced.
+                tombstones = (current.tombstones.filterNot { it.id == itemId } +
+                    VaultTombstone(id = itemId, deletedAt = nowMillis())),
+                dirtyItemIds = (current.dirtyItemIds + itemId).distinct()
+            )
         )
     }
 
@@ -144,29 +136,31 @@ class VaultRuntimeRepository {
 
     // --- Sync support ------------------------------------------------------
 
-    fun getDirtyItemIds(): List<String> = vaultModel.dirtyItemIds
+    fun getDirtyItemIds(): List<String> = getActiveVault().dirtyItemIds
 
-    fun getTombstones(): List<VaultTombstone> = vaultModel.tombstones
+    fun getTombstones(): List<VaultTombstone> = getActiveVault().tombstones
 
-    fun getLastSyncSeq(): Long = vaultModel.lastSyncSeq
+    fun getLastSyncSeq(): Long = getActiveVault().lastSyncSeq
 
     fun setLastSyncSeq(seq: Long) {
-        vaultModel = vaultModel.copy(lastSyncSeq = seq)
+        replaceActiveVault(getActiveVault().copy(lastSyncSeq = seq))
     }
 
     /** Clears dirty flags for items that were successfully pushed. */
     fun clearDirty(ids: Collection<String>) {
         if (ids.isEmpty()) return
-        vaultModel = vaultModel.copy(
-            dirtyItemIds = vaultModel.dirtyItemIds.filterNot { it in ids }
+        val current = getActiveVault()
+        replaceActiveVault(
+            current.copy(dirtyItemIds = current.dirtyItemIds.filterNot { it in ids })
         )
     }
 
     /** Removes tombstones that were successfully pushed. */
     fun clearTombstones(ids: Collection<String>) {
         if (ids.isEmpty()) return
-        vaultModel = vaultModel.copy(
-            tombstones = vaultModel.tombstones.filterNot { it.id in ids }
+        val current = getActiveVault()
+        replaceActiveVault(
+            current.copy(tombstones = current.tombstones.filterNot { it.id in ids })
         )
     }
 
@@ -174,26 +168,32 @@ class VaultRuntimeRepository {
      * Applies an item received from the server. Does NOT mark it dirty since it
      * is already in sync with the server. Caller is responsible for last-write-wins.
      */
-    fun applyRemoteUpsert(vaultItemModel: VaultItemModel) {
-        val existing = vaultModel.items.firstOrNull { it.id == vaultItemModel.id }
+    fun applyRemoteUpsert(item: VaultItemModel) {
+        val current = getActiveVault()
+        val existing = current.items.firstOrNull { it.id == item.id }
         val updatedItems = if (existing == null) {
-            vaultModel.items + vaultItemModel
+            current.items + item
         } else {
-            vaultModel.items.map { if (it.id == vaultItemModel.id) vaultItemModel else it }
+            current.items.map { if (it.id == item.id) item else it }
         }
-        vaultModel = vaultModel.copy(
-            items = updatedItems,
-            dirtyItemIds = vaultModel.dirtyItemIds.filterNot { it == vaultItemModel.id },
-            tombstones = vaultModel.tombstones.filterNot { it.id == vaultItemModel.id }
+        replaceActiveVault(
+            current.copy(
+                items = updatedItems,
+                dirtyItemIds = current.dirtyItemIds.filterNot { it == item.id },
+                tombstones = current.tombstones.filterNot { it.id == item.id }
+            )
         )
     }
 
     /** Applies a remote deletion without creating a new outgoing tombstone. */
     fun applyRemoteDelete(itemId: String) {
-        vaultModel = vaultModel.copy(
-            items = vaultModel.items.filter { it.id != itemId },
-            dirtyItemIds = vaultModel.dirtyItemIds.filterNot { it == itemId },
-            tombstones = vaultModel.tombstones.filterNot { it.id == itemId }
+        val current = getActiveVault()
+        replaceActiveVault(
+            current.copy(
+                items = current.items.filter { it.id != itemId },
+                dirtyItemIds = current.dirtyItemIds.filterNot { it == itemId },
+                tombstones = current.tombstones.filterNot { it.id == itemId }
+            )
         )
     }
 }

@@ -11,10 +11,7 @@ import io.github.devapro.droid.settings.reducer.OnDismissAuthDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissChangePasswordDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissRemoveDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissRenameDialogReducer
-import io.github.devapro.droid.settings.reducer.OnDismissFilePathDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissServerUrlDialogReducer
-import io.github.devapro.droid.settings.reducer.OnFilePathClickedReducer
-import io.github.devapro.droid.settings.reducer.OnFilePathSelectedReducer
 import io.github.devapro.droid.settings.reducer.OnLockIntervalChangedReducer
 import io.github.devapro.droid.settings.reducer.OnLoginClickedReducer
 import io.github.devapro.droid.settings.reducer.OnLoginSubmittedReducer
@@ -54,31 +51,25 @@ private fun Module.dataDi() {
     single<SettingsRepository> {
         SettingsRepositoryImpl(get(), get(), get(), get())
     }
-    single { ThemeManager(get()) }
 }
 
 private fun Module.reducersDi() {
+    // Reducers with dependencies (resolved by type via factoryOf)
     factoryOf(::InitScreenReducer)
     factoryOf(::OnLockIntervalChangedReducer)
     factoryOf(::OnThemeModeChangedReducer)
     factoryOf(::OnPasswordChangeSubmittedReducer)
-    // Reducers with dependencies
-    factory { InitScreenReducer(get(), get()) }
-    factory { OnLockIntervalChangedReducer(get()) }
-    factory { OnThemeModeChangedReducer(get(), get()) }
-    factory { OnPasswordChangeSubmittedReducer(get()) }
-    factory { OnFilePathSelectedReducer(get()) }
 
     // Sync reducers with dependencies
-    factory { OnServerUrlSubmittedReducer(get()) }
-    factory { OnRegisterSubmittedReducer(get(), get(), get()) }
-    factory { OnLoginSubmittedReducer(get(), get(), get()) }
-    factory { OnLogoutClickedReducer(get(), get()) }
-    factory { OnSyncNowExecuteReducer(get(), get()) }
-    factory { OnSyncToServerExecuteReducer(get(), get()) }
-    factory { OnSyncFromServerExecuteReducer(get(), get()) }
-    factory { OnPeriodicSyncToggledReducer(get(), get()) }
-    factory { OnPeriodicIntervalChangedReducer(get(), get()) }
+    factoryOf(::OnServerUrlSubmittedReducer)
+    factoryOf(::OnRegisterSubmittedReducer)
+    factoryOf(::OnLoginSubmittedReducer)
+    factoryOf(::OnLogoutClickedReducer)
+    factoryOf(::OnSyncNowExecuteReducer)
+    factoryOf(::OnSyncToServerExecuteReducer)
+    factoryOf(::OnSyncFromServerExecuteReducer)
+    factoryOf(::OnPeriodicSyncToggledReducer)
+    factoryOf(::OnPeriodicIntervalChangedReducer)
 
     // Simple reducers without dependencies
     factoryOf(::OnBackClickedReducer)
@@ -118,7 +109,6 @@ private fun Module.reducersDi() {
                 get(OnToggleAlsoDeleteFileReducer::class),
                 get(OnDismissRemoveDialogReducer::class),
                 get(OnRemoveVaultConfirmedReducer::class),
-                get(OnDismissFilePathDialogReducer::class),
                 get(OnServerUrlClickedReducer::class),
                 get(OnServerUrlSubmittedReducer::class),
                 get(OnDismissServerUrlDialogReducer::class),

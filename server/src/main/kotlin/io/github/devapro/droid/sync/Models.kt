@@ -69,6 +69,22 @@ data class ChangesResponse(
     val latestSeq: Long
 )
 
+/**
+ * A single vault namespace owned by the authenticated account. Items are scoped
+ * by (userId, vaultId), so one account can hold several independent vaults.
+ */
+@Serializable
+data class VaultSummary(
+    val vaultId: String,
+    val latestSeq: Long,
+    val updatedAt: Long
+)
+
+@Serializable
+data class VaultListResponse(
+    val vaults: List<VaultSummary>
+)
+
 @Serializable
 data class ErrorResponse(
     val error: String

@@ -31,6 +31,6 @@ fun Module.registerDataDi() {
     // Sync
     single { SyncApi(clientProvider = { createSyncHttpClient() }) }
     single { SyncStateStore(get()) }
-    single { SyncManager(get(), get(), get(), get(), get(), get()) }
+    single { SyncManager(get(), get(), get(), get(), get(), get(), get()) }
     single { SyncScheduler(get(), get(), get()) }
 }

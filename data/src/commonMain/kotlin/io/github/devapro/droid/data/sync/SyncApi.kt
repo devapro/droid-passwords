@@ -8,6 +8,7 @@ import io.github.devapro.droid.data.sync.model.PushItem
 import io.github.devapro.droid.data.sync.model.PushRequest
 import io.github.devapro.droid.data.sync.model.PushResponse
 import io.github.devapro.droid.data.sync.model.RegisterRequest
+import io.github.devapro.droid.data.sync.model.VaultListResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
@@ -54,13 +55,27 @@ class SyncApi(
             response.body<AuthResponse>()
         }
 
+    suspend fun listVaults(
+        baseUrl: String,
+        token: String
+    ): AppResult<VaultListResponse> = runCatchingResult {
+        val response = client.get("${normalize(baseUrl)}/sync/vaults") {
+            bearerAuth(token)
+        }
+        if (!response.status.isSuccess()) {
+            error(describe(response.status, "Failed to list vaults"))
+        }
+        response.body<VaultListResponse>()
+    }
+
     suspend fun getChanges(
         baseUrl: String,
         token: String,
+        vaultId: String,
         since: Long,
         limit: Int = 500
     ): AppResult<ChangesResponse> = runCatchingResult {
-        val response = client.get("${normalize(baseUrl)}/sync/changes") {
+        val response = client.get("${normalize(baseUrl)}/sync/$vaultId/changes") {
             bearerAuth(token)
             parameter("since", since)
             parameter("limit", limit)
@@ -74,9 +89,10 @@ class SyncApi(
     suspend fun push(
         baseUrl: String,
         token: String,
+        vaultId: String,
         items: List<PushItem>
     ): AppResult<PushResponse> = runCatchingResult {
-        val response = client.post("${normalize(baseUrl)}/sync/push") {
+        val response = client.post("${normalize(baseUrl)}/sync/$vaultId/push") {
             bearerAuth(token)
             contentType(ContentType.Application.Json)
             setBody(PushRequest(items))

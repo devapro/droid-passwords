@@ -24,11 +24,11 @@ fun Module.registerWelcomeScreenDi() {
 }
 
 private fun Module.reducersDi() {
-    factory { InitScreenReducer(get(), get()) }
-    factory { OnRestoreFromSyncClickedReducer(get()) }
-    factory { OnRestoreLoginSubmittedReducer(get()) }
-    factory { OnRestoreRegisterSubmittedReducer(get()) }
-    factory { OnRestoreMasterPasswordSubmittedReducer(get(), get()) }
+    factoryOf(::InitScreenReducer)
+    factoryOf(::OnRestoreFromSyncClickedReducer)
+    factoryOf(::OnRestoreLoginSubmittedReducer)
+    factoryOf(::OnRestoreRegisterSubmittedReducer)
+    factoryOf(::OnRestoreMasterPasswordSubmittedReducer)
 
     factoryOf(::OnCreateNewVaultReducer)
     factoryOf(::OnOpenExistingVaultReducer)

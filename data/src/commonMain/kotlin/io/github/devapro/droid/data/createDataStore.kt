@@ -13,12 +13,10 @@ private val dataStoreCache = mutableMapOf<String, DataStore<Preferences>>()
  */
 fun createDataStore(producePath: () -> String): DataStore<Preferences> {
     val path = producePath()
-    return synchronized(dataStoreCache) {
-        dataStoreCache.getOrPut(path) {
-            PreferenceDataStoreFactory.createWithPath(
-                produceFile = { path.toPath() }
-            )
-        }
+    return dataStoreCache.getOrPut(path) {
+        PreferenceDataStoreFactory.createWithPath(
+            produceFile = { path.toPath() }
+        )
     }
 }
 

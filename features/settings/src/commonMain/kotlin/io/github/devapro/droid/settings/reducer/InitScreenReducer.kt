@@ -34,7 +34,6 @@ class InitScreenReducer(
                     lockInterval = lockInterval,
                     themeMode = themeMode,
                     activeVaultName = activeName,
-                    vaultFilePath = vaultFilePath,
                     syncServerUrl = syncStateStore.getServerUrl(),
                     syncUsername = syncStateStore.getUsername(),
                     isLoggedIn = syncStateStore.isLoggedIn(),

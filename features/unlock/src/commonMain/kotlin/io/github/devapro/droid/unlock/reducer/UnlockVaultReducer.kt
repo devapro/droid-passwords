@@ -13,10 +13,9 @@ import io.github.devapro.droid.unlock.model.UnLockVaultScreenState
 
 class UnlockVaultReducer(
     private val vaultFileRepository: VaultFileRepository,
-    private val runtimeRepository: VaultRuntimeRepository,
-    private val syncScheduler: SyncScheduler
     private val vaultRegistryRepository: VaultRegistryRepository,
     private val runtimeRepository: VaultRuntimeRepository,
+    private val syncScheduler: SyncScheduler
 ) : Reducer<UnLockVaultScreenAction.UnlockVault, UnLockVaultScreenState, UnLockVaultScreenAction, UnLockVaultScreenEvent> {
 
     override val actionClass = UnLockVaultScreenAction.UnlockVault::class
@@ -51,7 +50,8 @@ class UnlockVaultReducer(
                 vaultRegistryRepository.setActiveVaultId(descriptor.id)
                 LockManager.onVaultUnlocked()
                 // Kick off periodic sync (if enabled) now that the vault is unlocked.
-                    syncScheduler.startIfEnabled()Reducer.Result(
+                syncScheduler.startIfEnabled()
+                Reducer.Result(
                     state = currentState.copy(isProcessing = false),
                     action = null,
                     event = UnLockVaultScreenEvent.UnlockSuccess
