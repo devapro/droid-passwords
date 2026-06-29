@@ -5,12 +5,21 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import okio.Path.Companion.toPath
 
+private val dataStoreCache = mutableMapOf<String, DataStore<Preferences>>()
+
 /**
- *   Gets the singleton DataStore instance, creating it if necessary.
+ * Returns a singleton [DataStore] for the given file path. DataStore must not be
+ * opened more than once per file — callers share the cached instance.
  */
-fun createDataStore(producePath: () -> String): DataStore<Preferences> =
-    PreferenceDataStoreFactory.createWithPath(
-        produceFile = { producePath().toPath() }
-    )
+fun createDataStore(producePath: () -> String): DataStore<Preferences> {
+    val path = producePath()
+    return synchronized(dataStoreCache) {
+        dataStoreCache.getOrPut(path) {
+            PreferenceDataStoreFactory.createWithPath(
+                produceFile = { path.toPath() }
+            )
+        }
+    }
+}
 
 internal const val dataStoreFileName = "settings.plist"

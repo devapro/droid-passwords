@@ -172,6 +172,31 @@ fun WelcomeScreenContent(
             }
         }
     }
+
+    if (state is WelcomeScreenState.Success) {
+        WelcomeRestoreAuthDialog(
+            isVisible = state.isRestoreAuthDialogVisible,
+            defaultUrl = state.syncServerUrl,
+            isLoading = state.isRestoreInProgress,
+            errorMessage = state.restoreError,
+            onDismiss = { onAction(WelcomeScreenAction.OnDismissRestoreAuthDialog) },
+            onRegister = { url, username, password ->
+                onAction(WelcomeScreenAction.OnRestoreRegisterSubmitted(url, username, password))
+            },
+            onLogin = { url, username, password ->
+                onAction(WelcomeScreenAction.OnRestoreLoginSubmitted(url, username, password))
+            }
+        )
+        WelcomeMasterPasswordDialog(
+            isVisible = state.isMasterPasswordDialogVisible,
+            isLoading = state.isRestoreInProgress,
+            errorMessage = state.restoreError,
+            onDismiss = { onAction(WelcomeScreenAction.OnDismissMasterPasswordDialog) },
+            onSubmit = { masterPassword ->
+                onAction(WelcomeScreenAction.OnRestoreMasterPasswordSubmitted(masterPassword))
+            }
+        )
+    }
 }
 
 @Composable
@@ -206,6 +231,18 @@ private fun WelcomeActions(
                             onAction(WelcomeScreenAction.OnLoadVault)
                         }
                     )
+                } else {
+                    CreateNewVault(
+                        onClick = {
+                            onAction(WelcomeScreenAction.OnCreateNewVault)
+                        }
+                    )
+                    RestoreFromSync(
+                        onClick = {
+                            onAction(WelcomeScreenAction.OnRestoreFromSyncClicked)
+                        }
+                    )
+                }
                 }
                 CreateNewVault(
                     onClick = {

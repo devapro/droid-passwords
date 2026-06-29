@@ -2,22 +2,40 @@ package io.github.devapro.droid.settings
 
 import io.github.devapro.droid.data.SettingsRepository
 import io.github.devapro.droid.data.SettingsRepositoryImpl
-import io.github.devapro.droid.data.ThemeManager
 import io.github.devapro.droid.settings.factory.SettingsScreenInitStateFactory
 import io.github.devapro.droid.settings.navigation.SettingsScreenFactoryImpl
 import io.github.devapro.droid.settings.reducer.InitScreenReducer
 import io.github.devapro.droid.settings.reducer.OnBackClickedReducer
 import io.github.devapro.droid.settings.reducer.OnChangePasswordClickedReducer
+import io.github.devapro.droid.settings.reducer.OnDismissAuthDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissChangePasswordDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissRemoveDialogReducer
 import io.github.devapro.droid.settings.reducer.OnDismissRenameDialogReducer
+import io.github.devapro.droid.settings.reducer.OnDismissFilePathDialogReducer
+import io.github.devapro.droid.settings.reducer.OnDismissServerUrlDialogReducer
+import io.github.devapro.droid.settings.reducer.OnFilePathClickedReducer
+import io.github.devapro.droid.settings.reducer.OnFilePathSelectedReducer
 import io.github.devapro.droid.settings.reducer.OnLockIntervalChangedReducer
+import io.github.devapro.droid.settings.reducer.OnLoginClickedReducer
+import io.github.devapro.droid.settings.reducer.OnLoginSubmittedReducer
+import io.github.devapro.droid.settings.reducer.OnLogoutClickedReducer
 import io.github.devapro.droid.settings.reducer.OnPasswordChangeSubmittedReducer
 import io.github.devapro.droid.settings.reducer.OnRemoveVaultClickedReducer
 import io.github.devapro.droid.settings.reducer.OnRemoveVaultConfirmedReducer
 import io.github.devapro.droid.settings.reducer.OnRenameDraftChangedReducer
 import io.github.devapro.droid.settings.reducer.OnRenameVaultClickedReducer
 import io.github.devapro.droid.settings.reducer.OnRenameVaultSubmittedReducer
+import io.github.devapro.droid.settings.reducer.OnPeriodicIntervalChangedReducer
+import io.github.devapro.droid.settings.reducer.OnPeriodicSyncToggledReducer
+import io.github.devapro.droid.settings.reducer.OnRegisterSubmittedReducer
+import io.github.devapro.droid.settings.reducer.OnServerUrlClickedReducer
+import io.github.devapro.droid.settings.reducer.OnServerUrlSubmittedReducer
+import io.github.devapro.droid.settings.reducer.OnSyncFromServerClickedReducer
+import io.github.devapro.droid.settings.reducer.OnSyncFromServerExecuteReducer
+import io.github.devapro.droid.settings.reducer.OnSyncNowClickedReducer
+import io.github.devapro.droid.settings.reducer.OnSyncNowExecuteReducer
+import io.github.devapro.droid.settings.reducer.OnSyncToServerClickedReducer
+import io.github.devapro.droid.settings.reducer.OnSyncToServerExecuteReducer
 import io.github.devapro.droid.settings.reducer.OnThemeModeChangedReducer
 import io.github.devapro.droid.settings.reducer.OnToggleAlsoDeleteFileReducer
 import org.koin.core.module.Module
@@ -44,6 +62,25 @@ private fun Module.reducersDi() {
     factoryOf(::OnLockIntervalChangedReducer)
     factoryOf(::OnThemeModeChangedReducer)
     factoryOf(::OnPasswordChangeSubmittedReducer)
+    // Reducers with dependencies
+    factory { InitScreenReducer(get(), get()) }
+    factory { OnLockIntervalChangedReducer(get()) }
+    factory { OnThemeModeChangedReducer(get(), get()) }
+    factory { OnPasswordChangeSubmittedReducer(get()) }
+    factory { OnFilePathSelectedReducer(get()) }
+
+    // Sync reducers with dependencies
+    factory { OnServerUrlSubmittedReducer(get()) }
+    factory { OnRegisterSubmittedReducer(get(), get(), get()) }
+    factory { OnLoginSubmittedReducer(get(), get(), get()) }
+    factory { OnLogoutClickedReducer(get(), get()) }
+    factory { OnSyncNowExecuteReducer(get(), get()) }
+    factory { OnSyncToServerExecuteReducer(get(), get()) }
+    factory { OnSyncFromServerExecuteReducer(get(), get()) }
+    factory { OnPeriodicSyncToggledReducer(get(), get()) }
+    factory { OnPeriodicIntervalChangedReducer(get(), get()) }
+
+    // Simple reducers without dependencies
     factoryOf(::OnBackClickedReducer)
     factoryOf(::OnChangePasswordClickedReducer)
     factoryOf(::OnDismissChangePasswordDialogReducer)
@@ -55,6 +92,13 @@ private fun Module.reducersDi() {
     factoryOf(::OnToggleAlsoDeleteFileReducer)
     factoryOf(::OnDismissRemoveDialogReducer)
     factoryOf(::OnRemoveVaultConfirmedReducer)
+    factoryOf(::OnServerUrlClickedReducer)
+    factoryOf(::OnDismissServerUrlDialogReducer)
+    factoryOf(::OnLoginClickedReducer)
+    factoryOf(::OnDismissAuthDialogReducer)
+    factoryOf(::OnSyncNowClickedReducer)
+    factoryOf(::OnSyncToServerClickedReducer)
+    factoryOf(::OnSyncFromServerClickedReducer)
 
     factory {
         SettingsScreenActionProcessor(
@@ -74,6 +118,23 @@ private fun Module.reducersDi() {
                 get(OnToggleAlsoDeleteFileReducer::class),
                 get(OnDismissRemoveDialogReducer::class),
                 get(OnRemoveVaultConfirmedReducer::class),
+                get(OnDismissFilePathDialogReducer::class),
+                get(OnServerUrlClickedReducer::class),
+                get(OnServerUrlSubmittedReducer::class),
+                get(OnDismissServerUrlDialogReducer::class),
+                get(OnLoginClickedReducer::class),
+                get(OnDismissAuthDialogReducer::class),
+                get(OnRegisterSubmittedReducer::class),
+                get(OnLoginSubmittedReducer::class),
+                get(OnLogoutClickedReducer::class),
+                get(OnSyncNowClickedReducer::class),
+                get(OnSyncNowExecuteReducer::class),
+                get(OnSyncToServerClickedReducer::class),
+                get(OnSyncToServerExecuteReducer::class),
+                get(OnSyncFromServerClickedReducer::class),
+                get(OnSyncFromServerExecuteReducer::class),
+                get(OnPeriodicSyncToggledReducer::class),
+                get(OnPeriodicIntervalChangedReducer::class)
             ),
             initStateFactory = get(),
             coroutineContextProvider = get(),

@@ -3,6 +3,7 @@ package io.github.devapro.droid.welcome.reducer
 import io.github.devapro.droid.core.mvi.AppResult
 import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.droid.data.vault.VaultDescriptor
+import io.github.devapro.droid.data.sync.SyncStateStore
 import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.droid.data.vault.VaultRegistryRepository
 import io.github.devapro.droid.welcome.model.WelcomeScreenAction
@@ -11,6 +12,7 @@ import io.github.devapro.droid.welcome.model.WelcomeScreenState
 
 class InitScreenReducer(
     private val vaultFileRepository: VaultFileRepository,
+    private val syncStateStore: SyncStateStore,
     private val vaultRegistryRepository: VaultRegistryRepository,
 ) : Reducer<WelcomeScreenAction.InitScreen, WelcomeScreenState, WelcomeScreenAction, WelcomeScreenEvent> {
 
@@ -19,7 +21,7 @@ class InitScreenReducer(
     override suspend fun reduce(
         action: WelcomeScreenAction.InitScreen,
         getState: () -> WelcomeScreenState
-    ): Reducer.Result<WelcomeScreenState, WelcomeScreenAction.InitScreen, WelcomeScreenEvent?> {
+    ): Reducer.Result<WelcomeScreenState, WelcomeScreenAction, WelcomeScreenEvent?> {
         val registry = vaultRegistryRepository.getRegistry()
         val hasRegistry = registry.isNotEmpty()
         val hasLegacy = vaultFileRepository.legacyVaultExists()
@@ -45,7 +47,10 @@ class InitScreenReducer(
 
         val finalRegistry = vaultRegistryRepository.getRegistry()
         return Reducer.Result(
-            state = WelcomeScreenState.Success(isVaultExists = finalRegistry.isNotEmpty()),
+            state = WelcomeScreenState.Success(
+                isVaultExists = finalRegistry.isNotEmpty(),
+                syncServerUrl = syncStateStore.getServerUrl()
+            ),
             action = null,
             event = null
         )

@@ -2,6 +2,7 @@ package io.github.devapro.droid.settings.reducer
 
 import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.droid.data.SettingsRepository
+import io.github.devapro.droid.data.sync.SyncStateStore
 import io.github.devapro.droid.data.vault.VaultRegistryRepository
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
 import io.github.devapro.droid.settings.model.SettingsScreenAction
@@ -12,6 +13,7 @@ class InitScreenReducer(
     private val settingsRepository: SettingsRepository,
     private val vaultRegistryRepository: VaultRegistryRepository,
     private val vaultRuntimeRepository: VaultRuntimeRepository,
+    private val syncStateStore: SyncStateStore
 ) : Reducer<SettingsScreenAction.InitScreen, SettingsScreenState, SettingsScreenAction, SettingsScreenEvent> {
 
     override val actionClass = SettingsScreenAction.InitScreen::class
@@ -32,6 +34,14 @@ class InitScreenReducer(
                     lockInterval = lockInterval,
                     themeMode = themeMode,
                     activeVaultName = activeName,
+                    vaultFilePath = vaultFilePath,
+                    syncServerUrl = syncStateStore.getServerUrl(),
+                    syncUsername = syncStateStore.getUsername(),
+                    isLoggedIn = syncStateStore.isLoggedIn(),
+                    periodicSyncEnabled = syncStateStore.isPeriodicEnabled(),
+                    periodicSyncIntervalMinutes = syncStateStore.getPeriodicIntervalMinutes(),
+                    lastSyncStatus = syncStateStore.getLastStatus(),
+                    lastSyncAt = syncStateStore.getLastSyncAt()
                 ),
                 action = null,
                 event = null,

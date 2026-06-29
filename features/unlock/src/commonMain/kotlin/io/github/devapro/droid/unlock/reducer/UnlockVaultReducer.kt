@@ -3,6 +3,7 @@ package io.github.devapro.droid.unlock.reducer
 import io.github.devapro.droid.core.mvi.AppResult
 import io.github.devapro.droid.core.mvi.Reducer
 import io.github.devapro.droid.data.LockManager
+import io.github.devapro.droid.data.sync.SyncScheduler
 import io.github.devapro.droid.data.vault.VaultFileRepository
 import io.github.devapro.droid.data.vault.VaultRegistryRepository
 import io.github.devapro.droid.data.vault.VaultRuntimeRepository
@@ -12,6 +13,8 @@ import io.github.devapro.droid.unlock.model.UnLockVaultScreenState
 
 class UnlockVaultReducer(
     private val vaultFileRepository: VaultFileRepository,
+    private val runtimeRepository: VaultRuntimeRepository,
+    private val syncScheduler: SyncScheduler
     private val vaultRegistryRepository: VaultRegistryRepository,
     private val runtimeRepository: VaultRuntimeRepository,
 ) : Reducer<UnLockVaultScreenAction.UnlockVault, UnLockVaultScreenState, UnLockVaultScreenAction, UnLockVaultScreenEvent> {
@@ -47,7 +50,8 @@ class UnlockVaultReducer(
                 runtimeRepository.setActiveVault(descriptor.id)
                 vaultRegistryRepository.setActiveVaultId(descriptor.id)
                 LockManager.onVaultUnlocked()
-                Reducer.Result(
+                // Kick off periodic sync (if enabled) now that the vault is unlocked.
+                    syncScheduler.startIfEnabled()Reducer.Result(
                     state = currentState.copy(isProcessing = false),
                     action = null,
                     event = UnLockVaultScreenEvent.UnlockSuccess

@@ -7,4 +7,6 @@ sealed interface WelcomeScreenEvent {
     data object OnOpenExistingVault : WelcomeScreenEvent
 
     data object OnLoadVault : WelcomeScreenEvent
+
+    data class OnRestoreSuccess(val message: String) : WelcomeScreenEvent
 }

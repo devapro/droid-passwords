@@ -75,6 +75,15 @@ fun SettingsScreenContent(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        SettingDivider()
+
+        // Sync Section
+        SyncSettingsSection(
+            state = state,
+            onAction = onAction
+        )
+
+        // Dialogs
         ChangePasswordDialog(
             isVisible = state.isChangePasswordDialogVisible,
             isLoading = state.isChangingPassword,
@@ -93,5 +102,26 @@ fun SettingsScreenContent(
 
         RenameVaultDialog(state = state, onAction = onAction)
         RemoveVaultDialog(state = state, onAction = onAction)
+
+        ServerUrlDialog(
+            isVisible = state.isServerUrlDialogVisible,
+            currentUrl = state.syncServerUrl,
+            onDismiss = { onAction(SettingsScreenAction.OnDismissServerUrlDialog) },
+            onSubmit = { url -> onAction(SettingsScreenAction.OnServerUrlSubmitted(url)) }
+        )
+
+        SyncAuthDialog(
+            isVisible = state.isAuthDialogVisible,
+            defaultUrl = state.syncServerUrl,
+            isLoading = state.isAuthInProgress,
+            errorMessage = state.authError,
+            onDismiss = { onAction(SettingsScreenAction.OnDismissAuthDialog) },
+            onRegister = { url, username, password ->
+                onAction(SettingsScreenAction.OnRegisterSubmitted(url, username, password))
+            },
+            onLogin = { url, username, password ->
+                onAction(SettingsScreenAction.OnLoginSubmitted(url, username, password))
+            }
+        )
     }
 }

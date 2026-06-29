@@ -75,6 +75,7 @@ kotlin {
             implementation(projects.featuresApi.unlock)
             implementation(projects.featuresApi.setlock)
             implementation(projects.featuresApi.importdata)
+            implementation(projects.featuresApi.tags)
 
         }
         commonTest.dependencies {
@@ -101,11 +102,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
         }
     }
     compileOptions {
