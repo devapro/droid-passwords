@@ -24,15 +24,16 @@ class OnPasswordItemClickedReducer(
         val now = Clock.System.now().toEpochMilliseconds()
         val updated = action.item.copy(lastUsedAt = now)
 
-        val vault = runtimeRepository.getVault()
-        vault.items.firstOrNull { it.id == action.item.id }?.let { existing ->
+        val vault = runtimeRepository.getActiveVaultOrNull()
+        vault?.items?.firstOrNull { it.id == action.item.id }?.let { existing ->
             // Bump lastUsedAt without marking the item dirty — a mere view must not
             // trigger a sync upload on every tap.
             runtimeRepository.updateItemMetadata(existing.copy(lastUsedAt = now))
-            fileRepository.saveVault(
-                descriptor = runtimeRepository.getActiveDescriptor(),
-                vaultModel = runtimeRepository.getVault(),
-            )
+            // Read descriptor + contents atomically so a concurrent background sync can
+            // never pair this vault's descriptor with another vault's items on disk.
+            runtimeRepository.getActiveSnapshot()?.let { snapshot ->
+                fileRepository.saveVault(descriptor = snapshot.descriptor, vaultModel = snapshot.vault)
+            }
         }
 
         return Reducer.Result(

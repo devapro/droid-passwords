@@ -121,20 +121,21 @@ class SyncManager(
         }
 
         val loaded = runtimeRepository.listLoaded()
-        if (loaded.isEmpty() || !isUnlocked()) {
+        if (loaded.isEmpty()) {
             return@withCredentials AppResult.Failure(Exception("Vault is locked"))
         }
 
-        val originalActiveId = runtimeRepository.getActiveVaultId()
         var total = SyncSummary()
         var lastError: Exception? = null
 
-        // 1. Two-way sync every loaded vault against its own namespace.
+        // 1. Two-way sync every loaded vault against its own namespace. Each is synced by
+        //    id so the user-facing active vault is never repointed mid-sync (which would
+        //    let a concurrent edit persist into the wrong vault's file).
         for (descriptor in loaded) {
-            // The vault may have been unloaded since `loaded` was captured; skip it
-            // rather than risk syncing/persisting the previously active vault.
-            if (!runtimeRepository.setActiveVault(descriptor.id)) continue
-            when (val result = syncActiveVault(url, token)) {
+            // The vault may have been unloaded (or locked) since `loaded` was captured.
+            val vault = runtimeRepository.getVault(descriptor.id) ?: continue
+            if (vault.password.isEmpty()) continue
+            when (val result = syncVault(url, token, descriptor)) {
                 is AppResult.Success -> total = total.merge(result.value)
                 is AppResult.Failure -> lastError = result.error
             }
@@ -148,33 +149,36 @@ class SyncManager(
         total = total.merge(sweep.summary)
         sweep.error?.let { lastError = it }
 
-        restoreActiveVault(originalActiveId)
-
         finishLink(total = total, pendingVaultCount = 0, error = lastError)
     }
 
-    /** Two-way sync of the currently active vault against its server namespace. */
-    private suspend fun syncActiveVault(url: String, token: String): AppResult<SyncSummary> {
+    /** Two-way sync of the vault [descriptor] against its server namespace, all by id. */
+    private suspend fun syncVault(
+        url: String,
+        token: String,
+        descriptor: VaultDescriptor
+    ): AppResult<SyncSummary> {
+        val vaultId = descriptor.id
         var summary = SyncSummary()
 
-        when (val pull = doPull(url, token)) {
+        when (val pull = doPull(url, token, vaultId)) {
             is AppResult.Success -> summary = summary.merge(pull.value.summary)
             is AppResult.Failure -> {
                 // An earlier page may have already been applied in-memory; persist it.
-                persistActive()
+                persist(descriptor)
                 return AppResult.Failure(pull.error)
             }
         }
-        when (val push = doPush(url, token)) {
+        when (val push = doPush(url, token, vaultId)) {
             is AppResult.Success -> {
                 summary = summary.merge(push.value.summary)
                 // Re-pull whenever anything was pushed OR the server rejected some of
                 // our items (it has a newer version we must pull down to reconcile).
                 if (push.value.attempted) {
-                    when (val pull2 = doPull(url, token)) {
+                    when (val pull2 = doPull(url, token, vaultId)) {
                         is AppResult.Success -> summary = summary.merge(pull2.value.summary)
                         is AppResult.Failure -> {
-                            persistActive()
+                            persist(descriptor)
                             return AppResult.Failure(pull2.error)
                         }
                     }
@@ -183,37 +187,39 @@ class SyncManager(
             is AppResult.Failure -> {
                 // Remote changes from the first pull were already applied in memory;
                 // persist them so they survive even though the push failed.
-                persistActive()
+                persist(descriptor)
                 return AppResult.Failure(push.error)
             }
         }
 
         // Best-effort: propagate this vault's (encrypted) display name to the server so
         // other devices can show the real name instead of a generic placeholder.
-        pushVaultMeta(url, token)
+        pushVaultMeta(url, token, descriptor)
 
-        persistActive()
+        persist(descriptor)
         return AppResult.Success(summary)
     }
 
-    /** Uploads local changes only. */
+    /** Uploads local changes only, for the active vault. */
     suspend fun pushToServer(): AppResult<SyncSummary> = withCredentials { url, token ->
-        if (!isUnlocked()) return@withCredentials AppResult.Failure(Exception("Vault is locked"))
-        when (val push = doPush(url, token)) {
+        val descriptor = activeUnlockedDescriptor()
+            ?: return@withCredentials AppResult.Failure(Exception("Vault is locked"))
+        when (val push = doPush(url, token, descriptor.id)) {
             is AppResult.Success -> {
-                persistAndRecord(push.value.summary)
+                persistAndRecord(descriptor, push.value.summary)
                 AppResult.Success(push.value.summary)
             }
             is AppResult.Failure -> AppResult.Failure(push.error)
         }
     }
 
-    /** Downloads remote changes only. */
+    /** Downloads remote changes only, for the active vault. */
     suspend fun pullFromServer(): AppResult<SyncSummary> = withCredentials { url, token ->
-        if (!isUnlocked()) return@withCredentials AppResult.Failure(Exception("Vault is locked"))
-        when (val pull = doPull(url, token)) {
+        val descriptor = activeUnlockedDescriptor()
+            ?: return@withCredentials AppResult.Failure(Exception("Vault is locked"))
+        when (val pull = doPull(url, token, descriptor.id)) {
             is AppResult.Success -> {
-                persistAndRecord(pull.value.summary)
+                persistAndRecord(descriptor, pull.value.summary)
                 AppResult.Success(pull.value.summary)
             }
             is AppResult.Failure -> AppResult.Failure(pull.error)
@@ -271,7 +277,7 @@ class SyncManager(
                 runtimeRepository.setActiveVault(descriptor.id)
                 registryRepository.addVault(descriptor)
                 registryRepository.setActiveVaultId(descriptor.id)
-                persistAndRecord(SyncSummary())
+                persistAndRecord(descriptor, SyncSummary())
                 return@withCredentials AppResult.Success(SyncSummary())
             }
 
@@ -301,7 +307,9 @@ class SyncManager(
             }
             runtimeRepository.setActiveVault(activeId)
             registryRepository.setActiveVaultId(activeId)
-            persistAndRecord(total)
+            // Each restored vault's file was already written by restoreRemoteVault; just
+            // record the sync outcome here.
+            recordSync(total)
             AppResult.Success(total)
         }
 
@@ -503,13 +511,14 @@ class SyncManager(
             return RestoreOutcome.WrongPassword
         }
         val name = decryptedName ?: descriptor.name
+        // Loaded (but NOT made active) so the pull can fill it by id without repointing
+        // the user's active vault.
         runtimeRepository.loadVault(
             descriptor = descriptor,
             vault = VaultModel(password = masterPassword, items = emptyList(), name = name, vaultId = descriptor.id)
         )
-        runtimeRepository.setActiveVault(descriptor.id)
 
-        return when (val pull = doPull(url, token)) {
+        return when (val pull = doPull(url, token, descriptor.id)) {
             is AppResult.Failure -> {
                 runtimeRepository.unloadVault(descriptor.id)
                 RestoreOutcome.Failed(pull.error)
@@ -525,12 +534,11 @@ class SyncManager(
                         pendingRestore = false,
                         encryptedName = null
                     )
-                    runtimeRepository.replaceActiveDescriptor(finalDescriptor)
+                    runtimeRepository.replaceDescriptor(oldId = descriptor.id, descriptor = finalDescriptor)
                     registryRepository.addVault(finalDescriptor)
-                    vaultFileRepository.saveVault(
-                        descriptor = finalDescriptor,
-                        vaultModel = runtimeRepository.getVault()
-                    )
+                    val vault = runtimeRepository.getVault(finalDescriptor.id)
+                        ?: return RestoreOutcome.Failed(Exception("Vault was unloaded during restore"))
+                    vaultFileRepository.saveVault(descriptor = finalDescriptor, vaultModel = vault)
                     RestoreOutcome.Restored(summary = result.summary, descriptorId = finalDescriptor.id)
                 }
             }
@@ -580,14 +588,14 @@ class SyncManager(
         // so a later meta push never clobbers a genuine, user-set name: a real name
         // always carries a higher timestamp and wins last-write-wins.
         val descriptor = newDescriptor(id = vaultId, name = name).copy(updatedAt = nameUpdatedAt)
-        // In-memory only — nothing is persisted until the pull succeeds.
+        // In-memory only (and NOT made active) — nothing is persisted until the pull
+        // succeeds, and the pull fills it by id without repointing the active vault.
         runtimeRepository.loadVault(
             descriptor = descriptor,
             vault = VaultModel(password = masterPassword, items = emptyList(), name = name, vaultId = descriptor.id)
         )
-        runtimeRepository.setActiveVault(descriptor.id)
 
-        return when (val pull = doPull(url, token)) {
+        return when (val pull = doPull(url, token, descriptor.id)) {
             is AppResult.Failure -> {
                 runtimeRepository.unloadVault(descriptor.id)
                 RestoreOutcome.Failed(pull.error)
@@ -600,20 +608,18 @@ class SyncManager(
                     RestoreOutcome.WrongPassword
                 } else {
                     registryRepository.addVault(descriptor)
-                    vaultFileRepository.saveVault(
-                        descriptor = descriptor,
-                        vaultModel = runtimeRepository.getVault()
-                    )
+                    val vault = runtimeRepository.getVault(descriptor.id)
+                        ?: return RestoreOutcome.Failed(Exception("Vault was unloaded during restore"))
+                    vaultFileRepository.saveVault(descriptor = descriptor, vaultModel = vault)
                     RestoreOutcome.Restored(summary = result.summary, descriptorId = descriptor.id)
                 }
             }
         }
     }
 
-    /** Pushes the active vault's encrypted display name to the server (best-effort). */
-    private suspend fun pushVaultMeta(url: String, token: String) {
-        val descriptor = runtimeRepository.getActiveDescriptor()
-        val encryptedName = encryptName(descriptor.name) ?: return
+    /** Pushes the given vault's encrypted display name to the server (best-effort). */
+    private suspend fun pushVaultMeta(url: String, token: String, descriptor: VaultDescriptor) {
+        val encryptedName = encryptName(descriptor.id, descriptor.name) ?: return
         syncApi.setVaultMeta(
             baseUrl = url,
             token = token,
@@ -649,13 +655,12 @@ class SyncManager(
         }
     }
 
-    private suspend fun doPull(url: String, token: String): AppResult<PullResult> {
-        val vaultId = runtimeRepository.getActiveDescriptor().id
+    private suspend fun doPull(url: String, token: String, vaultId: String): AppResult<PullResult> {
         var pulled = 0
         var deleted = 0
         var encryptedSeen = 0
         var decrypted = 0
-        var since = runtimeRepository.getLastSyncSeq()
+        var since = runtimeRepository.getLastSyncSeq(vaultId)
 
         while (true) {
             val response: ChangesResponse =
@@ -666,7 +671,8 @@ class SyncManager(
 
             // Snapshot the vault once per page for O(1) lookups instead of scanning
             // the whole item list for every incoming change.
-            val vault = runtimeRepository.getVault()
+            val vault = runtimeRepository.getVault(vaultId)
+                ?: return AppResult.Failure(Exception("Vault was unloaded during sync"))
             val itemsById = vault.items.associateBy { it.id }
             val tombstonesById = vault.tombstones.associateBy { it.id }
 
@@ -680,27 +686,28 @@ class SyncManager(
                 }
                 if (change.deleted) {
                     if (localItem != null && change.updatedAt >= localUpdatedAt) {
-                        runtimeRepository.applyRemoteDelete(change.id)
+                        runtimeRepository.applyRemoteDelete(vaultId, change.id)
                         deleted++
                     }
                 } else if (change.updatedAt > localUpdatedAt) {
                     val payload = change.payload ?: continue
                     encryptedSeen++
-                    val item = decryptItem(payload) ?: continue
+                    val item = decryptItem(vaultId, payload) ?: continue
                     decrypted++
-                    runtimeRepository.applyRemoteUpsert(item)
+                    runtimeRepository.applyRemoteUpsert(vaultId, item)
                     pulled++
                 }
             }
 
             if (response.items.size < PULL_PAGE_SIZE) {
                 runtimeRepository.setLastSyncSeq(
-                    maxOf(runtimeRepository.getLastSyncSeq(), response.latestSeq)
+                    vaultId,
+                    maxOf(runtimeRepository.getLastSyncSeq(vaultId), response.latestSeq)
                 )
                 break
             } else {
                 since = response.items.last().seq
-                runtimeRepository.setLastSyncSeq(maxOf(runtimeRepository.getLastSyncSeq(), since))
+                runtimeRepository.setLastSyncSeq(vaultId, maxOf(runtimeRepository.getLastSyncSeq(vaultId), since))
             }
         }
         return AppResult.Success(
@@ -712,9 +719,9 @@ class SyncManager(
         )
     }
 
-    private suspend fun doPush(url: String, token: String): AppResult<PushOutcome> {
-        val vaultId = runtimeRepository.getActiveDescriptor().id
-        val vault = runtimeRepository.getVault()
+    private suspend fun doPush(url: String, token: String, vaultId: String): AppResult<PushOutcome> {
+        val vault = runtimeRepository.getVault(vaultId)
+            ?: return AppResult.Failure(Exception("Vault was unloaded during sync"))
         // A vault the server has never seen (lastSyncSeq == 0) is uploaded in full, so a
         // first-time sync — from sign-in, "Sync now", or the scheduler — doesn't depend on
         // per-item dirty tracking, which may be empty for a vault created before sync existed.
@@ -727,7 +734,7 @@ class SyncManager(
         val pushItems = dirtyIds.mapNotNull { id ->
             val item = vault.items.firstOrNull { it.id == id }
             if (item != null) {
-                val payload = encryptItem(item) ?: return@mapNotNull null
+                val payload = encryptItem(vaultId, item) ?: return@mapNotNull null
                 PushItem(
                     id = id,
                     updatedAt = effectiveUpdatedAt(item),
@@ -755,8 +762,8 @@ class SyncManager(
                 // accepted ours, or it kept a newer version we will fetch on the re-pull),
                 // so it is safe to clear the local dirty/tombstone markers for all of them.
                 val pushedIds = r.value.results.map { it.id }
-                runtimeRepository.clearDirty(pushedIds)
-                runtimeRepository.clearTombstones(pushedIds)
+                runtimeRepository.clearDirty(vaultId, pushedIds)
+                runtimeRepository.clearTombstones(vaultId, pushedIds)
                 AppResult.Success(
                     PushOutcome(
                         summary = SyncSummary(pushed = r.value.results.count { it.stored }),
@@ -769,8 +776,8 @@ class SyncManager(
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    private suspend fun encryptItem(item: VaultItemModel): String? = try {
-        val masterPassword = runtimeRepository.getVault().password
+    private suspend fun encryptItem(vaultId: String, item: VaultItemModel): String? = try {
+        val masterPassword = runtimeRepository.getVault(vaultId)?.password ?: return null
         val raw = json.encodeToString(item)
         val cipher = cryptoMapper.encode(masterPassword, raw)
         Base64.encode(cipher)
@@ -779,8 +786,8 @@ class SyncManager(
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    private suspend fun decryptItem(payload: String): VaultItemModel? = try {
-        val masterPassword = runtimeRepository.getVault().password
+    private suspend fun decryptItem(vaultId: String, payload: String): VaultItemModel? = try {
+        val masterPassword = runtimeRepository.getVault(vaultId)?.password ?: return null
         val cipher = Base64.decode(payload)
         val raw = cryptoMapper.decode(masterPassword, cipher)
         json.decodeFromString<VaultItemModel>(raw)
@@ -788,10 +795,10 @@ class SyncManager(
         null
     }
 
-    /** Encrypts the vault display name with the active vault's master password (base64). */
+    /** Encrypts the vault display name with that vault's master password (base64). */
     @OptIn(ExperimentalEncodingApi::class)
-    private suspend fun encryptName(name: String): String? = try {
-        val masterPassword = runtimeRepository.getVault().password
+    private suspend fun encryptName(vaultId: String, name: String): String? = try {
+        val masterPassword = runtimeRepository.getVault(vaultId)?.password ?: return null
         Base64.encode(cryptoMapper.encode(masterPassword, name))
     } catch (e: Exception) {
         null
@@ -813,8 +820,11 @@ class SyncManager(
     private fun effectiveUpdatedAt(item: VaultItemModel): Long =
         item.updatedAt ?: item.createdAt ?: 0L
 
-    private fun isUnlocked(): Boolean =
-        runtimeRepository.getActiveVaultId() != null && runtimeRepository.getVault().password.isNotEmpty()
+    /** The active vault's descriptor if one is loaded and unlocked, else null. */
+    private fun activeUnlockedDescriptor(): VaultDescriptor? {
+        val snapshot = runtimeRepository.getActiveSnapshot() ?: return null
+        return snapshot.descriptor.takeIf { snapshot.vault.password.isNotEmpty() }
+    }
 
     @OptIn(ExperimentalTime::class)
     private fun newDescriptor(id: String = VaultDescriptor.newId(), name: String): VaultDescriptor {
@@ -828,17 +838,18 @@ class SyncManager(
         )
     }
 
-    private suspend fun persistAndRecord(summary: SyncSummary) {
-        persistActive()
+    private suspend fun persistAndRecord(descriptor: VaultDescriptor, summary: SyncSummary) {
+        persist(descriptor)
         recordSync(summary)
     }
 
-    /** Persists the active vault's current in-memory state to its encrypted file. */
-    private suspend fun persistActive() {
-        vaultFileRepository.saveVault(
-            descriptor = runtimeRepository.getActiveDescriptor(),
-            vaultModel = runtimeRepository.getVault()
-        )
+    /**
+     * Persists vault [descriptor]'s current in-memory state to its encrypted file. Reads the
+     * descriptor + contents together so a rename landing mid-sync isn't written back stale.
+     */
+    private suspend fun persist(descriptor: VaultDescriptor) {
+        val snapshot = runtimeRepository.getSnapshot(descriptor.id) ?: return
+        vaultFileRepository.saveVault(descriptor = snapshot.descriptor, vaultModel = snapshot.vault)
     }
 
     @OptIn(ExperimentalTime::class)

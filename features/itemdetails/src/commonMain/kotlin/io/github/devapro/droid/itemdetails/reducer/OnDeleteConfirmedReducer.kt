@@ -22,10 +22,14 @@ class OnDeleteConfirmedReducer(
         val currentState = getState()
 
         runtimeRepository.deleteVaultById(currentState.item.id)
-        val result = repository.saveVault(
-            descriptor = runtimeRepository.getActiveDescriptor(),
-            vaultModel = runtimeRepository.getVault(),
-        )
+        // Read descriptor + contents atomically so a concurrent background sync can
+        // never pair this vault's descriptor with another vault's items on disk.
+        val snapshot = runtimeRepository.getActiveSnapshot()
+        val result = if (snapshot == null) {
+            AppResult.Failure(Exception("No active vault"))
+        } else {
+            repository.saveVault(descriptor = snapshot.descriptor, vaultModel = snapshot.vault)
+        }
         return when(result) {
             is AppResult.Success -> {
                 Reducer.Result(

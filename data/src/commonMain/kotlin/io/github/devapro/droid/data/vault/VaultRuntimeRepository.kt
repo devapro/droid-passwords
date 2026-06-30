@@ -77,6 +77,22 @@ class VaultRuntimeRepository {
 
     fun getActiveDescriptor(): VaultDescriptor = synchronized(lock) { requireActiveEntry().descriptor }
 
+    /**
+     * Reads the active vault's descriptor and contents together under a single lock so a
+     * caller persisting the vault can never pair one vault's descriptor with another
+     * vault's items (which would write the wrong vault into a file). Returns null when no
+     * vault is active.
+     */
+    fun getActiveSnapshot(): VaultSnapshot? = synchronized(lock) {
+        val id = activeVaultId ?: return@synchronized null
+        loaded[id]?.let { VaultSnapshot(descriptor = it.descriptor, vault = it.vault) }
+    }
+
+    /** Like [getActiveSnapshot] but for a specific vault [id]; used by sync to persist by id. */
+    fun getSnapshot(id: String): VaultSnapshot? = synchronized(lock) {
+        loaded[id]?.let { VaultSnapshot(descriptor = it.descriptor, vault = it.vault) }
+    }
+
     fun getVault(id: String): VaultModel? = synchronized(lock) { loaded[id]?.vault }
 
     fun getDescriptor(id: String): VaultDescriptor? = synchronized(lock) { loaded[id]?.descriptor }
@@ -90,11 +106,21 @@ class VaultRuntimeRepository {
     }
 
     fun replaceActiveDescriptor(descriptor: VaultDescriptor) = synchronized(lock) {
-        val entry = requireActiveEntry()
-        val oldId = entry.descriptor.id
+        val activeId = activeVaultId ?: return@synchronized
+        replaceDescriptor(oldId = activeId, descriptor = descriptor)
+    }
+
+    /**
+     * Swaps the descriptor of the vault currently keyed by [oldId] (keeping its loaded
+     * contents). If the descriptor carries a new id the entry is re-keyed, and the active
+     * pointer follows only when it was pointing at [oldId]. Used by sync to finalize a
+     * restored vault without disturbing whichever vault the user currently has active.
+     */
+    fun replaceDescriptor(oldId: String, descriptor: VaultDescriptor) = synchronized(lock) {
+        val entry = loaded[oldId] ?: return@synchronized
         if (oldId != descriptor.id) {
             loaded.remove(oldId)
-            activeVaultId = descriptor.id
+            if (activeVaultId == oldId) activeVaultId = descriptor.id
         }
         loaded[descriptor.id] = entry.copy(descriptor = descriptor)
     }
@@ -184,65 +210,66 @@ class VaultRuntimeRepository {
     }
 
     // --- Sync support ------------------------------------------------------
+    // All keyed by vault id, NEVER the active pointer: the background sync walks every
+    // loaded vault and must mutate each by id so it never has to repoint (and race) the
+    // active vault the user is currently viewing/editing.
 
-    fun getDirtyItemIds(): List<String> = synchronized(lock) { getActiveVault().dirtyItemIds }
+    fun getLastSyncSeq(id: String): Long = synchronized(lock) { loaded[id]?.vault?.lastSyncSeq ?: 0L }
 
-    fun getTombstones(): List<VaultTombstone> = synchronized(lock) { getActiveVault().tombstones }
-
-    fun getLastSyncSeq(): Long = synchronized(lock) { getActiveVault().lastSyncSeq }
-
-    fun setLastSyncSeq(seq: Long) = synchronized(lock) {
-        replaceActiveVault(getActiveVault().copy(lastSyncSeq = seq))
-    }
+    fun setLastSyncSeq(id: String, seq: Long) = mutate(id) { it.copy(lastSyncSeq = seq) }
 
     /** Clears dirty flags for items that were successfully pushed. */
-    fun clearDirty(ids: Collection<String>) = synchronized(lock) {
-        if (ids.isEmpty()) return@synchronized
-        val current = getActiveVault()
-        replaceActiveVault(
-            current.copy(dirtyItemIds = current.dirtyItemIds.filterNot { it in ids })
-        )
+    fun clearDirty(id: String, ids: Collection<String>) {
+        if (ids.isEmpty()) return
+        mutate(id) { it.copy(dirtyItemIds = it.dirtyItemIds.filterNot { dirty -> dirty in ids }) }
     }
 
     /** Removes tombstones that were successfully pushed. */
-    fun clearTombstones(ids: Collection<String>) = synchronized(lock) {
-        if (ids.isEmpty()) return@synchronized
-        val current = getActiveVault()
-        replaceActiveVault(
-            current.copy(tombstones = current.tombstones.filterNot { it.id in ids })
+    fun clearTombstones(id: String, ids: Collection<String>) {
+        if (ids.isEmpty()) return
+        mutate(id) { it.copy(tombstones = it.tombstones.filterNot { tombstone -> tombstone.id in ids }) }
+    }
+
+    /**
+     * Applies an item received from the server to vault [id]. Does NOT mark it dirty
+     * since it is already in sync with the server. Caller is responsible for
+     * last-write-wins.
+     */
+    fun applyRemoteUpsert(id: String, item: VaultItemModel) = mutate(id) { current ->
+        val updatedItems = if (current.items.any { it.id == item.id }) {
+            current.items.map { if (it.id == item.id) item else it }
+        } else {
+            current.items + item
+        }
+        current.copy(
+            items = updatedItems,
+            dirtyItemIds = current.dirtyItemIds.filterNot { it == item.id },
+            tombstones = current.tombstones.filterNot { it.id == item.id }
+        )
+    }
+
+    /** Applies a remote deletion to vault [id] without creating a new outgoing tombstone. */
+    fun applyRemoteDelete(id: String, itemId: String) = mutate(id) { current ->
+        current.copy(
+            items = current.items.filter { it.id != itemId },
+            dirtyItemIds = current.dirtyItemIds.filterNot { it == itemId },
+            tombstones = current.tombstones.filterNot { it.id == itemId }
         )
     }
 
     /**
-     * Applies an item received from the server. Does NOT mark it dirty since it
-     * is already in sync with the server. Caller is responsible for last-write-wins.
+     * Atomically transforms the contents of the vault keyed by [id], emitting a single
+     * change notification. No-op when the vault is not loaded.
      */
-    fun applyRemoteUpsert(item: VaultItemModel) = synchronized(lock) {
-        val current = getActiveVault()
-        val existing = current.items.firstOrNull { it.id == item.id }
-        val updatedItems = if (existing == null) {
-            current.items + item
-        } else {
-            current.items.map { if (it.id == item.id) item else it }
-        }
-        replaceActiveVault(
-            current.copy(
-                items = updatedItems,
-                dirtyItemIds = current.dirtyItemIds.filterNot { it == item.id },
-                tombstones = current.tombstones.filterNot { it.id == item.id }
-            )
-        )
-    }
-
-    /** Applies a remote deletion without creating a new outgoing tombstone. */
-    fun applyRemoteDelete(itemId: String) = synchronized(lock) {
-        val current = getActiveVault()
-        replaceActiveVault(
-            current.copy(
-                items = current.items.filter { it.id != itemId },
-                dirtyItemIds = current.dirtyItemIds.filterNot { it == itemId },
-                tombstones = current.tombstones.filterNot { it.id == itemId }
-            )
-        )
+    private fun mutate(id: String, transform: (VaultModel) -> VaultModel) = synchronized(lock) {
+        val entry = loaded[id] ?: return@synchronized
+        entry.vault = transform(entry.vault)
+        notifyChange()
     }
 }
+
+/** An active vault's descriptor and contents read together atomically (see [VaultRuntimeRepository.getActiveSnapshot]). */
+data class VaultSnapshot(
+    val descriptor: VaultDescriptor,
+    val vault: VaultModel
+)

@@ -21,6 +21,13 @@ class OnRefreshReducer(
         action: VaultListScreenAction.OnRefresh,
         getState: () -> VaultListScreenState
     ): Reducer.Result<VaultListScreenState, VaultListScreenAction, VaultListScreenEvent?> {
+        // Ignore a refresh while one is already in flight so repeated pulls don't stack
+        // up back-to-back server round-trips.
+        val currentState = getState()
+        if (currentState is VaultListScreenState.Loaded && currentState.isSyncing) {
+            return Reducer.Result(state = currentState, action = null, event = null)
+        }
+
         val loggedIn = syncStateStore.isLoggedIn()
         val registry = registryRepository.getRegistry()
         val activeId = runtimeRepository.getActiveVaultId()
